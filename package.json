@@ -1,0 +1,35 @@
+{
+  "name": "qupacabras-db",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://YOUR_USERNAME.github.io/qupacabras",
+  "dependencies": {
+    "lucide-react": "^0.395.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "serve": "^14.2.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "node scripts/generate-benchmark-index.js && react-scripts build",
+    "generate-index": "node scripts/generate-benchmark-index.js"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
+  }
+}

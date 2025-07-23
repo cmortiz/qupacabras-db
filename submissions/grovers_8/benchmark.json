@@ -1,0 +1,15 @@
+{
+  "id": "grovers_8",
+  "algorithmName": "Grover's Algorithm",
+  "team": ["L. Grover"],
+  "device": "Rigetti Aspen-M-2",
+  "metricName": "Correct Answer Rate",
+  "metricValue": 0.95,
+  "uncertainty": 0.02,
+  "paperUrl": "https://arxiv.org/abs/quant-ph/9605043",
+  "timestamp": "2024-05-11T11:30:00Z",
+  "qasmFiles": ["grover_search.qasm", "oracle.qasm"],
+  "description": "Grover's search algorithm on 8-item database",
+  "methodology": "Amplitude amplification with 2 iterations",
+  "notes": "Oracle marks item at position 5 in the database"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "unique_benchmark_id",
+  "algorithmName": "Your Algorithm Name",
+  "team": ["Author 1", "Author 2"],
+  "device": "Quantum Device Name",
+  "metricName": "Performance Metric (e.g., Fidelity, Success Probability)",
+  "metricValue": 0.85,
+  "uncertainty": 0.05,
+  "paperUrl": "https://arxiv.org/abs/your-paper",
+  "timestamp": "2024-MM-DDTHH:MM:SSZ",
+  "qasmFiles": ["circuit.qasm", "measurement.qasm"],
+  "description": "Brief description of the benchmark",
+  "methodology": "How the benchmark was performed",
+  "notes": "Any additional notes or caveats"
+}
