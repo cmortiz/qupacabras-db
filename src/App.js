@@ -3,11 +3,14 @@ import { COLORS, CONFIG, UI_CONSTANTS } from './constants';
 import ContributionGuide from './components/ContributionGuide';
 import BenchmarkTable from './components/BenchmarkTable';
 import { useSortedData } from './hooks/useSortedData';
+import { Info, Github } from 'lucide-react';
 
 export default function App() {
     const [benchmarks, setBenchmarks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [showGuide, setShowGuide] = useState(false);
+    const [showInfo, setShowInfo] = useState(false);
 
     // Simple text filtering
     const filteredBenchmarks = useMemo(() => {
@@ -114,41 +117,114 @@ export default function App() {
 
     return (
         <div className="min-h-screen font-sans" style={{ backgroundColor: COLORS.bg, color: COLORS.fg }}>
-            <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-                <header className="text-center mb-8">
-                    <div className="flex justify-center items-center gap-4">
-                        <img src={UI_CONSTANTS.quantumIconUrl} alt="Quantum computer icon" className="w-10 h-10" />
-                        <img src={UI_CONSTANTS.alienIconUrl} alt="Alien icon" className="w-10 h-10" />
-                        <h1 className="text-4xl font-bold">
-                            <span style={{color: COLORS.accentRed}}>Q</span>upacabras
-                        </h1>
+            {/* Header with padding from top */}
+            <header className="pt-8 pb-6 px-12">
+                <div className="shadow-lg rounded-lg overflow-hidden" style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}` }}>
+                    <div className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                            <img src={UI_CONSTANTS.quantumIconUrl} alt="Quantum computer icon" className="w-8 h-8" />
+                            <img src={UI_CONSTANTS.alienIconUrl} alt="Alien icon" className="w-8 h-8" />
+                            <h1 className="text-2xl font-bold">
+                                <span style={{color: COLORS.accentRed}}>Q</span>upacabras
+                            </h1>
+                            <span className="hidden sm:inline text-sm" style={{ color: COLORS.fgMuted }}>
+                                {UI_CONSTANTS.appDescription}
+                            </span>
+                        </div>
                     </div>
-                    <p className="mt-2 text-lg" style={{ color: COLORS.fgMuted }}>
-                        {UI_CONSTANTS.appDescription}
-                    </p>
-                </header>
+                </div>
+            </header>
 
-                <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <ContributionGuide />
-                    <BenchmarkTable 
-                        filteredBenchmarks={sortedData}
-                        isLoading={isLoading}
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        downloadCSV={downloadCSV}
-                        sortConfig={sortConfig}
-                        onSort={handleSort}
+            {/* Main content area - full width */}
+            <main className="px-12 pb-8">
+                <BenchmarkTable 
+                    filteredBenchmarks={sortedData}
+                    isLoading={isLoading}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    downloadCSV={downloadCSV}
+                    sortConfig={sortConfig}
+                    onSort={handleSort}
+                />
+            </main>
+
+            {/* Floating Action Button for Contribution Guide */}
+            <button
+                onClick={() => setShowGuide(!showGuide)}
+                className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 z-50"
+                style={{ 
+                    backgroundColor: COLORS.accentBlue,
+                    color: COLORS.bg
+                }}
+                title="How to Contribute"
+            >
+                <Github className="w-6 h-6" />
+            </button>
+
+            {/* Contribution Guide Panel */}
+            {showGuide && (
+                <>
+                    <div 
+                        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                        onClick={() => setShowGuide(false)}
                     />
-                </main>
-                
-                <footer className="text-center mt-10 text-sm" style={{ color: COLORS.fgSubtle }}>
-                    <div className="pt-4 border-t" style={{borderColor: COLORS.border}}>
-                        <p className="mb-2">Built with React and hosted on GitHub Pages.</p>
-                        <p>Color Scheme: <a href="https://github.com/morhetz/gruvbox" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80" style={{ color: COLORS.accentAqua }}>Gruvbox</a> by morhetz.</p>
-                        <p className="mt-1">Icons: <a href="https://www.flaticon.com" title="Flaticon" className="underline hover:opacity-80" style={{ color: COLORS.accentAqua }}>Flaticon</a></p>
+                    <div 
+                        className="fixed right-0 top-0 h-full w-full sm:w-96 p-6 shadow-xl overflow-y-auto z-50"
+                        style={{ backgroundColor: COLORS.bgCard }}
+                    >
+                        <button
+                            onClick={() => setShowGuide(false)}
+                            className="absolute top-4 right-4 p-2 rounded-lg hover:opacity-80"
+                            style={{ backgroundColor: COLORS.bg }}
+                        >
+                            ✕
+                        </button>
+                        <ContributionGuide />
                     </div>
-                </footer>
-            </div>
+                </>
+            )}
+
+            {/* Info Button */}
+            <button
+                onClick={() => setShowInfo(!showInfo)}
+                className="fixed bottom-6 left-6 w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110"
+                style={{ 
+                    backgroundColor: COLORS.bgCard,
+                    border: `1px solid ${COLORS.border}`,
+                    color: COLORS.fgSubtle
+                }}
+                title="About"
+            >
+                <Info className="w-5 h-5" />
+            </button>
+
+            {/* Info Modal */}
+            {showInfo && (
+                <>
+                    <div 
+                        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                        onClick={() => setShowInfo(false)}
+                    />
+                    <div 
+                        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-xl shadow-xl z-50 max-w-md"
+                        style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}` }}
+                    >
+                        <button
+                            onClick={() => setShowInfo(false)}
+                            className="absolute top-4 right-4 p-2 rounded-lg hover:opacity-80"
+                            style={{ backgroundColor: COLORS.bg }}
+                        >
+                            ✕
+                        </button>
+                        <h3 className="text-lg font-semibold mb-4">About Qupacabras</h3>
+                        <div className="space-y-2 text-sm" style={{ color: COLORS.fgMuted }}>
+                            <p>Built with React and hosted on GitHub Pages.</p>
+                            <p>Color Scheme: <a href="https://github.com/morhetz/gruvbox" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80" style={{ color: COLORS.accentAqua }}>Gruvbox</a> by morhetz.</p>
+                            <p>Icons: <a href="https://www.flaticon.com" title="Flaticon" className="underline hover:opacity-80" style={{ color: COLORS.accentAqua }}>Flaticon</a></p>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

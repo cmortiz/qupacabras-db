@@ -119,9 +119,9 @@ export default function BenchmarkTable({
     onSort
 }) {
     return (
-        <div className="lg:col-span-2">
-            <div className="p-6 rounded-xl shadow-md" style={{ backgroundColor: COLORS.bgCard, borderColor: COLORS.border, borderWidth: '1px' }}>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+        <div className="w-full">
+            <div className="shadow-lg rounded-lg overflow-hidden" style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}`, minHeight: 'calc(100vh - 16rem)' }}>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-8 py-6" style={{ borderBottom: `1px solid ${COLORS.border}` }}>
                     <h2 className="text-2xl font-semibold flex items-center gap-2">
                         <Database className="w-6 h-6" style={{ color: COLORS.accentAqua }} /> Benchmark Data
                     </h2>
@@ -142,7 +142,7 @@ export default function BenchmarkTable({
                         <FileDown className="w-4 h-4"/> Download CSV
                     </button>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="table-container" style={{ maxHeight: 'calc(100vh - 24rem)', overflow: 'auto' }}>
                     <table className="w-full text-left table-auto">
                         <thead style={{ borderBottomColor: COLORS.border, borderBottomWidth: '2px' }}>
                             <tr className="text-sm font-semibold">
@@ -150,6 +150,7 @@ export default function BenchmarkTable({
                                     sortKey="algorithmName" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
+                                    className="px-8 py-5"
                                 >
                                     Algorithm
                                 </SortableHeader>
@@ -157,6 +158,7 @@ export default function BenchmarkTable({
                                     sortKey="device" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
+                                    className="px-8 py-5"
                                 >
                                     Device
                                 </SortableHeader>
@@ -164,6 +166,7 @@ export default function BenchmarkTable({
                                     sortKey="metricName" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
+                                    className="px-8 py-5"
                                 >
                                     Metric
                                 </SortableHeader>
@@ -171,7 +174,7 @@ export default function BenchmarkTable({
                                     sortKey="metricValue" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-right"
+                                    className="px-8 py-5 text-right"
                                 >
                                     Value
                                 </SortableHeader>
@@ -179,7 +182,7 @@ export default function BenchmarkTable({
                                     sortKey="uncertainty" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-right"
+                                    className="px-8 py-5 text-right"
                                 >
                                     Uncertainty
                                 </SortableHeader>
@@ -188,7 +191,7 @@ export default function BenchmarkTable({
                                     sortKey="errorRates.qubit.mean" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-center"
+                                    className="px-8 py-5 text-center"
                                 >
                                     <HeaderWithTooltip description={FIELD_DESCRIPTIONS.errorRates.qubit.description}>
                                         {FIELD_DESCRIPTIONS.errorRates.qubit.title}
@@ -198,7 +201,7 @@ export default function BenchmarkTable({
                                     sortKey="errorRates.readout.mean" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-center"
+                                    className="px-8 py-5 text-center"
                                 >
                                     <HeaderWithTooltip description={FIELD_DESCRIPTIONS.errorRates.readout.description}>
                                         {FIELD_DESCRIPTIONS.errorRates.readout.title}
@@ -208,7 +211,7 @@ export default function BenchmarkTable({
                                     sortKey="errorRates.twoQubitGate.mean" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-center"
+                                    className="px-8 py-5 text-center"
                                 >
                                     <HeaderWithTooltip description={FIELD_DESCRIPTIONS.errorRates.twoQubitGate.description}>
                                         {FIELD_DESCRIPTIONS.errorRates.twoQubitGate.title}
@@ -218,7 +221,7 @@ export default function BenchmarkTable({
                                     sortKey="errorRates.singleQubitGate.mean" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-center"
+                                    className="px-8 py-5 text-center"
                                 >
                                     <HeaderWithTooltip description={FIELD_DESCRIPTIONS.errorRates.singleQubitGate.description}>
                                         {FIELD_DESCRIPTIONS.errorRates.singleQubitGate.title}
@@ -228,19 +231,19 @@ export default function BenchmarkTable({
                                     sortKey="executionTime.mean" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-center"
+                                    className="px-8 py-5 text-center"
                                 >
                                     <HeaderWithTooltip description={FIELD_DESCRIPTIONS.executionTime.description}>
                                         {FIELD_DESCRIPTIONS.executionTime.title}
                                     </HeaderWithTooltip>
                                 </SortableHeader>
-                                <th className="p-3 text-center" style={{ color: COLORS.fgMuted }}>Paper</th>
-                                <th className="p-3 text-center" style={{ color: COLORS.fgMuted }}>Files</th>
+                                <th className="px-8 py-5 text-center" style={{ color: COLORS.fgMuted }}>Paper</th>
+                                <th className="px-8 py-5 text-center" style={{ color: COLORS.fgMuted }}>Files</th>
                                 <SortableHeader 
                                     sortKey="contributor" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="p-3 text-center"
+                                    className="px-8 py-5 text-center"
                                 >
                                     Contributor
                                 </SortableHeader>
@@ -248,6 +251,7 @@ export default function BenchmarkTable({
                                     sortKey="timestamp" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
+                                    className="px-8 py-5"
                                 >
                                     Timestamp
                                 </SortableHeader>
@@ -263,48 +267,48 @@ export default function BenchmarkTable({
                             ) : filteredBenchmarks.length > 0 ? (
                                 filteredBenchmarks.map(bm => (
                                     <tr key={bm.id} className="hover:bg-[#504945]" style={{ borderBottomColor: COLORS.border, borderBottomWidth: '1px' }}>
-                                        <td className="p-3 font-medium">{bm.algorithmName}</td>
-                                        <td className="p-3" style={{ color: COLORS.fgMuted }}>{bm.device}</td>
-                                        <td className="p-3" style={{ color: COLORS.fgMuted }}>{bm.metricName}</td>
-                                        <td className="p-3 text-right font-mono" style={{ color: COLORS.accentOrange }}>
+                                        <td className="px-8 py-5 font-medium">{bm.algorithmName}</td>
+                                        <td className="px-8 py-5" style={{ color: COLORS.fgMuted }}>{bm.device}</td>
+                                        <td className="px-8 py-5" style={{ color: COLORS.fgMuted }}>{bm.metricName}</td>
+                                        <td className="px-8 py-5 text-right font-mono" style={{ color: COLORS.accentOrange }}>
                                             {bm.metricValue}
                                         </td>
-                                        <td className="p-3 text-right font-mono" style={{ color: COLORS.fgSubtle }}>
+                                        <td className="px-8 py-5 text-right font-mono" style={{ color: COLORS.fgSubtle }}>
                                             {bm.uncertainty != null ? `±${bm.uncertainty}` : 'N/A'}
                                         </td>
                                         {/* Error Rate Cells */}
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             <StatValue 
                                                 stats={bm.errorRates?.qubit} 
                                                 label="Qubit Error Rate"
                                             />
                                         </td>
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             <StatValue 
                                                 stats={bm.errorRates?.readout} 
                                                 label="Readout Error Rate"
                                             />
                                         </td>
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             <StatValue 
                                                 stats={bm.errorRates?.twoQubitGate} 
                                                 label="Two-Qubit Gate Error"
                                             />
                                         </td>
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             <StatValue 
                                                 stats={bm.errorRates?.singleQubitGate} 
                                                 label="Single-Qubit Gate Error"
                                             />
                                         </td>
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             <StatValue 
                                                 stats={bm.executionTime} 
                                                 label="Execution Time"
                                                 isErrorRate={false}
                                             />
                                         </td>
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             {bm.paperUrl ? (
                                                 <a 
                                                     href={bm.paperUrl} 
@@ -320,7 +324,7 @@ export default function BenchmarkTable({
                                                 <span style={{ color: COLORS.border }}>-</span>
                                             )}
                                         </td>
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             <a 
                                                 href={`${CONFIG.githubRepoUrl}/tree/main/submissions/${bm.benchmarkFolder}`} 
                                                 target="_blank" 
@@ -332,7 +336,7 @@ export default function BenchmarkTable({
                                                 <FileText className="w-5 h-5"/>
                                             </a>
                                         </td>
-                                        <td className="p-3 text-center">
+                                        <td className="px-8 py-5 text-center">
                                             {bm.contributor ? (
                                                 <a 
                                                     href={`https://github.com/${bm.contributor}`} 
@@ -349,7 +353,7 @@ export default function BenchmarkTable({
                                                 <span style={{ color: COLORS.border }}>-</span>
                                             )}
                                         </td>
-                                        <td className="p-3 text-sm" style={{ color: COLORS.fgSubtle }}>
+                                        <td className="px-8 py-5 text-sm" style={{ color: COLORS.fgSubtle }}>
                                             {bm.timestamp.toLocaleDateString()}
                                         </td>
                                     </tr>
