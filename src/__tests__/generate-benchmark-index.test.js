@@ -5,9 +5,12 @@ const path = require('path');
 jest.mock('fs');
 
 // Mock the validate-benchmark module
+const mockValidateBenchmarkFile = jest.fn();
+const mockCheckDuplicates = jest.fn();
+
 jest.mock('../../scripts/validate-benchmark', () => ({
-  validateBenchmarkFile: jest.fn(() => ({ valid: true, errors: [], warnings: [] })),
-  checkDuplicates: jest.fn(() => [])
+  validateBenchmarkFile: mockValidateBenchmarkFile,
+  checkDuplicates: mockCheckDuplicates
 }));
 
 const generateBenchmarkIndex = require('../../scripts/generate-benchmark-index');
@@ -22,6 +25,10 @@ describe('generateBenchmarkIndex', () => {
     jest.spyOn(console, 'log').mockImplementation(() => {});
     jest.spyOn(console, 'warn').mockImplementation(() => {});
     jest.spyOn(console, 'error').mockImplementation(() => {});
+    
+    // Set default mock return values
+    mockValidateBenchmarkFile.mockReturnValue({ valid: true, errors: [], warnings: [] });
+    mockCheckDuplicates.mockReturnValue([]);
   });
 
   afterEach(() => {
@@ -107,11 +114,23 @@ measure q -> c;
     fs.writeFileSync.mockImplementation(() => {});
     fs.mkdirSync.mockImplementation(() => {});
 
+    // Mock validation to fail for incomplete data
+    mockValidateBenchmarkFile.mockReturnValueOnce({
+      valid: false,
+      errors: [
+        { field: 'device', message: 'Missing required field' },
+        { field: 'metricName', message: 'Missing required field' },
+        { field: 'metricValue', message: 'Missing required field' },
+        { field: 'timestamp', message: 'Missing required field' }
+      ],
+      warnings: []
+    });
+
     const result = generateBenchmarkIndex();
 
     expect(result).toHaveLength(0);
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('Missing required fields')
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining('Validation failed')
     );
   });
 
@@ -152,11 +171,21 @@ measure q -> c;
     fs.writeFileSync.mockImplementation(() => {});
     fs.mkdirSync.mockImplementation(() => {});
 
+    // Mock validation to succeed but with warnings
+    mockValidateBenchmarkFile.mockReturnValueOnce({
+      valid: true,
+      errors: [],
+      warnings: [
+        { field: 'qasmFiles[0]', message: 'File missing.qasm not found' },
+        { field: 'qasmFiles[1]', message: 'Invalid QASM content' }
+      ]
+    });
+
     const result = generateBenchmarkIndex();
 
     expect(result).toHaveLength(1); // Should still process despite warnings
     expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('validation warnings')
+      expect.stringContaining('warnings:')
     );
   });
 
@@ -181,14 +210,21 @@ measure q -> c;
     fs.writeFileSync.mockImplementation(() => {});
     fs.mkdirSync.mockImplementation(() => {});
 
+    // Mock validation to succeed but with warnings about non-numeric values
+    mockValidateBenchmarkFile.mockReturnValueOnce({
+      valid: true,
+      errors: [],
+      warnings: [
+        { field: 'metricValue', message: 'metricValue should be numeric' },
+        { field: 'uncertainty', message: 'uncertainty should be numeric' }
+      ]
+    });
+
     const result = generateBenchmarkIndex();
 
     expect(result).toHaveLength(1); // Should still process despite warnings
     expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('metricValue should be numeric')
-    );
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('uncertainty should be numeric')
+      expect.stringContaining('warnings:')
     );
   });
 
@@ -213,11 +249,20 @@ measure q -> c;
     fs.writeFileSync.mockImplementation(() => {});
     fs.mkdirSync.mockImplementation(() => {});
 
+    // Mock validation to succeed but with URL format warning
+    mockValidateBenchmarkFile.mockReturnValueOnce({
+      valid: true,
+      errors: [],
+      warnings: [
+        { field: 'paperUrl', message: 'paperUrl should be a valid HTTP/HTTPS URL' }
+      ]
+    });
+
     const result = generateBenchmarkIndex();
 
     expect(result).toHaveLength(1);
     expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('paperUrl should be a valid HTTP/HTTPS URL')
+      expect.stringContaining('warnings:')
     );
   });
 

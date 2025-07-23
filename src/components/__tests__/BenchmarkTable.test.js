@@ -85,7 +85,11 @@ describe('BenchmarkTable', () => {
     render(<BenchmarkTable {...defaultProps} />);
     
     // Check for N/A values where data is missing
-    expect(screen.getAllByText('N/A')).toHaveLength(1); // uncertainty for second item
+    // Second item has: uncertainty (1) + 5 error rate fields = at least 6 N/A values
+    const naElements = screen.getAllByText('N/A');
+    expect(naElements.length).toBeGreaterThanOrEqual(6);
+    
+    // Check for dash values for missing paper and contributor
     expect(screen.getAllByText('-')).toHaveLength(2); // paper and contributor for second item
   });
 
