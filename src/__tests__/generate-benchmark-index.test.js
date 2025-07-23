@@ -1,9 +1,16 @@
 const fs = require('fs');
 const path = require('path');
-const generateBenchmarkIndex = require('../../scripts/generate-benchmark-index');
 
-// Mock fs module
+// Mock fs module before requiring the script
 jest.mock('fs');
+
+// Mock the validate-benchmark module
+jest.mock('../../scripts/validate-benchmark', () => ({
+  validateBenchmarkFile: jest.fn(() => ({ valid: true, errors: [], warnings: [] })),
+  checkDuplicates: jest.fn(() => [])
+}));
+
+const generateBenchmarkIndex = require('../../scripts/generate-benchmark-index');
 
 describe('generateBenchmarkIndex', () => {
   const mockSubmissionsDir = '/test/submissions';

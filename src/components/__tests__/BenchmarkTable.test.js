@@ -13,7 +13,12 @@ const mockBenchmarks = [
     paperUrl: 'https://example.com/paper',
     contributor: 'testuser',
     timestamp: new Date('2024-01-01'),
-    benchmarkFolder: 'test1'
+    benchmarkFolder: 'test1',
+    errorRates: {
+      qubit: { min: 0.001, max: 0.005, median: 0.003, mean: 0.0032 },
+      readout: { min: 0.01, max: 0.03, median: 0.02, mean: 0.021 }
+    },
+    executionTime: { min: 0.5, max: 2.5, median: 1.2, mean: 1.3, unit: 'seconds' }
   },
   {
     id: 'test2',
@@ -25,7 +30,9 @@ const mockBenchmarks = [
     paperUrl: null,
     contributor: null,
     timestamp: new Date('2024-01-02'),
-    benchmarkFolder: 'test2'
+    benchmarkFolder: 'test2',
+    errorRates: null,
+    executionTime: null
   }
 ];
 
