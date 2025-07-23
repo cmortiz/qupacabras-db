@@ -1,16 +1,94 @@
 [
   {
+    "id": "minimal_example",
+    "algorithmName": "Quantum Fourier Transform",
+    "device": "Simulator",
+    "metricName": "Fidelity",
+    "metricValue": 0.99,
+    "timestamp": "2024-11-21T09:00:00.000Z",
+    "description": "QFT implementation without error rate data",
+    "notes": "This example shows that error rate fields are optional",
+    "benchmarkFolder": "minimal_example"
+  },
+  {
+    "id": "example_with_errors",
+    "algorithmName": "Variational Quantum Eigensolver",
+    "device": "IBM Quantum Brisbane",
+    "metricName": "Fidelity",
+    "metricValue": 0.87,
+    "uncertainty": 0.03,
+    "paperUrl": "https://arxiv.org/abs/2106.05105",
+    "timestamp": "2024-11-20T14:45:00.000Z",
+    "contributor": "quantum-researcher",
+    "team": [
+      "Dr. Alice Quantum",
+      "Prof. Bob Circuit"
+    ],
+    "qasmFiles": [
+      "circuit.qasm"
+    ],
+    "description": "VQE implementation for H2 molecule ground state energy calculation",
+    "methodology": "Used UCCSD ansatz with 100 optimization iterations, measured over 8192 shots per circuit evaluation",
+    "notes": "Error rates collected from device calibration data over 1 week period",
+    "quantumSpecific": {
+      "qubitCount": 5,
+      "gateCount": 42,
+      "circuitDepth": 15,
+      "twoQubitGateCount": 8,
+      "measurementCount": 8192,
+      "optimizationLevel": 3,
+      "errorMitigation": "None"
+    },
+    "errorRates": {
+      "qubit": {
+        "min": 0.001,
+        "max": 0.005,
+        "median": 0.003,
+        "mean": 0.0032
+      },
+      "readout": {
+        "min": 0.01,
+        "max": 0.03,
+        "median": 0.02,
+        "mean": 0.021
+      },
+      "twoQubitGate": {
+        "min": 0.005,
+        "max": 0.015,
+        "median": 0.01,
+        "mean": 0.0105
+      },
+      "singleQubitGate": {
+        "min": 0.0005,
+        "max": 0.002,
+        "median": 0.001,
+        "mean": 0.0011
+      }
+    },
+    "executionTime": {
+      "min": 0.5,
+      "max": 2.5,
+      "median": 1.2,
+      "mean": 1.3,
+      "unit": "seconds"
+    },
+    "environment": {
+      "provider": "IBM Quantum",
+      "backend": "ibm_brisbane",
+      "quantumVolume": 16
+    },
+    "benchmarkFolder": "example_with_errors"
+  },
+  {
     "id": "grovers_8",
     "algorithmName": "Grover's Algorithm",
-    "team": [
-      "L. Grover"
-    ],
     "device": "Rigetti Aspen-M-2",
-    "metricName": "Correct Answer Rate",
+    "metricName": "Success Probability",
     "metricValue": 0.95,
     "uncertainty": 0.02,
     "paperUrl": "https://arxiv.org/abs/quant-ph/9605043",
     "timestamp": "2024-05-11T11:30:00.000Z",
+    "contributor": "lgrover",
     "qasmFiles": [
       "grover_search.qasm",
       "oracle.qasm"
@@ -23,15 +101,13 @@
   {
     "id": "shors_15",
     "algorithmName": "Shor's Algorithm",
-    "team": [
-      "P. Shor"
-    ],
     "device": "IonQ Harmony",
     "metricName": "Success Probability",
     "metricValue": 0.99,
     "uncertainty": 0.01,
     "paperUrl": "https://arxiv.org/abs/quant-ph/9508027",
     "timestamp": "2024-05-10T10:00:00.000Z",
+    "contributor": "pshor",
     "qasmFiles": [
       "shor_15_factoring.qasm"
     ],

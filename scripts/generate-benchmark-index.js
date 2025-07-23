@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { validateBenchmarkFile, checkDuplicates } = require('./validate-benchmark');
 
 const SUBMISSIONS_DIR = path.join(__dirname, '../submissions');
 const OUTPUT_FILE = path.join(__dirname, '../public/benchmarks.json');
@@ -26,29 +27,37 @@ function generateBenchmarkIndex() {
         const benchmarkJsonPath = path.join(folderPath, 'benchmark.json');
         
         if (fs.existsSync(benchmarkJsonPath)) {
-            try {
-                const benchmarkData = JSON.parse(fs.readFileSync(benchmarkJsonPath, 'utf8'));
-                
-                // Validate required fields
-                const requiredFields = ['id', 'algorithmName', 'team', 'device', 'metricName', 'metricValue', 'timestamp'];
-                const missingFields = requiredFields.filter(field => !benchmarkData[field]);
-                
-                if (missingFields.length > 0) {
-                    console.warn(`⚠️  ${folder}: Missing required fields: ${missingFields.join(', ')}`);
-                    continue;
+            // Use the new validation function
+            const validationResult = validateBenchmarkFile(benchmarkJsonPath, folder);
+            
+            if (validationResult.valid) {
+                try {
+                    const benchmarkData = JSON.parse(fs.readFileSync(benchmarkJsonPath, 'utf8'));
+                    
+                    // Ensure benchmarkFolder matches the actual folder name
+                    benchmarkData.benchmarkFolder = folder;
+                    
+                    // Parse timestamp to ensure it's valid
+                    benchmarkData.timestamp = new Date(benchmarkData.timestamp).toISOString();
+                    
+                    benchmarks.push(benchmarkData);
+                    console.log(`✅ Added benchmark: ${benchmarkData.algorithmName} (${folder})`);
+                    
+                    // Display warnings if any
+                    if (validationResult.warnings.length > 0) {
+                        console.warn(`⚠️  ${folder} warnings:`);
+                        validationResult.warnings.forEach(warning => 
+                            console.warn(`   - ${warning.field}: ${warning.message}`)
+                        );
+                    }
+                } catch (error) {
+                    console.error(`❌ Error processing ${folder}/benchmark.json:`, error.message);
                 }
-                
-                // Ensure benchmarkFolder matches the actual folder name
-                benchmarkData.benchmarkFolder = folder;
-                
-                // Parse timestamp to ensure it's valid
-                benchmarkData.timestamp = new Date(benchmarkData.timestamp).toISOString();
-                
-                benchmarks.push(benchmarkData);
-                console.log(`✅ Added benchmark: ${benchmarkData.algorithmName} (${folder})`);
-                
-            } catch (error) {
-                console.error(`❌ Error processing ${folder}/benchmark.json:`, error.message);
+            } else {
+                console.error(`❌ ${folder}: Validation failed`);
+                validationResult.errors.forEach(err => 
+                    console.error(`   - ${err.field}: ${err.message}`)
+                );
             }
         } else {
             console.warn(`⚠️  ${folder}: No benchmark.json found`);
@@ -58,6 +67,18 @@ function generateBenchmarkIndex() {
     // Sort benchmarks by timestamp (newest first)
     benchmarks.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
+    // Check for duplicates
+    console.log('\n🔍 Checking for duplicate submissions...');
+    const duplicates = checkDuplicates(benchmarks);
+    
+    if (duplicates.length > 0) {
+        console.warn('⚠️  Potential duplicates detected:');
+        duplicates.forEach(dup => {
+            console.warn(`   - ${dup.current} may duplicate ${dup.existing} (${dup.signature})`);
+        });
+        console.warn('\nConsider reviewing these submissions for uniqueness.');
+    }
+
     // Ensure public directory exists
     const publicDir = path.dirname(OUTPUT_FILE);
     if (!fs.existsSync(publicDir)) {
@@ -66,7 +87,7 @@ function generateBenchmarkIndex() {
 
     // Write the index file
     fs.writeFileSync(OUTPUT_FILE, JSON.stringify(benchmarks, null, 2));
-    console.log(`🎉 Generated benchmarks.json with ${benchmarks.length} benchmarks`);
+    console.log(`\n🎉 Generated benchmarks.json with ${benchmarks.length} benchmarks`);
     
     return benchmarks;
 }

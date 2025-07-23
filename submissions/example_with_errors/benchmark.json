@@ -1,18 +1,18 @@
 {
-  "id": "template",
-  "algorithmName": "Your Algorithm Name",
-  "device": "Quantum Device Name",
+  "id": "example_with_errors",
+  "algorithmName": "Variational Quantum Eigensolver",
+  "device": "IBM Quantum Brisbane",
   "metricName": "Fidelity",
-  "metricValue": 0.85,
-  "uncertainty": 0.05,
-  "paperUrl": "https://arxiv.org/abs/your-paper",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "contributor": "github-username",
-  "team": ["Author 1", "Author 2"],
+  "metricValue": 0.87,
+  "uncertainty": 0.03,
+  "paperUrl": "https://arxiv.org/abs/2106.05105",
+  "timestamp": "2024-11-20T14:45:00Z",
+  "contributor": "quantum-researcher",
+  "team": ["Dr. Alice Quantum", "Prof. Bob Circuit"],
   "qasmFiles": ["circuit.qasm"],
-  "description": "Brief description of the benchmark",
-  "methodology": "How the benchmark was performed",
-  "notes": "Any additional notes or caveats",
+  "description": "VQE implementation for H2 molecule ground state energy calculation",
+  "methodology": "Used UCCSD ansatz with 100 optimization iterations, measured over 8192 shots per circuit evaluation",
+  "notes": "Error rates collected from device calibration data over 1 week period",
   "quantumSpecific": {
     "qubitCount": 5,
     "gateCount": 42,
@@ -57,7 +57,7 @@
   },
   "environment": {
     "provider": "IBM Quantum",
-    "backend": "ibmq_jakarta",
+    "backend": "ibm_brisbane",
     "quantumVolume": 16
   }
 }

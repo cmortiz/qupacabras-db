@@ -1,0 +1,326 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quantum Benchmark Schema",
+  "description": "Schema for validating quantum algorithm benchmark submissions",
+  "type": "object",
+  "definitions": {
+    "statisticalValue": {
+      "type": "object",
+      "description": "Statistical measurement with min, max, median, and mean",
+      "properties": {
+        "min": {
+          "type": "number",
+          "description": "Minimum value",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max": {
+          "type": "number",
+          "description": "Maximum value",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "median": {
+          "type": "number",
+          "description": "Median value",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mean": {
+          "type": "number",
+          "description": "Mean value",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["min", "max", "median", "mean"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "algorithmName",
+    "device",
+    "metricName",
+    "metricValue",
+    "timestamp"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier matching the folder name",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "minLength": 3,
+      "maxLength": 50
+    },
+    "algorithmName": {
+      "type": "string",
+      "description": "Name of the quantum algorithm",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "device": {
+      "type": "string",
+      "description": "Quantum device or simulator used",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "metricName": {
+      "type": "string",
+      "description": "Performance metric measured",
+      "enum": [
+        "Fidelity",
+        "Success Probability",
+        "Win Rate",
+        "Custom"
+      ]
+    },
+    "metricValue": {
+      "type": "number",
+      "description": "Numerical result of the metric",
+      "minimum": 0,
+      "maximum": 1e6
+    },
+    "uncertainty": {
+      "type": ["number", "null"],
+      "description": "Statistical uncertainty of the measurement",
+      "minimum": 0,
+      "maximum": 1e6
+    },
+    "paperUrl": {
+      "type": ["string", "null"],
+      "description": "URL to the published paper",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO 8601 formatted timestamp",
+      "format": "date-time"
+    },
+    "contributor": {
+      "type": ["string", "null"],
+      "description": "GitHub username of the contributor",
+      "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-])*$",
+      "maxLength": 39
+    },
+    "team": {
+      "type": "array",
+      "description": "List of team members/authors",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 100
+      },
+      "minItems": 1,
+      "maxItems": 20
+    },
+    "qasmFiles": {
+      "type": "array",
+      "description": "List of QASM circuit files",
+      "items": {
+        "type": "string",
+        "pattern": "^[^/\\\\]+\\.qasm$"
+      },
+      "minItems": 0,
+      "maxItems": 50
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the benchmark",
+      "maxLength": 500
+    },
+    "methodology": {
+      "type": "string",
+      "description": "How the benchmark was performed",
+      "maxLength": 1000
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or caveats",
+      "maxLength": 1000
+    },
+    "quantumSpecific": {
+      "type": "object",
+      "description": "Quantum-specific properties",
+      "properties": {
+        "qubitCount": {
+          "type": "integer",
+          "description": "Number of qubits used in the circuit",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "gateCount": {
+          "type": "integer",
+          "description": "Total number of quantum gates",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "circuitDepth": {
+          "type": "integer",
+          "description": "Depth of the quantum circuit",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "twoQubitGateCount": {
+          "type": "integer",
+          "description": "Number of two-qubit gates",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "measurementCount": {
+          "type": "integer",
+          "description": "Number of measurement repetitions/shots",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "optimizationLevel": {
+          "type": "integer",
+          "description": "Transpiler optimization level used",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "errorMitigation": {
+          "type": "string",
+          "description": "Error mitigation technique used",
+          "enum": ["None", "ZNE", "PEC", "Twirled Readout", "Dynamical Decoupling", "Custom"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "description": "Execution environment details",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Quantum cloud provider",
+          "enum": ["IBM Quantum", "AWS Braket", "Azure Quantum", "Google Quantum AI", "Rigetti", "IonQ", "Xanadu", "Local Simulator", "Other"]
+        },
+        "backend": {
+          "type": "string",
+          "description": "Specific backend/device name",
+          "maxLength": 100
+        },
+        "simulatorType": {
+          "type": "string",
+          "description": "Type of simulator if applicable",
+          "enum": ["State Vector", "Density Matrix", "Clifford", "MPS", "Noise Model", "Other"]
+        },
+        "quantumVolume": {
+          "type": "integer",
+          "description": "Quantum volume of the device",
+          "minimum": 1,
+          "maximum": 1000000
+        }
+      },
+      "additionalProperties": false
+    },
+    "errorRates": {
+      "type": "object",
+      "description": "Statistical error rate measurements aggregated across the entire experiment",
+      "properties": {
+        "qubit": {
+          "$ref": "#/definitions/statisticalValue",
+          "description": "Statistical error rates aggregated across all qubits used in the execution of the QASM files"
+        },
+        "readout": {
+          "$ref": "#/definitions/statisticalValue",
+          "description": "Statistical readout/measurement error rates aggregated across all experiments performed"
+        },
+        "twoQubitGate": {
+          "$ref": "#/definitions/statisticalValue",
+          "description": "Statistical error rates for two-qubit basis gates aggregated across all 2Q gates used in the circuit execution"
+        },
+        "singleQubitGate": {
+          "$ref": "#/definitions/statisticalValue",
+          "description": "Statistical error rates for single-qubit basis gates aggregated across all 1Q gates used in the circuit execution"
+        }
+      },
+      "additionalProperties": false
+    },
+    "executionTime": {
+      "type": "object",
+      "description": "Total execution time statistics aggregated across all experiments sent to the quantum computer",
+      "properties": {
+        "min": {
+          "type": "number",
+          "description": "Minimum execution time",
+          "minimum": 0
+        },
+        "max": {
+          "type": "number",
+          "description": "Maximum execution time",
+          "minimum": 0
+        },
+        "median": {
+          "type": "number",
+          "description": "Median execution time",
+          "minimum": 0
+        },
+        "mean": {
+          "type": "number",
+          "description": "Mean execution time",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "description": "Time unit",
+          "enum": ["nanoseconds", "microseconds", "milliseconds", "seconds"],
+          "default": "seconds"
+        }
+      },
+      "required": ["min", "max", "median", "mean"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "dependencies": {
+    "metricValue": {
+      "oneOf": [
+        {
+          "properties": {
+            "metricName": {
+              "enum": ["Fidelity", "Success Probability", "Correct Answer Rate"]
+            },
+            "metricValue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "metricName": {
+              "enum": ["Error Rate", "Gate Error Rate", "Readout Error Rate", "Two-Qubit Gate Error", "Single-Qubit Gate Error"]
+            },
+            "metricValue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "metricName": {
+              "enum": ["Circuit Execution Time"]
+            },
+            "metricValue": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "properties": {
+            "metricName": {
+              "enum": ["Quantum Volume", "CLOPS", "Custom"]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

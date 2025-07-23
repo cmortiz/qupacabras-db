@@ -382,3 +382,25 @@ a {
 a:hover {
   opacity: 0.8;
 }
+
+/* Custom tooltip styles for error rate statistics */
+.stat-tooltip {
+  display: none;
+  position: absolute;
+  z-index: 50;
+}
+
+.stat-value-wrapper:hover .stat-tooltip {
+  display: block;
+}
+
+/* Header tooltip styles */
+.header-tooltip {
+  display: none;
+  position: absolute;
+  z-index: 100;
+}
+
+.header-tooltip-wrapper:hover .header-tooltip {
+  display: block;
+}

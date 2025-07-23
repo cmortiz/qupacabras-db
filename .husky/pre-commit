@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# Pre-commit hook to validate benchmark submissions
+
+echo "🔍 Running pre-commit validation..."
+
+# Get list of staged JSON files in submissions directory
+STAGED_BENCHMARKS=$(git diff --cached --name-only --diff-filter=ACM | grep "^submissions/.*/benchmark\.json$" || true)
+
+if [ -n "$STAGED_BENCHMARKS" ]; then
+    echo "📋 Found benchmark files to validate:"
+    echo "$STAGED_BENCHMARKS"
+    echo ""
+    
+    # Track validation status
+    VALIDATION_FAILED=0
+    
+    # Validate each staged benchmark file
+    for file in $STAGED_BENCHMARKS; do
+        if [ -f "$file" ]; then
+            echo "🔍 Validating $file..."
+            
+            # Run validation
+            if node scripts/validate-benchmark.js --file "$file"; then
+                echo "✅ $file passed validation"
+            else
+                echo "❌ $file failed validation"
+                VALIDATION_FAILED=1
+            fi
+            echo ""
+        fi
+    done
+    
+    # Check if any validation failed
+    if [ $VALIDATION_FAILED -eq 1 ]; then
+        echo "❌ Pre-commit validation failed!"
+        echo "Please fix the validation errors before committing."
+        exit 1
+    fi
+fi
+
+# Run the full index generation to catch any other issues
+echo "🔧 Testing benchmark index generation..."
+if node scripts/generate-benchmark-index.js > /dev/null 2>&1; then
+    echo "✅ Benchmark index generation successful"
+else
+    echo "❌ Benchmark index generation failed!"
+    echo "Run 'npm run generate-index' to see detailed errors."
+    exit 1
+fi
+
+echo "✅ All pre-commit checks passed!"
