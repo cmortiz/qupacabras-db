@@ -125,7 +125,7 @@ export default function App() {
                             <img src={UI_CONSTANTS.quantumIconUrl} alt="Quantum computer icon" className="w-8 h-8" />
                             <img src={UI_CONSTANTS.alienIconUrl} alt="Alien icon" className="w-8 h-8" />
                             <h1 className="text-2xl font-bold">
-                                <span style={{color: COLORS.accentRed}}>Q</span>upacabras
+                                <span style={{color: COLORS.accentRed}}>Q</span>upacabras-DB
                             </h1>
                             <span className="hidden sm:inline text-sm" style={{ color: COLORS.fgMuted }}>
                                 {UI_CONSTANTS.appDescription}
@@ -226,7 +226,7 @@ export default function App() {
                         >
                             ✕
                         </button>
-                        <h3 className="text-lg font-semibold mb-4">About Qupacabras</h3>
+                        <h3 className="text-lg font-semibold mb-4">About Qupacabras-DB</h3>
                         <div className="space-y-2 text-sm" style={{ color: COLORS.fgMuted }}>
                             <p>Built with React and hosted on GitHub Pages.</p>
                             <p>Color Scheme: <a href="https://github.com/morhetz/gruvbox" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80" style={{ color: COLORS.accentAqua }}>Gruvbox</a> by morhetz.</p>

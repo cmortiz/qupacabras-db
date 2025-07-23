@@ -1,6 +1,6 @@
-# Contributing to Qupacabras
+# Contributing to Qupacabras-DB
 
-Thank you for contributing to the Qupacabras quantum algorithm benchmark database! This guide will help you add your quantum algorithm performance results.
+Thank you for contributing to the Qupacabras-DB quantum algorithm benchmark database! This guide will help you add your quantum algorithm performance results.
 
 ## Quick Start
 

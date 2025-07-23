@@ -13,12 +13,12 @@ export const COLORS = {
 };
 
 export const CONFIG = {
-    githubRepoUrl: 'https://github.com/YOUR_USERNAME/qupacabras',
+    githubRepoUrl: 'https://github.com/cmortiz/qupacabras-db',
     benchmarksDataUrl: '/benchmarks.json'
 };
 
 export const UI_CONSTANTS = {
-    appTitle: 'Qupacabras',
+    appTitle: 'Qupacabras-DB',
     appDescription: 'A community-maintained database for tracking the performance of quantum algorithms executed on quantum devices.',
     quantumIconUrl: 'https://cdn-icons-png.flaticon.com/512/2628/2628521.png',
     alienIconUrl: 'https://cdn-icons-png.flaticon.com/512/1970/1970363.png'
