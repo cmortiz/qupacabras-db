@@ -221,7 +221,7 @@ function checkDuplicates(allBenchmarks) {
     const duplicates = [];
     const seen = new Map();
     
-    allBenchmarks.forEach((benchmark, index) => {
+    allBenchmarks.forEach((benchmark) => {
         // Create a signature for comparison
         const signature = `${benchmark.algorithmName}-${benchmark.device}-${benchmark.metricName}`;
         

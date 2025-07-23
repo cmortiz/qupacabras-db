@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 
 // Mock fs module before requiring the script
 jest.mock('fs');
@@ -16,9 +15,6 @@ jest.mock('../../scripts/validate-benchmark', () => ({
 const generateBenchmarkIndex = require('../../scripts/generate-benchmark-index');
 
 describe('generateBenchmarkIndex', () => {
-  const mockSubmissionsDir = '/test/submissions';
-  const mockOutputFile = '/test/public/benchmarks.json';
-  
   beforeEach(() => {
     jest.clearAllMocks();
     // Reset console methods
