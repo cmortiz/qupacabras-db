@@ -56,6 +56,10 @@ body {
   flex-direction: column;
 }
 
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -99,6 +103,11 @@ body {
   line-height: 2rem;
 }
 
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
@@ -107,6 +116,11 @@ body {
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .text-center {
@@ -259,6 +273,10 @@ body {
 
 .w-10 {
   width: 2.5rem;
+}
+
+.h-10 {
+  height: 2.5rem;
 }
 
 .w-14 {
@@ -517,6 +535,10 @@ body {
   z-index: 40;
 }
 
+.z-10 {
+  z-index: 10;
+}
+
 .z-50 {
   z-index: 50;
 }
@@ -547,6 +569,10 @@ body {
 
 .space-y-6 > * + * {
   margin-top: 1.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
 }
 
 .overflow-y-auto {

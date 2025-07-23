@@ -169,12 +169,22 @@ export default function App() {
                         onClick={() => setShowGuide(false)}
                     />
                     <div 
-                        className="fixed right-0 top-0 h-full w-full sm:w-96 p-6 shadow-xl overflow-y-auto z-50"
-                        style={{ backgroundColor: COLORS.bgCard }}
+                        style={{ 
+                            position: 'fixed',
+                            backgroundColor: COLORS.bgCard,
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: '24rem',
+                            maxWidth: '100%',
+                            zIndex: 50,
+                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                            overflowY: 'auto'
+                        }}
                     >
                         <button
                             onClick={() => setShowGuide(false)}
-                            className="absolute top-4 right-4 p-2 rounded-lg hover:opacity-80"
+                            className="absolute top-4 right-4 p-2 rounded-lg hover:opacity-80 z-10"
                             style={{ backgroundColor: COLORS.bg }}
                         >
                             ✕
