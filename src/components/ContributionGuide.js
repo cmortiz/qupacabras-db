@@ -1,6 +1,6 @@
 import React from 'react';
 import { Github } from 'lucide-react';
-import { COLORS, CONFIG } from '../constants';
+import { COLORS } from '../constants';
 
 export default function ContributionGuide() {
     return (
