@@ -1,5 +1,5 @@
 import React from 'react';
-import { Database, FileDown, ScrollText, FileText, User, HelpCircle } from 'lucide-react';
+import { Database, FileDown, ScrollText, FileText, User } from 'lucide-react';
 import { COLORS, CONFIG, FIELD_DESCRIPTIONS } from '../constants';
 import SearchBar from './SearchBar';
 import SortableHeader from './SortableHeader';
@@ -7,9 +7,13 @@ import SortableHeader from './SortableHeader';
 // Helper component for header with tooltip
 function HeaderWithTooltip({ children, description }) {
     return (
-        <div className="header-tooltip-wrapper relative inline-flex items-center justify-center gap-1">
-            {children}
-            <HelpCircle className="w-4 h-4" style={{ color: COLORS.fgSubtle, cursor: 'help' }} />
+        <div className="header-tooltip-wrapper relative inline-flex items-center justify-center">
+            <span style={{ 
+                borderBottom: `1px dotted ${COLORS.fgSubtle}`,
+                cursor: 'help'
+            }}>
+                {children}
+            </span>
             <div 
                 className="header-tooltip"
                 style={{ 
