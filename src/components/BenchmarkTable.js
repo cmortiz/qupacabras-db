@@ -9,7 +9,7 @@ function HeaderWithTooltip({ children, description }) {
     return (
         <div className="header-tooltip-wrapper relative inline-flex items-center justify-center gap-1">
             {children}
-            <HelpCircle className="w-3 h-3" style={{ color: COLORS.fgSubtle, cursor: 'help' }} />
+            <HelpCircle className="w-4 h-4" style={{ color: COLORS.fgSubtle, cursor: 'help' }} />
             <div 
                 className="header-tooltip"
                 style={{ 
@@ -24,7 +24,7 @@ function HeaderWithTooltip({ children, description }) {
                     padding: '0.75rem',
                     borderRadius: '0.5rem',
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
-                    fontSize: '0.75rem',
+                    fontSize: '0.875rem',
                     fontWeight: 'normal',
                     textAlign: 'left',
                     color: COLORS.fg,
@@ -60,9 +60,9 @@ function StatValue({ stats, label, isErrorRate = true }) {
     return (
         <div className="stat-value-wrapper relative inline-block">
             <span 
-                className="font-mono text-sm" 
+                className="font-mono" 
                 style={{ 
-                    color: COLORS.accentOrange,
+                    color: COLORS.fg,
                     borderBottom: `1px dotted ${COLORS.fgSubtle}`,
                     cursor: 'help'
                 }}
@@ -131,7 +131,7 @@ export default function BenchmarkTable({
                     />
                     <button 
                         onClick={downloadCSV} 
-                        className="font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center gap-2 text-sm" 
+                        className="font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center gap-2" 
                         style={{ 
                             backgroundColor: COLORS.accentGreen, 
                             color: COLORS.bg, 
@@ -139,13 +139,13 @@ export default function BenchmarkTable({
                             'ringOffsetColor': COLORS.bgCard 
                         }}
                     >
-                        <FileDown className="w-4 h-4"/> Download CSV
+                        <FileDown className="w-5 h-5"/> Download CSV
                     </button>
                 </div>
                 <div className="table-container" style={{ maxHeight: 'calc(100vh - 24rem)', overflow: 'auto' }}>
                     <table className="w-full text-left table-auto">
                         <thead style={{ borderBottomColor: COLORS.border, borderBottomWidth: '2px' }}>
-                            <tr className="text-sm font-semibold">
+                            <tr className="font-semibold">
                                 <SortableHeader 
                                     sortKey="algorithmName" 
                                     currentSort={sortConfig} 
@@ -268,12 +268,12 @@ export default function BenchmarkTable({
                                 filteredBenchmarks.map(bm => (
                                     <tr key={bm.id} className="hover:bg-[#504945]" style={{ borderBottomColor: COLORS.border, borderBottomWidth: '1px' }}>
                                         <td className="px-8 py-5 font-medium">{bm.algorithmName}</td>
-                                        <td className="px-8 py-5" style={{ color: COLORS.fgMuted }}>{bm.device}</td>
-                                        <td className="px-8 py-5" style={{ color: COLORS.fgMuted }}>{bm.metricName}</td>
+                                        <td className="px-8 py-5">{bm.device}</td>
+                                        <td className="px-8 py-5">{bm.metricName}</td>
                                         <td className="px-8 py-5 text-right font-mono" style={{ color: COLORS.accentOrange }}>
                                             {bm.metricValue}
                                         </td>
-                                        <td className="px-8 py-5 text-right font-mono" style={{ color: COLORS.fgSubtle }}>
+                                        <td className="px-8 py-5 text-right font-mono">
                                             {bm.uncertainty != null ? `±${bm.uncertainty}` : 'N/A'}
                                         </td>
                                         {/* Error Rate Cells */}
@@ -353,7 +353,7 @@ export default function BenchmarkTable({
                                                 <span style={{ color: COLORS.border }}>-</span>
                                             )}
                                         </td>
-                                        <td className="px-8 py-5 text-sm" style={{ color: COLORS.fgSubtle }}>
+                                        <td className="px-8 py-5">
                                             {bm.timestamp.toLocaleDateString()}
                                         </td>
                                     </tr>
