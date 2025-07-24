@@ -31,6 +31,14 @@ body {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 @media (min-width: 1024px) {
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -222,6 +230,14 @@ body {
   margin-bottom: 1rem;
 }
 
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-10 {
+  margin-bottom: 2.5rem;
+}
+
 .mb-8 {
   margin-bottom: 2rem;
 }
@@ -246,8 +262,16 @@ body {
   margin-top: 1.5rem;
 }
 
+.mt-8 {
+  margin-top: 2rem;
+}
+
 .mt-10 {
   margin-top: 2.5rem;
+}
+
+.mt-12 {
+  margin-top: 3rem;
 }
 
 /* Layout */
@@ -305,6 +329,10 @@ body {
 
 .h-14 {
   height: 3.5rem;
+}
+
+.h-16 {
+  height: 4rem;
 }
 
 .h-full {
@@ -383,6 +411,18 @@ body {
 
 .ml-2 {
   margin-left: 0.5rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pb-3 {
+  padding-bottom: 0.75rem;
 }
 
 .flex-shrink-0 {
@@ -690,6 +730,32 @@ a:hover {
 
 .header-tooltip-wrapper:hover .header-tooltip {
   display: block;
+}
+
+/* Metric value tooltip styles */
+.metric-details-tooltip {
+  position: fixed;
+  z-index: 1000;
+}
+
+/* Tooltip scrollbar styling */
+.metric-details-tooltip::-webkit-scrollbar {
+  width: 8px;
+}
+
+.metric-details-tooltip::-webkit-scrollbar-track {
+  background-color: #282828;
+  border-radius: 4px;
+}
+
+.metric-details-tooltip::-webkit-scrollbar-thumb {
+  background-color: #504945;
+  border-radius: 4px;
+  border: 1px solid #282828;
+}
+
+.metric-details-tooltip::-webkit-scrollbar-thumb:hover {
+  background-color: #665c54;
 }
 
 /* Custom scrollbar styling for table container */

@@ -1,63 +1,16 @@
 {
-  "id": "template",
   "algorithmName": "Your Algorithm Name",
-  "device": "Quantum Device Name",
-  "metricName": "Fidelity",
+  "device": "Quantum Device or Simulator Name",
+  "metricName": "Success Rate",
   "metricValue": 0.85,
-  "uncertainty": 0.05,
-  "paperUrl": "https://arxiv.org/abs/your-paper",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "contributor": "github-username",
-  "team": ["Author 1", "Author 2"],
+  
+  "description": "Brief description of what you benchmarked",
+  
+  "paperUrl": "https://arxiv.org/abs/your-paper-id",
   "qasmFiles": ["circuit.qasm"],
-  "description": "Brief description of the benchmark",
-  "methodology": "How the benchmark was performed",
-  "notes": "Any additional notes or caveats",
+  
   "quantumSpecific": {
     "qubitCount": 5,
-    "gateCount": 42,
-    "circuitDepth": 15,
-    "twoQubitGateCount": 8,
-    "measurementCount": 8192,
-    "optimizationLevel": 3,
-    "errorMitigation": "None"
-  },
-  "errorRates": {
-    "qubit": {
-      "min": 0.001,
-      "max": 0.005,
-      "median": 0.003,
-      "mean": 0.0032
-    },
-    "readout": {
-      "min": 0.01,
-      "max": 0.03,
-      "median": 0.02,
-      "mean": 0.021
-    },
-    "twoQubitGate": {
-      "min": 0.005,
-      "max": 0.015,
-      "median": 0.01,
-      "mean": 0.0105
-    },
-    "singleQubitGate": {
-      "min": 0.0005,
-      "max": 0.002,
-      "median": 0.001,
-      "mean": 0.0011
-    }
-  },
-  "executionTime": {
-    "min": 0.5,
-    "max": 2.5,
-    "median": 1.2,
-    "mean": 1.3,
-    "unit": "seconds"
-  },
-  "environment": {
-    "provider": "IBM Quantum",
-    "backend": "ibmq_jakarta",
-    "quantumVolume": 16
+    "shots": 1024
   }
 }

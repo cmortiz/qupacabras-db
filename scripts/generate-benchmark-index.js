@@ -32,13 +32,24 @@ function generateBenchmarkIndex() {
             
             if (validationResult.valid) {
                 try {
-                    const benchmarkData = JSON.parse(fs.readFileSync(benchmarkJsonPath, 'utf8'));
+                    // Use the data from validation result which may have auto-generated fields
+                    const benchmarkData = validationResult.data || JSON.parse(fs.readFileSync(benchmarkJsonPath, 'utf8'));
                     
                     // Ensure benchmarkFolder matches the actual folder name
                     benchmarkData.benchmarkFolder = folder;
                     
-                    // Parse timestamp to ensure it's valid
-                    benchmarkData.timestamp = new Date(benchmarkData.timestamp).toISOString();
+                    // Auto-generate ID if not present
+                    if (!benchmarkData.id) {
+                        benchmarkData.id = folder;
+                    }
+                    
+                    // Auto-generate timestamp if not present
+                    if (!benchmarkData.timestamp) {
+                        benchmarkData.timestamp = new Date().toISOString();
+                    } else {
+                        // Parse timestamp to ensure it's valid
+                        benchmarkData.timestamp = new Date(benchmarkData.timestamp).toISOString();
+                    }
                     
                     benchmarks.push(benchmarkData);
                     console.log(`✅ Added benchmark: ${benchmarkData.algorithmName} (${folder})`);

@@ -1,32 +1,40 @@
 # Contributing to Qupacabras-DB
 
-Thank you for contributing to the Qupacabras-DB quantum algorithm benchmark database! This guide will help you add your quantum algorithm performance results.
+Thank you for contributing to the Qupacabras-DB quantum algorithm benchmark database!
 
-## Quick Start
+## 🚀 Super Quick Start (2 minutes!)
+
+### Minimal Submission - Only 4 fields required!
 
 1. **Fork** this repository
-2. **Copy the template** from `submissions/template/`
-3. **Fill in your data** in `benchmark.json` and `README.md`
-4. **Add your QASM files** to your submission folder
-5. **Submit a Pull Request**
+2. **Copy** `submissions/template/` → `submissions/your_name/`
+3. **Edit** `benchmark.json` with just:
+```json
+{
+  "algorithmName": "Grover's Algorithm",
+  "device": "IBM Sherbrooke",
+  "metricName": "Success Rate",
+  "metricValue": 0.95
+}
+```
+4. **Submit PR** - That's it! 🎉
 
-✨ **That's it!** Your data will automatically appear on the website once your PR is merged - no manual editing required!
+The system auto-generates:
+- `id` from your folder name
+- `timestamp` with current date
 
-## Adding a New Benchmark
+## 📊 Adding More Details (Optional)
 
-### Step 1: Create Your Submission Folder
+### Standard Submission
+Add these commonly used fields:
+- `description` - Brief explanation of your benchmark
+- `paperUrl` - Link to your paper/preprint
+- `qasmFiles` - List your circuit files: `["circuit.qasm"]`
+- `quantumSpecific.qubitCount` - Number of qubits used
+- `quantumSpecific.shots` - Number of measurement repetitions
 
-1. Copy the `submissions/template/` folder
-2. Rename it to `submissions/your_algorithm_name/`
-3. Your folder should contain:
-   - `benchmark.json` - All your benchmark metadata
-   - `README.md` - Detailed description
-   - `*.qasm` - Your QASM circuit files
-   - Any additional files (analysis scripts, raw data, etc.)
-
-### Step 2: Fill in Your Data
-
-Edit `benchmark.json` with your benchmark information:
+### Advanced Submission
+See `submissions/template/advanced-example.json` for all possible fields including error rates, execution times, team info, and custom metrics.
 
 ```json
 {

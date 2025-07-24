@@ -1,5 +1,92 @@
 [
   {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Quantum Systems",
+    "metricName": "Win Rate",
+    "metricValue": 0.85,
+    "uncertainty": 0.03,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on IBM quantum devices for a 14-vertex graph coloring problem",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "qasmFiles": [
+      "g14_graph_coloring_sample.qasm"
+    ],
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 8192,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game",
+    "id": "g14_graph_coloring_ibm",
+    "timestamp": "2025-07-24T05:58:19.778Z",
+    "benchmarkFolder": "g14_graph_coloring_ibm"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "Rigetti Ankaa-3",
+    "metricName": "Win Rate",
+    "metricValue": 0.87,
+    "uncertainty": 0.02,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-3 84-qubit quantum processor",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "qasmFiles": [
+      "g14_graph_coloring_sample.qasm"
+    ],
+    "timestamp": "2024-12-23T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 8192,
+      "circuitVariations": 88,
+      "deviceQubits": 84,
+      "architecture": "Ankaa (4th gen)",
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "errorRates": {
+      "twoQubitGate": {
+        "mean": 0.005,
+        "median": 0.005,
+        "min": 0.004,
+        "max": 0.006,
+        "unit": "fraction"
+      }
+    },
+    "notes": "Rigetti Ankaa-3 with 99.5% median 2-qubit gate fidelity (0.5% error rate). Note: Ankaa-3 became available December 23, 2024, after paper publication.",
+    "id": "g14_graph_coloring_rigetti_ankaa3",
+    "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa3"
+  },
+  {
     "id": "minimal_example",
     "algorithmName": "Quantum Fourier Transform",
     "device": "Simulator",
@@ -115,5 +202,54 @@
     "methodology": "Quantum Fourier Transform based period finding",
     "notes": "Used optimized quantum circuits with error mitigation",
     "benchmarkFolder": "shors_15"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "Rigetti Ankaa-2",
+    "metricName": "Win Rate",
+    "metricValue": 0.84,
+    "uncertainty": 0.03,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-2 84-qubit quantum processor",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "qasmFiles": [
+      "g14_graph_coloring_sample.qasm"
+    ],
+    "timestamp": "2023-12-20T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 8192,
+      "circuitVariations": 88,
+      "deviceQubits": 84,
+      "architecture": "Ankaa (4th gen)",
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "errorRates": {
+      "twoQubitGate": {
+        "mean": 0.02,
+        "median": 0.02,
+        "min": 0.015,
+        "max": 0.025,
+        "unit": "fraction"
+      }
+    },
+    "notes": "Rigetti Ankaa-2 with 98% median 2-qubit gate fidelity (2% error rate). Available via Rigetti QCS from December 20, 2023.",
+    "id": "g14_graph_coloring_rigetti_ankaa2",
+    "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa2"
   }
 ]

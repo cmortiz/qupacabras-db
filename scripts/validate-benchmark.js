@@ -52,12 +52,17 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
         
         // Additional validations beyond schema
         
-        // Check if ID matches folder name
-        if (benchmarkData.id !== folderName) {
-            result.valid = false;
-            result.errors.push({
+        // Auto-generate ID if not provided
+        if (!benchmarkData.id) {
+            benchmarkData.id = folderName;
+            result.warnings.push({
                 field: 'id',
-                message: `ID '${benchmarkData.id}' must match folder name '${folderName}'`
+                message: `ID auto-generated from folder name: '${folderName}'`
+            });
+        } else if (benchmarkData.id !== folderName) {
+            result.warnings.push({
+                field: 'id',
+                message: `ID '${benchmarkData.id}' doesn't match folder name '${folderName}' (consider using folder name)`
             });
         }
         
@@ -67,81 +72,25 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
             benchmarkData.qasmFiles.forEach(qasmFile => {
                 const qasmPath = path.join(folderPath, qasmFile);
                 if (!fs.existsSync(qasmPath)) {
-                    result.valid = false;
-                    result.errors.push({
+                    result.warnings.push({
                         field: 'qasmFiles',
-                        message: `QASM file '${qasmFile}' not found`
+                        message: `QASM file '${qasmFile}' not found (optional)`
                     });
-                } else {
-                    // Validate QASM content
-                    const qasmContent = fs.readFileSync(qasmPath, 'utf8');
-                    if (!validateQASMContent(qasmContent)) {
-                        result.warnings.push({
-                            field: 'qasmFiles',
-                            message: `${qasmFile} may not be valid QASM (missing standard headers)`
-                        });
-                    }
                 }
             });
         }
         
-        // Quantum-specific validations
-        if (benchmarkData.quantumSpecific) {
-            const qs = benchmarkData.quantumSpecific;
-            
-            // Validate circuit depth vs gate count
-            if (qs.circuitDepth !== undefined && qs.gateCount !== undefined) {
-                if (qs.circuitDepth > qs.gateCount) {
-                    result.warnings.push({
-                        field: 'quantumSpecific',
-                        message: 'Circuit depth cannot exceed total gate count'
-                    });
-                }
-            }
-            
-            // Validate two-qubit gates vs total gates
-            if (qs.twoQubitGateCount !== undefined && qs.gateCount !== undefined) {
-                if (qs.twoQubitGateCount > qs.gateCount) {
-                    result.warnings.push({
-                        field: 'quantumSpecific.twoQubitGateCount',
-                        message: 'Two-qubit gate count cannot exceed total gate count'
-                    });
-                }
-            }
-        }
-        
-        // Statistical value validations
-        if (benchmarkData.errorRates) {
-            const errorTypes = ['qubit', 'readout', 'twoQubitGate', 'singleQubitGate'];
-            errorTypes.forEach(errorType => {
-                if (benchmarkData.errorRates[errorType]) {
-                    const stats = benchmarkData.errorRates[errorType];
-                    validateStatisticalConsistency(stats, `errorRates.${errorType}`, result);
-                }
-            });
-        }
-        
-        if (benchmarkData.executionTime) {
-            const stats = benchmarkData.executionTime;
-            validateStatisticalConsistency(stats, 'executionTime', result, false);
-        }
-        
-        // Check for recommended fields
-        if (!benchmarkData.uncertainty) {
+        // Auto-generate timestamp if not provided
+        if (!benchmarkData.timestamp) {
+            benchmarkData.timestamp = new Date().toISOString();
             result.warnings.push({
-                field: 'uncertainty',
-                message: 'Consider adding uncertainty/error bars for the metric'
+                field: 'timestamp',
+                message: `Timestamp auto-generated: ${benchmarkData.timestamp}`
             });
         }
         
-        if (!benchmarkData.quantumSpecific) {
-            result.warnings.push({
-                field: 'quantumSpecific',
-                message: 'Consider adding quantum-specific properties (qubit count, gate count, etc.)'
-            });
-        }
-        
-        // Note: errorRates and executionTime are optional fields, no warnings needed
+        // Store the potentially modified data
+        result.data = benchmarkData;
         
         return result;
         

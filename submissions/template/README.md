@@ -1,47 +1,48 @@
-# Benchmark Template
+# Benchmark Submission Template
 
-This template shows how to structure your quantum algorithm benchmark submission.
+This folder contains templates for submitting quantum algorithm benchmarks.
 
-## Required Files
+## Quick Start - Only 4 Required Fields!
 
-1. **`benchmark.json`** - Contains all benchmark metadata
-2. **`README.md`** - Detailed description and methodology  
-3. **`*.qasm`** - QASM circuit files
-4. **Supporting files** (optional) - Analysis scripts, raw data, etc.
-
-## Instructions
-
-1. Copy this template folder to `submissions/your_algorithm_name/`
-2. Update `benchmark.json` with your data
-3. Replace this README with your description
-4. Add your QASM files
-5. Submit a Pull Request
-
-## Example Structure
-
-```
-submissions/
-├── your_algorithm_name/
-│   ├── benchmark.json          # Metadata
-│   ├── README.md              # Documentation
-│   ├── circuit.qasm           # Main circuit
-│   ├── measurement.qasm       # Measurement circuit (if separate)
-│   ├── analysis.py            # Analysis script (optional)
-│   └── raw_data.csv          # Raw results (optional)
+At minimum, you only need these fields in `benchmark.json`:
+```json
+{
+  "algorithmName": "Your Algorithm Name",
+  "device": "Quantum Device or Simulator",
+  "metricName": "What you measured",
+  "metricValue": 0.95
+}
 ```
 
-## benchmark.json Fields
+That's it! The system will auto-generate:
+- `id` from your folder name
+- `timestamp` with current date/time
 
-- **id**: Unique identifier (use folder name)
-- **algorithmName**: Name of the quantum algorithm
-- **team**: Array of contributor names
-- **device**: Quantum device or simulator used
-- **metricName**: Performance metric measured
-- **metricValue**: Numerical result
-- **uncertainty**: Statistical uncertainty (optional)
-- **paperUrl**: Link to published paper (optional)
-- **timestamp**: When benchmark was performed (ISO 8601)
-- **qasmFiles**: List of QASM files in this folder
-- **description**: Brief description
-- **methodology**: How the benchmark was performed
-- **notes**: Additional notes or caveats
+## Example Templates
+
+1. **minimal-example.json** - Absolute minimum required (4 fields)
+2. **benchmark.json** - Standard submission with common fields
+3. **advanced-example.json** - Full example with all optional fields
+
+## How to Submit
+
+1. Copy this `template` folder
+2. Rename it (e.g., `my_algorithm_2024`)
+3. Edit `benchmark.json` with your data
+4. Optionally add `.qasm` files
+5. Submit a pull request
+
+## Optional Enhancements
+
+Add these fields to provide more context:
+- `description` - What you benchmarked
+- `paperUrl` - Link to your paper
+- `qasmFiles` - List of circuit files
+- `quantumSpecific` - Qubit count, gate count, etc.
+- Any custom fields you want!
+
+## Tips
+
+- Start simple - you can always add more fields later
+- The schema is flexible - add any extra data you need
+- QASM files are optional but recommended

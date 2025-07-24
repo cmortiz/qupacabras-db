@@ -1,0 +1,39 @@
+{
+  "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+  "device": "Rigetti Ankaa-2",
+  "metricName": "Win Rate",
+  "metricValue": 0.84,
+  "uncertainty": 0.03,
+  "paperUrl": "https://arxiv.org/pdf/2311.01363",
+  "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-2 84-qubit quantum processor",
+  "team": ["J. Furches", "S. Chehade", "K. Hamilton", "N. Wiebe", "C. Ortiz Marrero"],
+  "qasmFiles": ["g14_graph_coloring_sample.qasm"],
+  "timestamp": "2023-12-20T00:00:00Z",
+  "quantumSpecific": {
+    "qubitCount": 4,
+    "gateCount": 14,
+    "circuitDepth": 5,
+    "twoQubitGateCount": 4,
+    "singleQubitGateCount": 10,
+    "shots": 8192,
+    "circuitVariations": 88,
+    "deviceQubits": 84,
+    "architecture": "Ankaa (4th gen)",
+    "gateBreakdown": {
+      "h": 2,
+      "cx": 4,
+      "u": 4,
+      "ry": 4
+    }
+  },
+  "errorRates": {
+    "twoQubitGate": {
+      "mean": 0.02,
+      "median": 0.02,
+      "min": 0.015,
+      "max": 0.025,
+      "unit": "fraction"
+    }
+  },
+  "notes": "Rigetti Ankaa-2 with 98% median 2-qubit gate fidelity (2% error rate). Available via Rigetti QCS from December 20, 2023."
+}
