@@ -30,11 +30,12 @@
         "cx": 4,
         "u": 4,
         "ry": 4
-      }
+      },
+      "measurementCount": 4
     },
     "notes": "88 different circuit configurations tested for G14 graph coloring game",
     "id": "g14_graph_coloring_ibm",
-    "timestamp": "2025-07-24T05:58:19.778Z",
+    "timestamp": "2025-07-24T06:14:13.270Z",
     "benchmarkFolder": "g14_graph_coloring_ibm"
   },
   {
@@ -71,7 +72,8 @@
         "cx": 4,
         "u": 4,
         "ry": 4
-      }
+      },
+      "measurementCount": 4
     },
     "errorRates": {
       "twoQubitGate": {
@@ -124,7 +126,12 @@
       "twoQubitGateCount": 8,
       "measurementCount": 8192,
       "optimizationLevel": 3,
-      "errorMitigation": "None"
+      "errorMitigation": "None",
+      "singleQubitGateCount": 1,
+      "gateBreakdown": {
+        "h": 1,
+        "cx": 2
+      }
     },
     "errorRates": {
       "qubit": {
@@ -183,7 +190,21 @@
     "description": "Grover's search algorithm on 8-item database",
     "methodology": "Amplitude amplification with 2 iterations",
     "notes": "Oracle marks item at position 5 in the database",
-    "benchmarkFolder": "grovers_8"
+    "benchmarkFolder": "grovers_8",
+    "quantumSpecific": {
+      "qubitCount": 3,
+      "gateCount": 39,
+      "circuitDepth": 17,
+      "twoQubitGateCount": 0,
+      "singleQubitGateCount": 35,
+      "measurementCount": 3,
+      "gateBreakdown": {
+        "h": 15,
+        "x": 20,
+        "ccx": 4
+      },
+      "circuitVariations": 2
+    }
   },
   {
     "id": "shors_15",
@@ -201,7 +222,20 @@
     "description": "Implementation of Shor's algorithm for factoring 15",
     "methodology": "Quantum Fourier Transform based period finding",
     "notes": "Used optimized quantum circuits with error mitigation",
-    "benchmarkFolder": "shors_15"
+    "benchmarkFolder": "shors_15",
+    "quantumSpecific": {
+      "qubitCount": 7,
+      "gateCount": 12,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 6,
+      "singleQubitGateCount": 6,
+      "measurementCount": 7,
+      "gateBreakdown": {
+        "h": 6,
+        "cx": 3,
+        "cu1": 3
+      }
+    }
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -237,7 +271,8 @@
         "cx": 4,
         "u": 4,
         "ry": 4
-      }
+      },
+      "measurementCount": 4
     },
     "errorRates": {
       "twoQubitGate": {

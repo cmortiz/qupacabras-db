@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { validateBenchmarkFile, checkDuplicates } = require('./validate-benchmark');
+const { analyzeQASMFile } = require('./analyze-qasm');
 
 const SUBMISSIONS_DIR = path.join(__dirname, '../submissions');
 const OUTPUT_FILE = path.join(__dirname, '../public/benchmarks.json');
@@ -49,6 +50,84 @@ function generateBenchmarkIndex() {
                     } else {
                         // Parse timestamp to ensure it's valid
                         benchmarkData.timestamp = new Date(benchmarkData.timestamp).toISOString();
+                    }
+                    
+                    // Auto-populate quantum properties from QASM files if available
+                    if (benchmarkData.qasmFiles && benchmarkData.qasmFiles.length > 0) {
+                        console.log(`   📊 Analyzing QASM files for ${folder}...`);
+                        let totalAnalysis = null;
+                        let fileCount = 0;
+                        
+                        for (const qasmFile of benchmarkData.qasmFiles) {
+                            const qasmPath = path.join(folderPath, qasmFile);
+                            if (fs.existsSync(qasmPath)) {
+                                const analysis = analyzeQASMFile(qasmPath);
+                                if (analysis) {
+                                    fileCount++;
+                                    // If this is the first file, use it as base
+                                    if (!totalAnalysis) {
+                                        totalAnalysis = analysis;
+                                    } else {
+                                        // For multiple files, we'll use the first file's properties
+                                        // but note that there are multiple circuits
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Update quantum properties if analysis succeeded
+                        if (totalAnalysis) {
+                            if (!benchmarkData.quantumSpecific) {
+                                benchmarkData.quantumSpecific = {};
+                            }
+                            
+                            // Auto-populate from QASM analysis, preserving existing manual entries
+                            const autoPopulated = [];
+                            
+                            // Only update if not already present
+                            if (benchmarkData.quantumSpecific.qubitCount === undefined) {
+                                benchmarkData.quantumSpecific.qubitCount = totalAnalysis.qubitCount;
+                                autoPopulated.push('qubitCount');
+                            }
+                            if (benchmarkData.quantumSpecific.gateCount === undefined) {
+                                benchmarkData.quantumSpecific.gateCount = totalAnalysis.gateCount;
+                                autoPopulated.push('gateCount');
+                            }
+                            if (benchmarkData.quantumSpecific.circuitDepth === undefined) {
+                                benchmarkData.quantumSpecific.circuitDepth = totalAnalysis.circuitDepth;
+                                autoPopulated.push('circuitDepth');
+                            }
+                            if (benchmarkData.quantumSpecific.twoQubitGateCount === undefined) {
+                                benchmarkData.quantumSpecific.twoQubitGateCount = totalAnalysis.twoQubitGateCount;
+                                autoPopulated.push('twoQubitGateCount');
+                            }
+                            if (benchmarkData.quantumSpecific.singleQubitGateCount === undefined) {
+                                benchmarkData.quantumSpecific.singleQubitGateCount = totalAnalysis.singleQubitGateCount;
+                                autoPopulated.push('singleQubitGateCount');
+                            }
+                            if (benchmarkData.quantumSpecific.measurementCount === undefined) {
+                                benchmarkData.quantumSpecific.measurementCount = totalAnalysis.measurementCount;
+                                autoPopulated.push('measurementCount');
+                            }
+                            
+                            // Add gate breakdown if not present
+                            if (Object.keys(totalAnalysis.gateTypes).length > 0 && !benchmarkData.quantumSpecific.gateBreakdown) {
+                                benchmarkData.quantumSpecific.gateBreakdown = totalAnalysis.gateTypes;
+                                autoPopulated.push('gateBreakdown');
+                            }
+                            
+                            // If multiple QASM files and circuitVariations not set, note it
+                            if (fileCount > 1 && benchmarkData.quantumSpecific.circuitVariations === undefined) {
+                                benchmarkData.quantumSpecific.circuitVariations = fileCount;
+                                autoPopulated.push('circuitVariations');
+                            }
+                            
+                            if (autoPopulated.length > 0) {
+                                console.log(`   ✅ Auto-populated quantum properties: ${autoPopulated.join(', ')}`);
+                            } else {
+                                console.log(`   ℹ️  All quantum properties already present, skipping auto-population`);
+                            }
+                        }
                     }
                     
                     benchmarks.push(benchmarkData);

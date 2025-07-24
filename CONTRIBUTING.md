@@ -22,6 +22,7 @@ Thank you for contributing to the Qupacabras-DB quantum algorithm benchmark data
 The system auto-generates:
 - `id` from your folder name
 - `timestamp` with current date
+- `contributor` from your GitHub username (when submitting via PR)
 
 ## 📊 Adding More Details (Optional)
 
@@ -29,7 +30,7 @@ The system auto-generates:
 Add these commonly used fields:
 - `description` - Brief explanation of your benchmark
 - `paperUrl` - Link to your paper/preprint
-- `qasmFiles` - List your circuit files: `["circuit.qasm"]`
+- `qasmFiles` - List your circuit files: `["circuit.qasm"]` (quantum properties auto-extracted!)
 - `quantumSpecific.qubitCount` - Number of qubits used
 - `quantumSpecific.shots` - Number of measurement repetitions
 

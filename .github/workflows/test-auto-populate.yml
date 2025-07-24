@@ -1,0 +1,72 @@
+name: Test Auto-populate Contributor
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_username:
+        description: 'Test username to use'
+        required: true
+        default: 'test-user'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Create test submission
+        run: |
+          mkdir -p submissions/test_auto_populate
+          cat > submissions/test_auto_populate/benchmark.json << 'EOF'
+          {
+            "algorithmName": "Test Algorithm",
+            "device": "Test Device",
+            "metricName": "Success Rate",
+            "metricValue": 0.99
+          }
+          EOF
+          
+      - name: Run add-contributor script
+        run: |
+          chmod +x scripts/add-contributor.js
+          node scripts/add-contributor.js submissions/test_auto_populate/benchmark.json "${{ github.event.inputs.test_username }}"
+          
+      - name: Verify contributor was added
+        run: |
+          echo "Contents of benchmark.json after adding contributor:"
+          cat submissions/test_auto_populate/benchmark.json
+          
+          # Verify contributor field exists and matches
+          CONTRIBUTOR=$(jq -r '.contributor' submissions/test_auto_populate/benchmark.json)
+          if [ "$CONTRIBUTOR" = "${{ github.event.inputs.test_username }}" ]; then
+            echo "✅ Success: Contributor field correctly added"
+          else
+            echo "❌ Failed: Expected contributor '${{ github.event.inputs.test_username }}', got '$CONTRIBUTOR'"
+            exit 1
+          fi
+          
+      - name: Test idempotency
+        run: |
+          # Run again - should not modify
+          node scripts/add-contributor.js submissions/test_auto_populate/benchmark.json "different-user"
+          
+          # Verify it didn't change
+          CONTRIBUTOR=$(jq -r '.contributor' submissions/test_auto_populate/benchmark.json)
+          if [ "$CONTRIBUTOR" = "${{ github.event.inputs.test_username }}" ]; then
+            echo "✅ Success: Contributor field was not overwritten"
+          else
+            echo "❌ Failed: Contributor was overwritten to '$CONTRIBUTOR'"
+            exit 1
+          fi
+          
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -rf submissions/test_auto_populate

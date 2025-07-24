@@ -1,0 +1,105 @@
+name: Auto-populate Contributor Field
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - 'submissions/**/benchmark.json'
+
+jobs:
+  auto-populate:
+    runs-on: ubuntu-latest
+    # Only run on PRs from forks or non-main branches
+    if: github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.head.ref != 'main'
+    
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Auto-populate contributor field
+        id: populate
+        run: |
+          #!/bin/bash
+          set -e
+          
+          CONTRIBUTOR="${{ github.event.pull_request.user.login }}"
+          MODIFIED_FILES=""
+          MODIFIED_COUNT=0
+          
+          echo "🔍 Checking benchmark.json files for contributor field..."
+          echo "📝 PR submitted by: $CONTRIBUTOR"
+          
+          # Make the script executable
+          chmod +x scripts/add-contributor.js
+          
+          # Find all benchmark.json files in submissions directory
+          for file in $(find submissions -name "benchmark.json" -type f | grep -v template); do
+            echo "Checking: $file"
+            
+            # Use Node.js script to check and add contributor
+            if node scripts/add-contributor.js "$file" "$CONTRIBUTOR"; then
+              # Check if file was actually modified by comparing with git
+              if ! git diff --quiet "$file"; then
+                MODIFIED_FILES="$MODIFIED_FILES\n- $file"
+                ((MODIFIED_COUNT++))
+              fi
+            fi
+          done
+          
+          echo "modified_count=$MODIFIED_COUNT" >> $GITHUB_OUTPUT
+          echo "modified_files<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$MODIFIED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+      - name: Commit changes
+        if: steps.populate.outputs.modified_count > 0
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Stage only benchmark.json files
+          git add submissions/**/benchmark.json
+          
+          # Commit with descriptive message
+          git commit -m "Auto-populate contributor field with PR author: ${{ github.event.pull_request.user.login }}" \
+                     -m "This commit was automatically generated to add the contributor field to benchmark.json files that were missing it."
+          
+          # Push changes
+          git push
+          
+      - name: Comment on PR
+        if: steps.populate.outputs.modified_count > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const modifiedCount = ${{ steps.populate.outputs.modified_count }};
+            const modifiedFiles = `${{ steps.populate.outputs.modified_files }}`;
+            
+            const comment = `### 🤖 Auto-population Complete
+            
+            I've automatically added the \`contributor\` field to ${modifiedCount} benchmark.json file(s) based on the PR author (@${{ github.event.pull_request.user.login }}).
+            
+            **Modified files:**
+            ${modifiedFiles}
+            
+            This helps maintain accurate attribution for all submissions. If you need to change the contributor field, you can update it in your benchmark.json file.`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
