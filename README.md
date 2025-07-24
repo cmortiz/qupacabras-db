@@ -1,4 +1,4 @@
-# Qupacabras-DB 🧪
+# Qupacabras-DB
 
 A community-maintained database for tracking the performance of quantum algorithms executed on quantum devices.
 
@@ -6,10 +6,9 @@ A community-maintained database for tracking the performance of quantum algorith
 
 - 📊 **Automatic Data Collection**: Submit benchmarks via pull requests - no manual data entry
 - ✅ **Enhanced Validation**: JSON Schema validation with quantum-specific checks
-- 🔍 **Duplicate Detection**: Automatic detection of similar submissions
-- 🌐 **GitHub Pages Deployment**: Live website updates automatically on merge
+- 🌐 **GitHub Pages Deployment**: Live checks and website updates automatically on merge
 - 📈 **Data Export**: Download benchmark data as CSV for analysis
-- 🔬 **Quantum-Specific Fields**: Track qubits, gates, circuit depth, and more
+- 🔬 **Quantum-Specific Metrics**: Track qubits, gates, circuit depth, and more
 
 ## Quick Start
 
