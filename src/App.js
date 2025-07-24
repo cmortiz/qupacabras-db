@@ -1,52 +1,27 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { COLORS, CONFIG, UI_CONSTANTS } from './constants';
+import React, { useState, useEffect } from 'react';
+import { Github, Info } from 'lucide-react';
 import ContributionGuide from './components/ContributionGuide';
 import BenchmarkTable from './components/BenchmarkTable';
+import { COLORS, CONFIG, UI_CONSTANTS } from './constants';
 import { useSortedData } from './hooks/useSortedData';
-import { Info, Github } from 'lucide-react';
 
-export default function App() {
+function App() {
     const [benchmarks, setBenchmarks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [showGuide, setShowGuide] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
 
-    // Simple text filtering
-    const filteredBenchmarks = useMemo(() => {
-        if (!searchQuery) {
-            return benchmarks;
-        }
-        return benchmarks.filter(bm => {
-            const query = searchQuery.toLowerCase();
-            return (
-                bm.algorithmName.toLowerCase().includes(query) ||
-                (bm.device && bm.device.toLowerCase().includes(query)) ||
-                bm.metricName.toLowerCase().includes(query) ||
-                (bm.contributor && bm.contributor.toLowerCase().includes(query))
-            );
-        });
-    }, [benchmarks, searchQuery]);
-
-    // Sorting hook (applied to filtered data)
-    const { sortedData, sortConfig, handleSort } = useSortedData(filteredBenchmarks);
-
     useEffect(() => {
-        fetch(`${process.env.PUBLIC_URL}${CONFIG.benchmarksDataUrl}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load benchmark data');
-                }
-                return response.json();
-            })
+        fetch(process.env.PUBLIC_URL + '/benchmarks.json')
+            .then(response => response.json())
             .then(data => {
-                const quantumData = data.map(d => ({
-                    ...d,
-                    timestamp: new Date(d.timestamp)
+                // Convert timestamp strings to Date objects
+                const processedData = data.map(benchmark => ({
+                    ...benchmark,
+                    timestamp: new Date(benchmark.timestamp)
                 }));
-                
-                const sortedData = quantumData.sort((a, b) => b.timestamp - a.timestamp);
-                setBenchmarks(sortedData);
+                setBenchmarks(processedData);
                 setIsLoading(false);
             })
             .catch(error => {
@@ -56,48 +31,42 @@ export default function App() {
             });
     }, []);
 
+    // Filter benchmarks based on search query
+    const filteredBenchmarks = benchmarks.filter(benchmark => {
+        const searchLower = searchQuery.toLowerCase();
+        return (
+            benchmark.algorithmName?.toLowerCase().includes(searchLower) ||
+            benchmark.device?.toLowerCase().includes(searchLower) ||
+            benchmark.metricName?.toLowerCase().includes(searchLower) ||
+            benchmark.team?.some(member => member.toLowerCase().includes(searchLower)) ||
+            benchmark.contributor?.toLowerCase().includes(searchLower)
+        );
+    });
+
+    // Sort functionality - use filtered data
+    const { sortedData, sortConfig, handleSort } = useSortedData(filteredBenchmarks);
+
+    // Download CSV with only visible columns
     const downloadCSV = () => {
-        if (benchmarks.length === 0) {
+        if (sortedData.length === 0) {
             alert("No data available to download.");
             return;
         }
-        const headers = [
-            'Algorithm', 'Device', 'Metric', 'Value', 'Uncertainty',
-            'Qubit_Error_Min', 'Qubit_Error_Max', 'Qubit_Error_Median', 'Qubit_Error_Mean',
-            'Readout_Error_Min', 'Readout_Error_Max', 'Readout_Error_Median', 'Readout_Error_Mean',
-            'Two_Qubit_Gate_Error_Min', 'Two_Qubit_Gate_Error_Max', 'Two_Qubit_Gate_Error_Median', 'Two_Qubit_Gate_Error_Mean',
-            'Single_Qubit_Gate_Error_Min', 'Single_Qubit_Gate_Error_Max', 'Single_Qubit_Gate_Error_Median', 'Single_Qubit_Gate_Error_Mean',
-            'Execution_Time_Min', 'Execution_Time_Max', 'Execution_Time_Median', 'Execution_Time_Mean', 'Execution_Time_Unit',
-            'Paper_URL', 'Contributor', 'Contributor_URL', 'Timestamp', 'Submission_Folder_URL'
-        ];
         
-        const rows = benchmarks.map(bm => {
-            const submissionUrl = `${CONFIG.githubRepoUrl}/tree/main/submissions/${bm.benchmarkFolder}`;
-            const contributorUrl = bm.contributor ? `https://github.com/${bm.contributor}` : 'N/A';
-            
-            // Helper to extract stats or return N/A
-            const getStats = (stats) => {
-                if (!stats) return ['N/A', 'N/A', 'N/A', 'N/A'];
-                return [stats.min, stats.max, stats.median, stats.mean];
-            };
+        // Only include the visible columns
+        const headers = ['Algorithm', 'Device', 'Metric', 'Value', 'Submission_Date', 'Paper_URL', 'Source_URL'];
+        
+        const rows = sortedData.map(bm => {
+            const sourceUrl = `${CONFIG.githubRepoUrl}/tree/main/submissions/${bm.benchmarkFolder}`;
             
             return [
-                `"${bm.algorithmName}"`, 
+                `"${bm.algorithmName}"`,
                 `"${bm.device || 'N/A'}"`,
-                `"${bm.metricName}"`, 
-                bm.metricValue, 
-                bm.uncertainty ?? 'N/A',
-                ...getStats(bm.errorRates?.qubit),
-                ...getStats(bm.errorRates?.readout),
-                ...getStats(bm.errorRates?.twoQubitGate),
-                ...getStats(bm.errorRates?.singleQubitGate),
-                ...getStats(bm.executionTime),
-                bm.executionTime?.unit || 'N/A',
+                `"${bm.metricName}"`,
+                bm.metricValue,
+                `"${bm.timestamp.toISOString().split('T')[0]}"`,
                 `"${bm.paperUrl || 'N/A'}"`,
-                `"${bm.contributor || 'N/A'}"`,
-                `"${contributorUrl}"`,
-                `"${bm.timestamp.toISOString()}"`, 
-                `"${submissionUrl}"`
+                `"${sourceUrl}"`
             ].join(',');
         });
 
@@ -108,26 +77,70 @@ export default function App() {
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `quantum_benchmark_data_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute("download", `quantum_benchmarks_${new Date().toISOString().split('T')[0]}.csv`);
         
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
 
+    // Download JSON with all detailed data
+    const downloadJSON = () => {
+        if (benchmarks.length === 0) {
+            alert("No data available to download.");
+            return;
+        }
+
+        // Convert dates back to ISO strings for JSON
+        const dataForExport = benchmarks.map(bm => ({
+            ...bm,
+            timestamp: bm.timestamp.toISOString()
+        }));
+
+        const jsonContent = JSON.stringify(dataForExport, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `quantum_benchmarks_full_${new Date().toISOString().split('T')[0]}.json`);
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     return (
-        <div className="min-h-screen font-sans" style={{ backgroundColor: COLORS.bg, color: COLORS.fg }}>
+        <div style={{ 
+            minHeight: '100vh',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+            backgroundColor: COLORS.bg, 
+            color: COLORS.fg 
+        }}>
             {/* Header with padding from top */}
-            <header className="pt-8 pb-6 px-12">
-                <div className="shadow-lg rounded-lg overflow-hidden" style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}` }}>
-                    <div className="px-8 py-6">
-                        <div className="flex items-center gap-3">
-                            <img src={UI_CONSTANTS.quantumIconUrl} alt="Quantum computer icon" className="w-8 h-8" />
-                            <img src={UI_CONSTANTS.alienIconUrl} alt="Alien icon" className="w-8 h-8" />
-                            <h1 className="text-2xl font-bold">
+            <header style={{ paddingTop: '2rem', paddingBottom: '1.5rem', paddingLeft: '3rem', paddingRight: '3rem' }}>
+                <div style={{ 
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    borderRadius: '0.5rem',
+                    overflow: 'hidden',
+                    backgroundColor: COLORS.bgCard, 
+                    border: `1px solid ${COLORS.border}` 
+                }}>
+                    <div style={{ padding: '1.5rem 2rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <img src={UI_CONSTANTS.quantumIconUrl} alt="Quantum computer icon" style={{ width: '2rem', height: '2rem' }} />
+                            <img src={UI_CONSTANTS.alienIconUrl} alt="Alien icon" style={{ width: '2rem', height: '2rem' }} />
+                            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
                                 <span style={{color: COLORS.accentRed}}>Q</span>upacabras-DB
                             </h1>
-                            <span className="hidden sm:inline text-sm" style={{ color: COLORS.fgMuted }}>
+                            <span 
+                                className="app-description"
+                                style={{ 
+                                    fontSize: '1.125rem',
+                                    color: COLORS.fgMuted 
+                                }}
+                            >
                                 {UI_CONSTANTS.appDescription}
                             </span>
                         </div>
@@ -136,13 +149,14 @@ export default function App() {
             </header>
 
             {/* Main content area - full width */}
-            <main className="px-12 pb-8">
+            <main style={{ paddingLeft: '3rem', paddingRight: '3rem', paddingBottom: '2rem' }}>
                 <BenchmarkTable 
                     filteredBenchmarks={sortedData}
                     isLoading={isLoading}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     downloadCSV={downloadCSV}
+                    downloadJSON={downloadJSON}
                     sortConfig={sortConfig}
                     onSort={handleSort}
                 />
@@ -151,21 +165,41 @@ export default function App() {
             {/* Floating Action Button for Contribution Guide */}
             <button
                 onClick={() => setShowGuide(!showGuide)}
-                className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 z-50"
                 style={{ 
+                    position: 'fixed',
+                    bottom: '1.5rem',
+                    right: '1.5rem',
+                    width: '3.5rem',
+                    height: '3.5rem',
+                    borderRadius: '50%',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s',
+                    zIndex: 50,
                     backgroundColor: COLORS.accentBlue,
-                    color: COLORS.bg
+                    color: COLORS.bg,
+                    border: 'none',
+                    cursor: 'pointer'
                 }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 title="How to Contribute"
             >
-                <Github className="w-6 h-6" />
+                <Github style={{ width: '1.5rem', height: '1.5rem' }} />
             </button>
 
             {/* Contribution Guide Panel */}
             {showGuide && (
                 <>
                     <div 
-                        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                        style={{ 
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            zIndex: 40
+                        }}
                         onClick={() => setShowGuide(false)}
                     />
                     <div 
@@ -184,8 +218,20 @@ export default function App() {
                     >
                         <button
                             onClick={() => setShowGuide(false)}
-                            className="absolute top-4 right-4 p-2 rounded-lg hover:opacity-80 z-10"
-                            style={{ backgroundColor: COLORS.bg }}
+                            style={{ 
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                padding: '0.5rem',
+                                borderRadius: '0.5rem',
+                                backgroundColor: COLORS.bg,
+                                border: 'none',
+                                cursor: 'pointer',
+                                zIndex: 10,
+                                transition: 'opacity 0.2s'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                         >
                             ✕
                         </button>
@@ -197,40 +243,127 @@ export default function App() {
             {/* Info Button */}
             <button
                 onClick={() => setShowInfo(!showInfo)}
-                className="fixed bottom-6 left-6 w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110"
                 style={{ 
+                    position: 'fixed',
+                    bottom: '1.5rem',
+                    left: '1.5rem',
+                    width: '2.5rem',
+                    height: '2.5rem',
+                    borderRadius: '50%',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s',
                     backgroundColor: COLORS.bgCard,
                     border: `1px solid ${COLORS.border}`,
-                    color: COLORS.fgSubtle
+                    color: COLORS.fgSubtle,
+                    cursor: 'pointer'
                 }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 title="About"
             >
-                <Info className="w-5 h-5" />
+                <Info style={{ width: '1.25rem', height: '1.25rem' }} />
             </button>
 
             {/* Info Modal */}
             {showInfo && (
                 <>
                     <div 
-                        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                        style={{ 
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            zIndex: 40
+                        }}
                         onClick={() => setShowInfo(false)}
                     />
                     <div 
-                        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-xl shadow-xl z-50 max-w-md"
-                        style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}` }}
+                        style={{ 
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            padding: '1.5rem',
+                            borderRadius: '0.75rem',
+                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                            zIndex: 50,
+                            maxWidth: '28rem',
+                            backgroundColor: COLORS.bgCard,
+                            border: `1px solid ${COLORS.border}`
+                        }}
                     >
                         <button
                             onClick={() => setShowInfo(false)}
-                            className="absolute top-4 right-4 p-2 rounded-lg hover:opacity-80"
-                            style={{ backgroundColor: COLORS.bg }}
+                            style={{ 
+                                position: 'absolute',
+                                top: '0.5rem',
+                                right: '0.5rem',
+                                background: 'none',
+                                border: 'none',
+                                fontSize: '1.5rem',
+                                cursor: 'pointer',
+                                color: COLORS.fgMuted,
+                                padding: '0.25rem',
+                                lineHeight: 1
+                            }}
                         >
-                            ✕
+                            ×
                         </button>
-                        <h3 className="text-lg font-semibold mb-4">About Qupacabras-DB</h3>
-                        <div className="space-y-2 text-sm" style={{ color: COLORS.fgMuted }}>
-                            <p>Built with React and hosted on GitHub Pages.</p>
-                            <p>Color Scheme: <a href="https://github.com/morhetz/gruvbox" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80" style={{ color: COLORS.accentAqua }}>Gruvbox</a> by morhetz.</p>
-                            <p>Icons: <a href="https://www.flaticon.com" title="Flaticon" className="underline hover:opacity-80" style={{ color: COLORS.accentAqua }}>Flaticon</a></p>
+                        <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>About Qupacabras-DB</h3>
+                        <div style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: 1.5 }}>
+                            <p style={{ marginBottom: '0.5rem' }}>
+                                {UI_CONSTANTS.appDescription}
+                            </p>
+                            <p style={{ marginBottom: '0.5rem' }}>
+                                Built to help researchers compare quantum algorithm performance, analyze hardware capabilities, and track the evolution of quantum computing benchmarks over time.
+                            </p>
+                            <p style={{ marginBottom: '0.5rem' }}>
+                                <strong style={{ color: COLORS.fg }}>Version:</strong> {UI_CONSTANTS.version}
+                            </p>
+                            <p style={{ marginBottom: '0.5rem' }}>
+                                <strong style={{ color: COLORS.fg }}>GitHub:</strong>{' '}
+                                <a 
+                                    href={CONFIG.githubRepoUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    style={{ color: COLORS.accentBlue, textDecoration: 'none' }}
+                                    onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                                    onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                >
+                                    View Repository
+                                </a>
+                            </p>
+                            <p style={{ marginBottom: '0.5rem' }}>
+                                <strong style={{ color: COLORS.fg }}>Credits:</strong>
+                            </p>
+                            <ul style={{ paddingLeft: '1rem', marginBottom: '0.5rem' }}>
+                                <li>Icons from{' '}
+                                    <a 
+                                        href="https://www.flaticon.com" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        style={{ color: COLORS.accentBlue, textDecoration: 'none' }}
+                                        onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                                        onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                    >
+                                        Flaticon.com
+                                    </a>
+                                </li>
+                                <li>Color theme inspired by{' '}
+                                    <a 
+                                        href="https://github.com/morhetz/gruvbox" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        style={{ color: COLORS.accentBlue, textDecoration: 'none' }}
+                                        onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                                        onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                    >
+                                        Gruvbox
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </>
@@ -239,3 +372,4 @@ export default function App() {
     );
 }
 
+export default App;

@@ -19,9 +19,10 @@ export const CONFIG = {
 
 export const UI_CONSTANTS = {
     appTitle: 'Qupacabras-DB',
-    appDescription: 'A community-maintained database for tracking the performance of quantum algorithms executed on quantum devices.',
+    appDescription: 'A community-maintained database for tracking the performance of quantum experiments executed on quantum devices.',
     quantumIconUrl: 'https://cdn-icons-png.flaticon.com/512/2628/2628521.png',
-    alienIconUrl: 'https://cdn-icons-png.flaticon.com/512/1970/1970363.png'
+    alienIconUrl: 'https://cdn-icons-png.flaticon.com/512/1970/1970363.png',
+    version: '1.0'
 };
 
 export const FIELD_DESCRIPTIONS = {
@@ -48,7 +49,7 @@ export const FIELD_DESCRIPTIONS = {
         description: 'Total execution time statistics aggregated across all experiments sent to the quantum computer, including queueing and processing time.'
     },
     general: {
-        algorithm: 'The quantum algorithm being benchmarked',
+        algorithm: 'The quantum experiment being benchmarked',
         device: 'The quantum device or simulator used for execution',
         metric: 'The primary performance metric being measured',
         value: 'The measured value of the primary metric',

@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Database, FileDown, FileText, FolderOpen, Github } from 'lucide-react';
+import { Database, FileText, FolderOpen, Github } from 'lucide-react';
 import { COLORS, CONFIG } from '../constants';
 import SearchBar from './SearchBar';
 import SortableHeader from './SortableHeader';
+import DownloadDropdown from './DownloadDropdown';
 
 
 // Component for metric value with all details on hover
@@ -75,14 +76,15 @@ function MetricValueWithDetails({ benchmark }) {
     
     return (
         <div 
-            className="metric-value-wrapper relative inline-block" 
+            style={{ position: 'relative', display: 'inline-block' }} 
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
             <span 
                 ref={valueRef}
-                className="font-mono" 
                 style={{ 
+                    fontFamily: 'monospace',
+                    fontSize: '1rem',
                     color: COLORS.accentOrange,
                     borderBottom: `2px dotted ${COLORS.accentOrange}`,
                     cursor: 'help'
@@ -110,15 +112,15 @@ function MetricValueWithDetails({ benchmark }) {
                         display: 'block'
                     }}
                 >
-                <div className="font-semibold mb-3" style={{ color: COLORS.accentAqua }}>
+                <div style={{ fontWeight: '600', marginBottom: '0.75rem', color: COLORS.accentAqua }}>
                     {benchmark.algorithmName} - All Metrics
                 </div>
                 
                 {/* Primary Metric */}
-                <div className="mb-3 pb-3" style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                    <div className="flex justify-between mb-1">
+                <div style={{ marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: `1px solid ${COLORS.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                         <span style={{ color: COLORS.fgMuted }}>{benchmark.metricName}:</span>
-                        <span className="font-mono" style={{ color: COLORS.accentOrange }}>
+                        <span style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>
                             {benchmark.metricValue} {benchmark.uncertainty ? `±${benchmark.uncertainty}` : ''}
                         </span>
                     </div>
@@ -126,97 +128,97 @@ function MetricValueWithDetails({ benchmark }) {
                 
                 {/* Error Rates */}
                 {benchmark.errorRates && (
-                    <div className="mb-3">
-                        <div className="font-medium mb-2" style={{ color: COLORS.fg }}>Error Rates</div>
-                        <div className="space-y-2 pl-2">
+                    <div style={{ marginBottom: '0.75rem' }}>
+                        <div style={{ fontWeight: '500', marginBottom: '0.5rem', color: COLORS.fg }}>Error Rates</div>
+                        <div style={{ paddingLeft: '0.5rem' }}>
                             {benchmark.errorRates.qubit && (
                                 <div>
-                                    <div className="font-medium mb-1" style={{ color: COLORS.fgMuted }}>Qubit Error:</div>
-                                    <div className="grid grid-cols-4 gap-2 text-xs pl-2">
+                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>Qubit Error:</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.qubit).min}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).min}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.qubit).median}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).median}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div className="font-mono font-semibold" style={{ color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).mean}</div>
+                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).mean}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.qubit).max}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).max}</div>
                                         </div>
                                     </div>
                                 </div>
                             )}
                             {benchmark.errorRates.readout && (
-                                <div>
-                                    <div className="font-medium mb-1" style={{ color: COLORS.fgMuted }}>Readout Error:</div>
-                                    <div className="grid grid-cols-4 gap-2 text-xs pl-2">
+                                <div style={{ marginTop: '0.5rem' }}>
+                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>Readout Error:</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.readout).min}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.readout).min}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.readout).median}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.readout).median}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div className="font-mono font-semibold" style={{ color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.readout).mean}</div>
+                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.readout).mean}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.readout).max}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.readout).max}</div>
                                         </div>
                                     </div>
                                 </div>
                             )}
                             {benchmark.errorRates.singleQubitGate && (
-                                <div>
-                                    <div className="font-medium mb-1" style={{ color: COLORS.fgMuted }}>1Q Gate Error:</div>
-                                    <div className="grid grid-cols-4 gap-2 text-xs pl-2">
+                                <div style={{ marginTop: '0.5rem' }}>
+                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>1Q Gate Error:</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).min}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).min}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).median}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).median}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div className="font-mono font-semibold" style={{ color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).mean}</div>
+                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).mean}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).max}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).max}</div>
                                         </div>
                                     </div>
                                 </div>
                             )}
                             {benchmark.errorRates.twoQubitGate && (
-                                <div>
-                                    <div className="font-medium mb-1" style={{ color: COLORS.fgMuted }}>2Q Gate Error:</div>
-                                    <div className="grid grid-cols-4 gap-2 text-xs pl-2">
+                                <div style={{ marginTop: '0.5rem' }}>
+                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>2Q Gate Error:</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).min}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).min}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).median}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).median}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div className="font-mono font-semibold" style={{ color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).mean}</div>
+                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).mean}</div>
                                         </div>
                                         <div>
                                             <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div className="font-mono">{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).max}</div>
+                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).max}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -227,24 +229,24 @@ function MetricValueWithDetails({ benchmark }) {
                 
                 {/* Execution Time */}
                 {benchmark.executionTime && (
-                    <div className="mb-3">
-                        <div className="font-medium mb-2" style={{ color: COLORS.fg }}>Execution Time</div>
-                        <div className="grid grid-cols-4 gap-2 text-xs pl-2">
+                    <div style={{ marginBottom: '0.75rem' }}>
+                        <div style={{ fontWeight: '500', marginBottom: '0.5rem', color: COLORS.fg }}>Execution Time</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
                             <div>
                                 <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                <div className="font-mono">{formatDetailedTime(benchmark.executionTime).min}</div>
+                                <div style={{ fontFamily: 'monospace' }}>{formatDetailedTime(benchmark.executionTime).min}</div>
                             </div>
                             <div>
                                 <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                <div className="font-mono">{formatDetailedTime(benchmark.executionTime).median}</div>
+                                <div style={{ fontFamily: 'monospace' }}>{formatDetailedTime(benchmark.executionTime).median}</div>
                             </div>
                             <div>
                                 <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                <div className="font-mono font-semibold" style={{ color: COLORS.accentGreen }}>{formatDetailedTime(benchmark.executionTime).mean}</div>
+                                <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentGreen }}>{formatDetailedTime(benchmark.executionTime).mean}</div>
                             </div>
                             <div>
                                 <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                <div className="font-mono">{formatDetailedTime(benchmark.executionTime).max}</div>
+                                <div style={{ fontFamily: 'monospace' }}>{formatDetailedTime(benchmark.executionTime).max}</div>
                             </div>
                         </div>
                     </div>
@@ -252,48 +254,48 @@ function MetricValueWithDetails({ benchmark }) {
                 
                 {/* Quantum Properties */}
                 {benchmark.quantumSpecific && (
-                    <div>
-                        <div className="font-medium mb-2" style={{ color: COLORS.fg }}>Quantum Properties</div>
-                        <div className="space-y-1 pl-2">
+                    <div style={{ marginBottom: '0.75rem' }}>
+                        <div style={{ fontWeight: '500', marginBottom: '0.5rem', color: COLORS.fg }}>Quantum Properties</div>
+                        <div style={{ paddingLeft: '0.5rem' }}>
                             {benchmark.quantumSpecific.qubitCount && (
-                                <div className="flex justify-between">
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span style={{ color: COLORS.fgMuted }}>Qubits:</span>
-                                    <span className="font-mono">{benchmark.quantumSpecific.qubitCount}</span>
+                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.qubitCount}</span>
                                 </div>
                             )}
                             {benchmark.quantumSpecific.gateCount && (
-                                <div className="flex justify-between">
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span style={{ color: COLORS.fgMuted }}>Gates:</span>
-                                    <span className="font-mono">{benchmark.quantumSpecific.gateCount}</span>
+                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.gateCount}</span>
                                 </div>
                             )}
                             {benchmark.quantumSpecific.circuitDepth && (
-                                <div className="flex justify-between">
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span style={{ color: COLORS.fgMuted }}>Depth:</span>
-                                    <span className="font-mono">{benchmark.quantumSpecific.circuitDepth}</span>
+                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.circuitDepth}</span>
                                 </div>
                             )}
                             {benchmark.quantumSpecific.shots && (
-                                <div className="flex justify-between">
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span style={{ color: COLORS.fgMuted }}>Shots:</span>
-                                    <span className="font-mono">{benchmark.quantumSpecific.shots}</span>
+                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.shots}</span>
                                 </div>
                             )}
                             {benchmark.quantumSpecific.circuitVariations && (
-                                <div className="flex justify-between">
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span style={{ color: COLORS.fgMuted }}>Circuit Variations:</span>
-                                    <span className="font-mono">{benchmark.quantumSpecific.circuitVariations}</span>
+                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.circuitVariations}</span>
                                 </div>
                             )}
                         </div>
                         {benchmark.quantumSpecific.gateBreakdown && (
-                            <div className="mt-2">
-                                <div className="font-medium mb-1" style={{ color: COLORS.fgMuted }}>Gate Breakdown:</div>
-                                <div className="grid grid-cols-2 gap-2 text-xs pl-2">
+                            <div style={{ marginTop: '0.5rem' }}>
+                                <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>Gate Breakdown:</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
                                     {Object.entries(benchmark.quantumSpecific.gateBreakdown).map(([gate, count]) => (
                                         <div key={gate} className="flex justify-between">
                                             <span style={{ color: COLORS.fgSubtle }}>{gate.toUpperCase()}:</span>
-                                            <span className="font-mono">{count}</span>
+                                            <span style={{ fontFamily: 'monospace' }}>{count}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -301,6 +303,47 @@ function MetricValueWithDetails({ benchmark }) {
                         )}
                     </div>
                 )}
+                
+                {/* Additional Information */}
+                <div style={{ paddingTop: '0.75rem', borderTop: `1px solid ${COLORS.border}` }}>
+                    <div>
+                        {benchmark.experimentDate && (
+                            <div className="flex justify-between">
+                                <span style={{ color: COLORS.fgMuted }}>Experiment Date:</span>
+                                <span style={{ fontFamily: 'monospace' }}>
+                                    {new Date(benchmark.experimentDate).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    })}
+                                </span>
+                            </div>
+                        )}
+                        {benchmark.contributor && (
+                            <div className="flex justify-between">
+                                <span style={{ color: COLORS.fgMuted }}>Contributor:</span>
+                                <span style={{ fontFamily: 'monospace' }}>{benchmark.contributor}</span>
+                            </div>
+                        )}
+                        {benchmark.description && (
+                            <div style={{ marginTop: '0.5rem' }}>
+                                <div style={{ color: COLORS.fgMuted }}>Description:</div>
+                                <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: COLORS.fgSubtle }}>
+                                    {benchmark.description}
+                                </div>
+                            </div>
+                        )}
+                        {benchmark.notes && (
+                            <div style={{ marginTop: '0.5rem' }}>
+                                <div style={{ color: COLORS.fgMuted }}>Notes:</div>
+                                <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: COLORS.fgSubtle }}>
+                                    {benchmark.notes}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                
                 </div>,
                 document.body
             )}
@@ -314,50 +357,43 @@ export default function BenchmarkTable({
     searchQuery, 
     setSearchQuery, 
     downloadCSV,
+    downloadJSON,
     sortConfig,
     onSort
 }) {
     return (
-        <div className="w-full">
-            <div className="shadow-lg rounded-lg overflow-hidden" style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}`, minHeight: 'calc(100vh - 16rem)' }}>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-8 py-6" style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                    <h2 className="text-2xl font-semibold flex items-center gap-2">
-                        <Database className="w-6 h-6" style={{ color: COLORS.accentAqua }} /> Benchmark Data
+        <div style={{ width: '100%' }}>
+            <div style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', borderRadius: '0.5rem', overflow: 'hidden', backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}`, minHeight: 'calc(100vh - 16rem)' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', padding: '1.5rem 2rem', borderBottom: `1px solid ${COLORS.border}` }}>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Database style={{ width: '1.5rem', height: '1.5rem', color: COLORS.accentAqua }} /> Benchmark Data
                     </h2>
                     <SearchBar 
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                     />
-                    <button 
-                        onClick={downloadCSV} 
-                        className="font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center gap-2" 
-                        style={{ 
-                            backgroundColor: COLORS.accentGreen, 
-                            color: COLORS.bg, 
-                            '--tw-ring-color': COLORS.accentGreen, 
-                            'ringOffsetColor': COLORS.bgCard 
-                        }}
-                    >
-                        <FileDown className="w-5 h-5"/> Download CSV
-                    </button>
+                    <DownloadDropdown 
+                        onDownloadCSV={downloadCSV}
+                        onDownloadJSON={downloadJSON}
+                    />
                 </div>
-                <div className="table-container" style={{ maxHeight: 'calc(100vh - 24rem)', overflow: 'auto' }}>
-                    <table className="w-full text-left table-auto">
-                        <thead style={{ borderBottomColor: COLORS.border, borderBottomWidth: '2px' }}>
-                            <tr className="font-semibold">
+                <div style={{ maxHeight: 'calc(100vh - 24rem)', overflow: 'auto' }}>
+                    <table style={{ width: '100%', textAlign: 'left', tableLayout: 'auto' }}>
+                        <thead style={{ borderBottom: `2px solid ${COLORS.border}` }}>
+                            <tr style={{ fontWeight: '600' }}>
                                 <SortableHeader 
                                     sortKey="algorithmName" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="px-8 py-5"
+                                    style={{ padding: '1.25rem 2rem' }}
                                 >
-                                    Algorithm
+                                    Experiment
                                 </SortableHeader>
                                 <SortableHeader 
                                     sortKey="device" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="px-8 py-5"
+                                    style={{ padding: '1.25rem 2rem' }}
                                 >
                                     Device
                                 </SortableHeader>
@@ -365,7 +401,7 @@ export default function BenchmarkTable({
                                     sortKey="metricName" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="px-8 py-5"
+                                    style={{ padding: '1.25rem 2rem' }}
                                 >
                                     Metric
                                 </SortableHeader>
@@ -373,83 +409,85 @@ export default function BenchmarkTable({
                                     sortKey="metricValue" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="px-8 py-5 text-right"
+                                    style={{ padding: '1.25rem 2rem', textAlign: 'right' }}
                                 >
-                                    <span style={{ 
-                                        borderBottom: `1px dotted ${COLORS.fgSubtle}`,
-                                        cursor: 'help'
-                                    }}>
-                                        Value
-                                    </span>
+                                    Value
                                 </SortableHeader>
                                 <SortableHeader 
                                     sortKey="timestamp" 
                                     currentSort={sortConfig} 
                                     onSort={onSort}
-                                    className="px-8 py-5"
+                                    style={{ padding: '1.25rem 2rem' }}
                                 >
-                                    Date
+                                    <span style={{
+                                        borderBottom: `2px dotted ${COLORS.fgMuted}`,
+                                        cursor: 'help'
+                                    }} title="Date when the benchmark was submitted to the database">
+                                        Submission
+                                    </span>
                                 </SortableHeader>
-                                <th className="px-8 py-5 text-center" style={{ color: COLORS.fgMuted }}>Links</th>
+                                <th style={{ padding: '1.25rem 2rem', textAlign: 'center', color: COLORS.fgMuted }}>Links</th>
                             </tr>
                         </thead>
                         <tbody>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan="6" className="text-center p-8" style={{ color: COLORS.fgMuted }}>
+                                    <td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
                                         Loading...
                                     </td>
                                 </tr>
                             ) : filteredBenchmarks.length > 0 ? (
                                 filteredBenchmarks.map((bm) => (
-                                    <tr key={bm.id} className="hover:bg-[#504945]" style={{ borderBottomColor: COLORS.border, borderBottomWidth: '1px' }}>
-                                        <td className="px-8 py-5 font-medium">{bm.algorithmName}</td>
-                                        <td className="px-8 py-5">{bm.device}</td>
-                                        <td className="px-8 py-5">{bm.metricName}</td>
-                                        <td className="px-8 py-5 text-right">
+                                    <tr key={bm.id} style={{ borderBottom: `1px solid ${COLORS.border}`, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#504945'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                                        <td style={{ padding: '1.25rem 2rem', fontWeight: '500' }}>{bm.algorithmName}</td>
+                                        <td style={{ padding: '1.25rem 2rem' }}>{bm.device}</td>
+                                        <td style={{ padding: '1.25rem 2rem' }}>{bm.metricName}</td>
+                                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
                                             <MetricValueWithDetails benchmark={bm} />
                                         </td>
-                                        <td className="px-8 py-5 font-mono text-sm">
+                                         <td style={{ padding: '1.25rem 2rem' }}>
                                             {bm.timestamp.toLocaleDateString('en-US', { 
                                                 year: 'numeric', 
                                                 month: 'short', 
                                                 day: 'numeric'
                                             })}
-                                        </td>
-                                            <td className="px-8 py-5 text-center">
-                                                <div className="flex items-center justify-center gap-3">
+                                        </td>                                            <td style={{ padding: '1.25rem 2rem', textAlign: 'center' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
                                                     {bm.paperUrl && (
                                                         <a 
                                                             href={bm.paperUrl} 
                                                             target="_blank" 
                                                             rel="noopener noreferrer" 
-                                                            className="hover:opacity-80 transition-all hover:scale-110"
-                                                            style={{ color: COLORS.accentAqua }}
+                                                            style={{ transition: 'all 0.2s', cursor: 'pointer', color: COLORS.accentAqua }}
+                                                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                                                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
                                                             title="View Paper"
                                                         >
-                                                            <FileText className="w-5 h-5" />
+                                                            <FileText style={{ width: '1.25rem', height: '1.25rem' }} />
                                                         </a>
                                                     )}
                                                     <a 
                                                         href={`${CONFIG.githubRepoUrl}/tree/main/submissions/${bm.benchmarkFolder}`} 
                                                         target="_blank" 
                                                         rel="noopener noreferrer" 
-                                                        className="hover:opacity-80 transition-all hover:scale-110"
-                                                        style={{ color: COLORS.accentBlue }}
+                                                        style={{ transition: 'all 0.2s', cursor: 'pointer', color: COLORS.accentBlue }}
+                                                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                                                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
                                                         title="View Source Files"
                                                     >
-                                                        <FolderOpen className="w-5 h-5" />
+                                                        <FolderOpen style={{ width: '1.25rem', height: '1.25rem' }} />
                                                     </a>
                                                     {bm.contributor && (
                                                         <a 
                                                             href={`https://github.com/${bm.contributor}`} 
                                                             target="_blank" 
                                                             rel="noopener noreferrer" 
-                                                            className="hover:opacity-80 transition-all hover:scale-110"
-                                                            style={{ color: COLORS.fg }}
+                                                            style={{ transition: 'all 0.2s', cursor: 'pointer', color: COLORS.fg }}
+                                                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                                                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
                                                             title={`Contributor: ${bm.contributor}`}
                                                         >
-                                                            <Github className="w-5 h-5" />
+                                                            <Github style={{ width: '1.25rem', height: '1.25rem' }} />
                                                         </a>
                                                     )}
                                                 </div>
@@ -458,7 +496,7 @@ export default function BenchmarkTable({
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="text-center p-8" style={{ color: COLORS.fgMuted }}>
+                                    <td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
                                         {searchQuery ? `No results found for "${searchQuery}".` : 'No benchmarks available.'}
                                     </td>
                                 </tr>
