@@ -768,6 +768,17 @@ a:hover {
   flex-direction: column;
 }
 
+/* Responsive app description */
+.app-description {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .app-description {
+    display: inline;
+  }
+}
+
 .table-container::-webkit-scrollbar {
   height: 10px;
   width: 10px;

@@ -4,20 +4,40 @@ import { COLORS } from '../constants';
 
 export default function SearchBar({ searchQuery, setSearchQuery }) {
     return (
-        <div className="flex-grow max-w-sm w-full">
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: COLORS.fgSubtle }} />
+        <div style={{ flexGrow: 1, maxWidth: '24rem', width: '100%' }}>
+            <div style={{ position: 'relative' }}>
+                <Search 
+                    style={{ 
+                        position: 'absolute',
+                        left: '0.75rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        width: '1.25rem',
+                        height: '1.25rem',
+                        color: COLORS.fgSubtle 
+                    }} 
+                />
                 <input
                     type="text"
                     placeholder="Search benchmarks..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border text-sm"
                     style={{ 
+                        width: '100%',
+                        paddingLeft: '2.5rem',
+                        paddingRight: '1rem',
+                        paddingTop: '0.5rem',
+                        paddingBottom: '0.5rem',
+                        borderRadius: '0.5rem',
+                        border: `1px solid ${COLORS.border}`,
+                        fontSize: '0.875rem',
                         backgroundColor: COLORS.bg, 
-                        borderColor: COLORS.border, 
-                        color: COLORS.fg 
+                        color: COLORS.fg,
+                        outline: 'none',
+                        transition: 'border-color 0.2s'
                     }}
+                    onFocus={(e) => e.target.style.borderColor = COLORS.accentAqua}
+                    onBlur={(e) => e.target.style.borderColor = COLORS.border}
                 />
             </div>
         </div>

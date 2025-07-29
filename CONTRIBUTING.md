@@ -1,6 +1,6 @@
 # Contributing to Qupacabras-DB
 
-Thank you for contributing to the Qupacabras-DB quantum algorithm benchmark database!
+Thank you for contributing to the Qupacabras-DB quantum experiment benchmark database!
 
 ## 🚀 Super Quick Start (2 minutes!)
 
@@ -21,7 +21,7 @@ Thank you for contributing to the Qupacabras-DB quantum algorithm benchmark data
 
 The system auto-generates:
 - `id` from your folder name
-- `timestamp` with current date
+- `timestamp` with PR submission date
 - `contributor` from your GitHub username (when submitting via PR)
 
 ## 📊 Adding More Details (Optional)
@@ -68,17 +68,18 @@ See `submissions/template/advanced-example.json` for all possible fields includi
 
 ### Required Fields
 - `id`: Unique identifier (use folder name)
-- `algorithmName`: Name of the quantum algorithm
+- `algorithmName`: Name of the quantum experiment
 - `device`: Quantum device or simulator used
 - `metricName`: What performance metric was measured (see accepted values below)
 - `metricValue`: Numerical result (0-1 for probabilities/fidelities)
-- `timestamp`: ISO 8601 format date
+- `timestamp`: ISO 8601 format date (auto-populated with PR submission date)
 
 ### Optional Fields
 - `team`: Array of contributor names
 - `uncertainty`: Statistical uncertainty (±)
 - `paperUrl`: Link to published paper
 - `contributor`: GitHub username of the contributor
+- `experimentDate`: ISO 8601 format date when the experiment was performed (if different from submission date)
 - `qasmFiles`: Array of QASM circuit file names
 - `description`: Brief description of the benchmark
 - `methodology`: How the benchmark was performed

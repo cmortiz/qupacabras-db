@@ -1,6 +1,6 @@
 # Benchmark Submission Template
 
-This folder contains templates for submitting quantum algorithm benchmarks.
+This folder contains templates for submitting quantum experiment benchmarks.
 
 ## Quick Start - Only 4 Required Fields!
 

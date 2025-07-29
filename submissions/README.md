@@ -1,6 +1,6 @@
 # Submissions Directory
 
-This directory contains detailed documentation for each quantum algorithm benchmark in the database.
+This directory contains detailed documentation for each quantum experiment benchmark in the database.
 
 ## Structure
 

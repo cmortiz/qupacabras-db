@@ -4,7 +4,7 @@ This submission contains the implementation and benchmark results for Shor's alg
 
 ## Algorithm Overview
 
-Shor's algorithm is a quantum algorithm for integer factorization that runs in polynomial time on a quantum computer. This implementation targets factoring 15 = 3 × 5.
+Shor's algorithm is a quantum experiment for integer factorization that runs in polynomial time on a quantum computer. This implementation targets factoring 15 = 3 × 5.
 
 ## Implementation Details
 

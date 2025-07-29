@@ -7,29 +7,39 @@ export default function SortableHeader({
     sortKey, 
     currentSort, 
     onSort, 
-    className = "p-3" 
+    style = {}
 }) {
     const isActive = currentSort.key === sortKey;
     const direction = currentSort.direction;
 
     const getSortIcon = () => {
         if (!isActive) {
-            return <ChevronsUpDown className="w-4 h-4 opacity-50" />;
+            return <ChevronsUpDown style={{ width: '1rem', height: '1rem', opacity: 0.5 }} />;
         }
         return direction === 'asc' 
-            ? <ChevronUp className="w-4 h-4" />
-            : <ChevronDown className="w-4 h-4" />;
+            ? <ChevronUp style={{ width: '1rem', height: '1rem' }} />
+            : <ChevronDown style={{ width: '1rem', height: '1rem' }} />;
     };
 
     return (
         <th 
-            className={`${className} cursor-pointer select-none hover:bg-opacity-10 hover:bg-white transition-colors duration-150`}
             onClick={() => onSort(sortKey)}
             style={{ 
-                color: isActive ? COLORS.fg : COLORS.fgMuted 
+                cursor: 'pointer',
+                userSelect: 'none',
+                transition: 'background-color 0.15s',
+                color: isActive ? COLORS.fg : COLORS.fgMuted,
+                ...style
             }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
-            <div className="flex items-center gap-2 justify-between">
+            <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem', 
+                justifyContent: 'space-between' 
+            }}>
                 <span>{children}</span>
                 <span style={{ color: isActive ? COLORS.accentAqua : COLORS.fgSubtle }}>
                     {getSortIcon()}

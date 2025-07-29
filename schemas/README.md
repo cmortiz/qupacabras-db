@@ -10,7 +10,7 @@ The `benchmark-schema.json` file defines the structure and validation rules for 
 
 ### Required Fields
 - **id**: Must match the submission folder name
-- **algorithmName**: Name of the quantum algorithm
+- **algorithmName**: Name of the quantum experiment
 - **device**: Quantum device or simulator used
 - **metricName**: Performance metric (from predefined list)
 - **metricValue**: Numeric result

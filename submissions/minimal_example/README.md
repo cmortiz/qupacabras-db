@@ -1,6 +1,6 @@
 # Benchmark Template
 
-This template shows how to structure your quantum algorithm benchmark submission.
+This template shows how to structure your quantum experiment benchmark submission.
 
 ## Required Files
 
@@ -33,7 +33,7 @@ submissions/
 ## benchmark.json Fields
 
 - **id**: Unique identifier (use folder name)
-- **algorithmName**: Name of the quantum algorithm
+- **algorithmName**: Name of the quantum experiment
 - **team**: Array of contributor names
 - **device**: Quantum device or simulator used
 - **metricName**: Performance metric measured

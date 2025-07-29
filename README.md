@@ -1,6 +1,6 @@
 # Qupacabras-DB
 
-A community-maintained database for tracking the performance of quantum algorithms executed on quantum devices.
+A community-maintained database for tracking the performance of quantum experiments executed on quantum devices.
 
 ## Features
 

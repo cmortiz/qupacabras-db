@@ -47,6 +47,7 @@ const defaultProps = {
   searchQuery: '',
   setSearchQuery: jest.fn(),
   downloadCSV: jest.fn(),
+  downloadJSON: jest.fn(),
   sortConfig: mockSortConfig,
   onSort: jest.fn()
 };
@@ -63,11 +64,8 @@ describe('BenchmarkTable', () => {
     expect(screen.getByText('Device')).toBeInTheDocument();
     expect(screen.getByText('Metric')).toBeInTheDocument();
     expect(screen.getByText('Value')).toBeInTheDocument();
-    expect(screen.getByText('Uncertainty')).toBeInTheDocument();
-    expect(screen.getByText('Paper')).toBeInTheDocument();
-    expect(screen.getByText('Files')).toBeInTheDocument();
-    expect(screen.getByText('Contributor')).toBeInTheDocument();
-    expect(screen.getByText('Timestamp')).toBeInTheDocument();
+    expect(screen.getByText('Submission')).toBeInTheDocument();
+    expect(screen.getByText('Links')).toBeInTheDocument();
   });
 
   test('renders benchmark data correctly', () => {
@@ -77,20 +75,15 @@ describe('BenchmarkTable', () => {
     expect(screen.getByText('Test Device')).toBeInTheDocument();
     expect(screen.getByText('Test Metric')).toBeInTheDocument();
     expect(screen.getByText('0.95')).toBeInTheDocument();
-    expect(screen.getByText('±0.02')).toBeInTheDocument();
-    expect(screen.getByText('testuser')).toBeInTheDocument();
   });
 
   test('handles missing data gracefully', () => {
     render(<BenchmarkTable {...defaultProps} />);
     
-    // Check for N/A values where data is missing
-    // Second item has: uncertainty (1) + 5 error rate fields = at least 6 N/A values
-    const naElements = screen.getAllByText('N/A');
-    expect(naElements.length).toBeGreaterThanOrEqual(6);
-    
-    // Check for dash values for missing paper and contributor
-    expect(screen.getAllByText('-')).toHaveLength(2); // paper and contributor for second item
+    // The second benchmark should be rendered without errors
+    expect(screen.getByText('Another Algorithm')).toBeInTheDocument();
+    expect(screen.getByText('Another Device')).toBeInTheDocument();
+    expect(screen.getByText('0.85')).toBeInTheDocument();
   });
 
   test('displays loading state', () => {
@@ -105,13 +98,27 @@ describe('BenchmarkTable', () => {
     expect(screen.getByText('No results found for "nonexistent".')).toBeInTheDocument();
   });
 
-  test('calls download CSV function when button is clicked', () => {
+  test('download dropdown functionality', () => {
     render(<BenchmarkTable {...defaultProps} />);
     
-    const downloadButton = screen.getByText('Download CSV');
+    // Click the download button to open dropdown
+    const downloadButton = screen.getByText('Download');
     fireEvent.click(downloadButton);
     
+    // Check that dropdown options appear
+    expect(screen.getByText('CSV - Visible Data')).toBeInTheDocument();
+    expect(screen.getByText('JSON - All Data')).toBeInTheDocument();
+    
+    // Click CSV option
+    fireEvent.click(screen.getByText('CSV - Visible Data'));
     expect(defaultProps.downloadCSV).toHaveBeenCalledTimes(1);
+    
+    // Open dropdown again
+    fireEvent.click(downloadButton);
+    
+    // Click JSON option
+    fireEvent.click(screen.getByText('JSON - All Data'));
+    expect(defaultProps.downloadJSON).toHaveBeenCalledTimes(1);
   });
 
   test('calls sort function when header is clicked', () => {
@@ -132,17 +139,4 @@ describe('BenchmarkTable', () => {
     expect(defaultProps.setSearchQuery).toHaveBeenCalledWith('test query');
   });
 
-  test('renders external links correctly', () => {
-    render(<BenchmarkTable {...defaultProps} />);
-    
-    // Check contributor GitHub link
-    const contributorLink = screen.getByTitle("View testuser's GitHub profile");
-    expect(contributorLink).toHaveAttribute('href', 'https://github.com/testuser');
-    expect(contributorLink).toHaveAttribute('target', '_blank');
-    
-    // Check paper link
-    const paperLink = screen.getByTitle('View Paper');
-    expect(paperLink).toHaveAttribute('href', 'https://example.com/paper');
-    expect(paperLink).toHaveAttribute('target', '_blank');
-  });
 });

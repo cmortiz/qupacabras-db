@@ -1,4 +1,4 @@
-name: Test Auto-populate Contributor
+name: Test Auto-populate PR Metadata
 
 on:
   workflow_dispatch:
@@ -33,12 +33,12 @@ jobs:
           }
           EOF
           
-      - name: Run add-contributor script
+      - name: Run add-pr-metadata script
         run: |
-          chmod +x scripts/add-contributor.js
-          node scripts/add-contributor.js submissions/test_auto_populate/benchmark.json "${{ github.event.inputs.test_username }}"
+          chmod +x scripts/add-pr-metadata.js
+          node scripts/add-pr-metadata.js submissions/test_auto_populate/benchmark.json "${{ github.event.inputs.test_username }}" "2025-07-24T10:30:00Z"
           
-      - name: Verify contributor was added
+      - name: Verify contributor and timestamp were added
         run: |
           echo "Contents of benchmark.json after adding contributor:"
           cat submissions/test_auto_populate/benchmark.json
@@ -52,17 +52,33 @@ jobs:
             exit 1
           fi
           
+          # Verify timestamp field exists
+          TIMESTAMP=$(jq -r '.timestamp' submissions/test_auto_populate/benchmark.json)
+          if [ "$TIMESTAMP" = "2025-07-24T10:30:00Z" ]; then
+            echo "✅ Success: Timestamp field correctly added"
+          else
+            echo "❌ Failed: Expected timestamp '2025-07-24T10:30:00Z', got '$TIMESTAMP'"
+            exit 1
+          fi
+          
       - name: Test idempotency
         run: |
           # Run again - should not modify
-          node scripts/add-contributor.js submissions/test_auto_populate/benchmark.json "different-user"
+          node scripts/add-pr-metadata.js submissions/test_auto_populate/benchmark.json "different-user" "2025-07-25T12:00:00Z"
           
-          # Verify it didn't change
+          # Verify they didn't change
           CONTRIBUTOR=$(jq -r '.contributor' submissions/test_auto_populate/benchmark.json)
+          TIMESTAMP=$(jq -r '.timestamp' submissions/test_auto_populate/benchmark.json)
           if [ "$CONTRIBUTOR" = "${{ github.event.inputs.test_username }}" ]; then
             echo "✅ Success: Contributor field was not overwritten"
           else
             echo "❌ Failed: Contributor was overwritten to '$CONTRIBUTOR'"
+            exit 1
+          fi
+          if [ "$TIMESTAMP" = "2025-07-24T10:30:00Z" ]; then
+            echo "✅ Success: Timestamp field was not overwritten"
+          else
+            echo "❌ Failed: Timestamp was overwritten to '$TIMESTAMP'"
             exit 1
           fi
           

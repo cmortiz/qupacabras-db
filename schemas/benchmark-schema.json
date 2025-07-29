@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Quantum Benchmark Schema",
-  "description": "Schema for validating quantum algorithm benchmark submissions",
+  "description": "Schema for validating quantum experiment benchmark submissions",
   "type": "object",
   "required": [
     "algorithmName",
@@ -19,7 +19,7 @@
     },
     "algorithmName": {
       "type": "string",
-      "description": "Name of the quantum algorithm",
+      "description": "Name of the quantum experiment",
       "minLength": 3,
       "maxLength": 100
     },
@@ -63,6 +63,11 @@
       "description": "GitHub username of the contributor",
       "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-])*$",
       "maxLength": 39
+    },
+    "experimentDate": {
+      "type": ["string", "null"],
+      "description": "ISO 8601 formatted date when the experiment was performed",
+      "format": "date-time"
     },
     "team": {
       "type": "array",
