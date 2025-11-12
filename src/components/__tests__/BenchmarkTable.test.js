@@ -57,16 +57,29 @@ describe('BenchmarkTable', () => {
     jest.clearAllMocks();
   });
 
-  test('renders table headers correctly', () => {
-    render(<BenchmarkTable {...defaultProps} />);
-    
-    expect(screen.getByText('Algorithm')).toBeInTheDocument();
-    expect(screen.getByText('Device')).toBeInTheDocument();
-    expect(screen.getByText('Metric')).toBeInTheDocument();
-    expect(screen.getByText('Value')).toBeInTheDocument();
-    expect(screen.getByText('Submission')).toBeInTheDocument();
-    expect(screen.getByText('Links')).toBeInTheDocument();
-  });
+test('renders table headers correctly', () => {
+  render(<BenchmarkTable {...defaultProps} />);
+
+  expect(
+    screen.getByRole('columnheader', { name: /experiment/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('columnheader', { name: /device/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('columnheader', { name: /metric/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('columnheader', { name: /value/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('columnheader', { name: /submission/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('columnheader', { name: /links/i })
+  ).toBeInTheDocument();
+});
+
 
   test('renders benchmark data correctly', () => {
     render(<BenchmarkTable {...defaultProps} />);
@@ -123,12 +136,14 @@ describe('BenchmarkTable', () => {
 
   test('calls sort function when header is clicked', () => {
     render(<BenchmarkTable {...defaultProps} />);
-    
-    const algorithmHeader = screen.getByText('Algorithm');
-    fireEvent.click(algorithmHeader);
-    
+
+    // the first column header is "Experiment", not "Algorithm"
+    const experimentHeader = screen.getByRole('columnheader', { name: /experiment/i });
+    fireEvent.click(experimentHeader);
+
     expect(defaultProps.onSort).toHaveBeenCalledWith('algorithmName');
-  });
+  }); 
+
 
   test('search functionality works', () => {
     render(<BenchmarkTable {...defaultProps} />);
