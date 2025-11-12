@@ -112,42 +112,54 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const changedFiles = '${{ steps.changed-files.outputs.all_changed_files }}'.split(' ');
-          const submissionFolders = [...new Set(changedFiles
-            .filter(file => file.startsWith('submissions/'))
-            .map(file => file.split('/')[1])
-            .filter(folder => folder !== 'template')
+          const changedFilesStr = '${{ steps.changed-files.outputs.all_changed_files }}';
+          const changedFiles = changedFilesStr.split(/\s+/).filter(Boolean);
+
+          const submissionFolders = [...new Set(
+            changedFiles
+              .filter(file => file.startsWith('submissions/'))
+              .map(file => file.split('/')[1])
+              .filter(folder => folder !== 'template')
           )];
-          
-          if (submissionFolders.length > 0) {
-            const validatedFolders = process.env.VALIDATED_FOLDERS ? process.env.VALIDATED_FOLDERS.trim().split(' ') : [];
-            const comment = `## 🧪 Benchmark Submission Validation
-            
-**Validated submissions:** ${validatedFolders.map(f => \`\\\`${f}\\\`\`).join(', ')}
 
-✅ All validations passed! The benchmark data has been validated for:
-- **JSON Schema compliance** with comprehensive field validation
-- **Quantum-specific properties** (qubit count, gate count, circuit depth)
-- **QASM file existence and syntax** (if specified)
-- **Numeric field validation** with appropriate ranges
-- **URL format validation**
-- **Duplicate detection** across submissions
-- **Timestamp format** (ISO 8601)
-- **ID/folder name matching**
+          if (submissionFolders.length === 0) {
+            return;
+          }
 
-### Enhanced Validation Features:
-- 📋 Validates against formal JSON Schema
-- 🔬 Quantum-specific field validation (qubits, gates, depth)
-- 🔍 Automatic duplicate submission detection
-- ⚠️  Warnings for missing recommended fields
-- 🛡️  Pre-commit hook ready for local validation
+          const validatedFoldersEnv = process.env.VALIDATED_FOLDERS || '';
+          const validatedFolders = validatedFoldersEnv.trim().split(/\s+/).filter(Boolean);
 
-Your submission is ready for review by maintainers.`;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+          const formattedValidated = validatedFolders.length
+            ? validatedFolders.map(f => `\`${f}\``).join(', ')
+            : '_None_';
+
+          const comment = `## 🧪 Benchmark Submission Validation
+
+          **Validated submissions:** ${formattedValidated}
+
+          ✅ All validations passed! The benchmark data has been validated for:
+          - **JSON Schema compliance** with comprehensive field validation
+          - **Quantum-specific properties** (qubit count, gate count, circuit depth)
+          - **QASM file existence and syntax** (if specified)
+          - **Numeric field validation** with appropriate ranges
+          - **URL format validation**
+          - **Duplicate detection** across submissions
+          - **Timestamp format** (ISO 8601)
+          - **ID/folder name matching**
+
+          ### Enhanced Validation Features:
+          - 📋 Validates against formal JSON Schema
+          - 🔬 Quantum-specific field validation (qubits, gates, depth)
+          - 🔍 Automatic duplicate submission detection
+          - ⚠️  Warnings for missing recommended fields
+          - 🛡️  Pre-commit hook ready for local validation
+
+          Your submission is ready for review by maintainers.`;
+
+                    await github.rest.issues.createComment({
+                      issue_number: context.issue.number,
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      body: comment
+                    });
           }
