@@ -123,31 +123,31 @@ jobs:
             const validatedFolders = process.env.VALIDATED_FOLDERS ? process.env.VALIDATED_FOLDERS.trim().split(' ') : [];
             const comment = `## 🧪 Benchmark Submission Validation
             
-**Validated submissions:** ${validatedFolders.map(f => \`\\\`${f}\\\`\`).join(', ')}
+          **Validated submissions:** ${validatedFolders.map(f => \`\\\`${f}\\\`\`).join(', ')}
 
-✅ All validations passed! The benchmark data has been validated for:
-- **JSON Schema compliance** with comprehensive field validation
-- **Quantum-specific properties** (qubit count, gate count, circuit depth)
-- **QASM file existence and syntax** (if specified)
-- **Numeric field validation** with appropriate ranges
-- **URL format validation**
-- **Duplicate detection** across submissions
-- **Timestamp format** (ISO 8601)
-- **ID/folder name matching**
+          ✅ All validations passed! The benchmark data has been validated for:
+          - **JSON Schema compliance** with comprehensive field validation
+          - **Quantum-specific properties** (qubit count, gate count, circuit depth)
+          - **QASM file existence and syntax** (if specified)
+          - **Numeric field validation** with appropriate ranges
+          - **URL format validation**
+          - **Duplicate detection** across submissions
+          - **Timestamp format** (ISO 8601)
+          - **ID/folder name matching**
 
-### Enhanced Validation Features:
-- 📋 Validates against formal JSON Schema
-- 🔬 Quantum-specific field validation (qubits, gates, depth)
-- 🔍 Automatic duplicate submission detection
-- ⚠️  Warnings for missing recommended fields
-- 🛡️  Pre-commit hook ready for local validation
+          ### Enhanced Validation Features:
+          - 📋 Validates against formal JSON Schema
+          - 🔬 Quantum-specific field validation (qubits, gates, depth)
+          - 🔍 Automatic duplicate submission detection
+          - ⚠️  Warnings for missing recommended fields
+          - 🛡️  Pre-commit hook ready for local validation
 
-Your submission is ready for review by maintainers.`;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+          Your submission is ready for review by maintainers.`;
+                      
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: comment
+                      });
           }
