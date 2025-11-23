@@ -13,6 +13,7 @@
   "scripts": {
     "start": "cross-env NODE_OPTIONS=\"--experimental-webstorage --localstorage-file=/tmp/qupacabras-localstorage.db\" react-scripts start",
     "build": "cross-env NODE_OPTIONS=\"--experimental-webstorage --localstorage-file=/tmp/qupacabras-localstorage.db\" node scripts/generate-benchmark-index.js && cross-env NODE_OPTIONS=\"--experimental-webstorage --localstorage-file=/tmp/qupacabras-localstorage.db\" react-scripts build",
+    "build:ci": "node scripts/generate-benchmark-index.js && react-scripts build",
     "test": "cross-env NODE_OPTIONS=\"--experimental-webstorage --localstorage-file=/tmp/qupacabras-localstorage.db\" react-scripts test",
     "test:ci": "cross-env NODE_OPTIONS=\"--experimental-webstorage --localstorage-file=/tmp/qupacabras-localstorage.db\" react-scripts test --coverage --ci --watchAll=false",
     "generate-index": "node scripts/generate-benchmark-index.js",
