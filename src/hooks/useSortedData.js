@@ -18,7 +18,7 @@ export function useSortedData(data) {
 
         const sortedArray = [...data].sort((a, b) => {
             const { key, direction } = sortConfig;
-            
+
             // Support nested properties like 'errorRates.qubit.mean'
             let aValue = getNestedValue(a, key);
             let bValue = getNestedValue(b, key);
@@ -27,7 +27,7 @@ export function useSortedData(data) {
             if (key === 'timestamp') {
                 aValue = new Date(aValue);
                 bValue = new Date(bValue);
-            } else if (key === 'metricValue' || key === 'uncertainty' || key.includes('.mean') || key.includes('.min') || key.includes('.max') || key.includes('.median')) {
+            } else if (key === 'metricValue' || key === 'uncertainty' || key.includes('Count') || key.includes('Depth') || key.includes('shots') || key.includes('.mean') || key.includes('.min') || key.includes('.max') || key.includes('.median')) {
                 aValue = parseFloat(aValue) || 0;
                 bValue = parseFloat(bValue) || 0;
             } else if (typeof aValue === 'string') {

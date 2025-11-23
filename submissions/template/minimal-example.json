@@ -1,6 +1,0 @@
-{
-  "algorithmName": "Grover's Algorithm",
-  "device": "Qiskit Aer Simulator",
-  "metricName": "Success Rate",
-  "metricValue": 0.95
-}

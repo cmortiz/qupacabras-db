@@ -1,23 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Database, FileText, FolderOpen, Github } from 'lucide-react';
+import { Database, FileText, FolderOpen, Github, X, FileCode, Activity, Cpu, Clock } from 'lucide-react';
 import { COLORS, CONFIG } from '../constants';
 import SearchBar from './SearchBar';
 import SortableHeader from './SortableHeader';
 import DownloadDropdown from './DownloadDropdown';
 
+// Modal component for detailed benchmark view
+function BenchmarkDetailsModal({ benchmark, onClose }) {
+    if (!benchmark) return null;
 
-// Component for metric value with all details on hover
-function MetricValueWithDetails({ benchmark }) {
-    const [isHovered, setIsHovered] = React.useState(false);
-    const [tooltipPosition, setTooltipPosition] = React.useState({ top: 0, left: 0 });
-    const valueRef = React.useRef(null);
-    
     const formatErrorRate = (val) => {
         if (val === null || val === undefined) return 'N/A';
         return (val * 100).toFixed(3) + '%';
     };
-    
+
     const formatDetailedErrorRate = (stats) => {
         if (!stats) return { mean: 'N/A', min: 'N/A', median: 'N/A', max: 'N/A' };
         return {
@@ -27,340 +24,288 @@ function MetricValueWithDetails({ benchmark }) {
             max: formatErrorRate(stats.max)
         };
     };
-    
-    const formatDetailedTime = (stats) => {
-        if (!stats) return { mean: 'N/A', min: 'N/A', median: 'N/A', max: 'N/A' };
-        const unit = stats.unit || 'seconds';
-        return {
-            mean: `${stats.mean?.toFixed(3) || 'N/A'} ${unit}`,
-            min: `${stats.min?.toFixed(3) || 'N/A'} ${unit}`,
-            median: `${stats.median?.toFixed(3) || 'N/A'} ${unit}`,
-            max: `${stats.max?.toFixed(3) || 'N/A'} ${unit}`
-        };
-    };
-    
-    const handleMouseEnter = () => {
-        if (valueRef.current) {
-            const rect = valueRef.current.getBoundingClientRect();
-            const tooltipHeight = 600; // Approximate height
-            const tooltipWidth = 450;
-            const viewportHeight = window.innerHeight;
-            const viewportWidth = window.innerWidth;
-            
-            let top = rect.bottom + 8;
-            let left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
-            
-            // Check if tooltip would go off bottom of viewport
-            if (rect.bottom + tooltipHeight > viewportHeight) {
-                top = rect.top - tooltipHeight - 8;
-            }
-            
-            // Check if tooltip would go off right edge
-            if (left + tooltipWidth > viewportWidth) {
-                left = viewportWidth - tooltipWidth - 20;
-            }
-            
-            // Check if tooltip would go off left edge
-            if (left < 20) {
-                left = 20;
-            }
-            
-            setTooltipPosition({ top, left });
-            setIsHovered(true);
-        }
-    };
-    
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
-    
-    return (
-        <div 
-            style={{ position: 'relative', display: 'inline-block' }} 
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            <span 
-                ref={valueRef}
-                style={{ 
-                    fontFamily: 'monospace',
-                    fontSize: '1rem',
-                    color: COLORS.accentOrange,
-                    borderBottom: `2px dotted ${COLORS.accentOrange}`,
-                    cursor: 'help'
+
+    return ReactDOM.createPortal(
+        <>
+            <div
+                style={{
+                    position: 'fixed',
+                    inset: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    zIndex: 40,
+                    backdropFilter: 'blur(2px)'
+                }}
+                onClick={onClose}
+            />
+            <div
+                style={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '90%',
+                    maxWidth: '800px',
+                    maxHeight: '90vh',
+                    backgroundColor: COLORS.bgCard,
+                    border: `1px solid ${COLORS.border}`,
+                    borderRadius: '0.75rem',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    zIndex: 50,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden'
                 }}
             >
-                {benchmark.metricValue}
-            </span>
-            {isHovered && ReactDOM.createPortal(
-                <div 
-                    className="metric-details-tooltip"
-                    style={{ 
-                        position: 'fixed',
-                        backgroundColor: COLORS.bgCard,
-                        border: `1px solid ${COLORS.border}`,
-                        top: tooltipPosition.top,
-                        left: tooltipPosition.left,
-                        width: '450px',
-                        maxHeight: '80vh',
-                        overflowY: 'auto',
+                {/* Header */}
+                <div style={{
+                    padding: '1.5rem',
+                    borderBottom: `1px solid ${COLORS.border}`,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'start',
+                    backgroundColor: COLORS.bg
+                }}>
+                    <div>
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: COLORS.fg, marginBottom: '0.5rem' }}>
+                            {benchmark.algorithmName}
+                        </h2>
+                        <div style={{ display: 'flex', gap: '1rem', color: COLORS.fgMuted, fontSize: '0.875rem' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                <Cpu size={14} /> {benchmark.device}
+                            </span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                <Clock size={14} /> {benchmark.timestamp.toLocaleDateString()}
+                            </span>
+                            {benchmark.contributor && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                    <Github size={14} /> @{benchmark.contributor}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: COLORS.fgMuted,
+                            cursor: 'pointer',
+                            padding: '0.25rem'
+                        }}
+                    >
+                        <X size={24} />
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div style={{ padding: '1.5rem', overflowY: 'auto' }}>
+                    {/* Primary Metric */}
+                    <div style={{
+                        backgroundColor: COLORS.bg,
                         padding: '1rem',
                         borderRadius: '0.5rem',
-                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
-                        fontSize: '0.875rem',
-                        zIndex: 1000,
-                        display: 'block'
-                    }}
-                >
-                <div style={{ fontWeight: '600', marginBottom: '0.75rem', color: COLORS.accentAqua }}>
-                    {benchmark.algorithmName} - All Metrics
-                </div>
-                
-                {/* Primary Metric */}
-                <div style={{ marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: `1px solid ${COLORS.border}` }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                        <span style={{ color: COLORS.fgMuted }}>{benchmark.metricName}:</span>
-                        <span style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>
-                            {benchmark.metricValue} {benchmark.uncertainty ? `±${benchmark.uncertainty}` : ''}
-                        </span>
+                        marginBottom: '1.5rem',
+                        border: `1px solid ${COLORS.border}`,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}>
+                        <div>
+                            <div style={{ color: COLORS.fgMuted, fontSize: '0.875rem', marginBottom: '0.25rem' }}>Primary Metric</div>
+                            <div style={{ fontSize: '1.125rem', fontWeight: '600', color: COLORS.accentAqua }}>{benchmark.metricName}</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: COLORS.accentOrange, fontFamily: 'monospace' }}>
+                                {benchmark.metricValue}
+                                {benchmark.uncertainty && <span style={{ fontSize: '1rem', color: COLORS.fgMuted, marginLeft: '0.5rem' }}>± {benchmark.uncertainty}</span>}
+                            </div>
+                            {benchmark.uncertaintyDefinition && (
+                                <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>
+                                    ({benchmark.uncertaintyDefinition})
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-                
-                {/* Error Rates */}
-                {benchmark.errorRates && (
-                    <div style={{ marginBottom: '0.75rem' }}>
-                        <div style={{ fontWeight: '500', marginBottom: '0.5rem', color: COLORS.fg }}>Error Rates</div>
-                        <div style={{ paddingLeft: '0.5rem' }}>
-                            {benchmark.errorRates.qubit && (
+
+                    {/* Description & Methodology */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                        <div>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg }}>Description</h3>
+                            <p style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: '1.5' }}>
+                                {benchmark.description || 'No description provided.'}
+                            </p>
+                        </div>
+                        {benchmark.methodology && (
+                            <div>
+                                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg }}>Methodology</h3>
+                                <p style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: '1.5' }}>
+                                    {benchmark.methodology}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Quantum Specifics */}
+                    {benchmark.quantumSpecific && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <Activity size={16} /> Quantum Circuit Details
+                            </h3>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(4, 1fr)',
+                                gap: '1rem',
+                                backgroundColor: COLORS.bg,
+                                padding: '1rem',
+                                borderRadius: '0.5rem',
+                                border: `1px solid ${COLORS.border}`
+                            }}>
                                 <div>
-                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>Qubit Error:</div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).min}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).median}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).mean}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).max}</div>
-                                        </div>
-                                    </div>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Qubits</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.qubitCount || '-'}</div>
                                 </div>
-                            )}
-                            {benchmark.errorRates.readout && (
-                                <div style={{ marginTop: '0.5rem' }}>
-                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>Readout Error:</div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.readout).min}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.readout).median}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.readout).mean}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.readout).max}</div>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Depth</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.circuitDepth || '-'}</div>
                                 </div>
-                            )}
-                            {benchmark.errorRates.singleQubitGate && (
-                                <div style={{ marginTop: '0.5rem' }}>
-                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>1Q Gate Error:</div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).min}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).median}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).mean}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).max}</div>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Gates</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.gateCount || '-'}</div>
                                 </div>
-                            )}
-                            {benchmark.errorRates.twoQubitGate && (
-                                <div style={{ marginTop: '0.5rem' }}>
-                                    <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>2Q Gate Error:</div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).min}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).median}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                            <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).mean}</div>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                            <div style={{ fontFamily: 'monospace' }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).max}</div>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Shots</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.shots || '-'}</div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-                
-                {/* Execution Time */}
-                {benchmark.executionTime && (
-                    <div style={{ marginBottom: '0.75rem' }}>
-                        <div style={{ fontWeight: '500', marginBottom: '0.5rem', color: COLORS.fg }}>Execution Time</div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
-                            <div>
-                                <span style={{ color: COLORS.fgSubtle }}>Min:</span>
-                                <div style={{ fontFamily: 'monospace' }}>{formatDetailedTime(benchmark.executionTime).min}</div>
-                            </div>
-                            <div>
-                                <span style={{ color: COLORS.fgSubtle }}>Median:</span>
-                                <div style={{ fontFamily: 'monospace' }}>{formatDetailedTime(benchmark.executionTime).median}</div>
-                            </div>
-                            <div>
-                                <span style={{ color: COLORS.fgSubtle }}>Mean:</span>
-                                <div style={{ fontFamily: 'monospace', fontWeight: '600', color: COLORS.accentGreen }}>{formatDetailedTime(benchmark.executionTime).mean}</div>
-                            </div>
-                            <div>
-                                <span style={{ color: COLORS.fgSubtle }}>Max:</span>
-                                <div style={{ fontFamily: 'monospace' }}>{formatDetailedTime(benchmark.executionTime).max}</div>
                             </div>
                         </div>
-                    </div>
-                )}
-                
-                {/* Quantum Properties */}
-                {benchmark.quantumSpecific && (
-                    <div style={{ marginBottom: '0.75rem' }}>
-                        <div style={{ fontWeight: '500', marginBottom: '0.5rem', color: COLORS.fg }}>Quantum Properties</div>
-                        <div style={{ paddingLeft: '0.5rem' }}>
-                            {benchmark.quantumSpecific.qubitCount && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: COLORS.fgMuted }}>Qubits:</span>
-                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.qubitCount}</span>
-                                </div>
-                            )}
-                            {benchmark.quantumSpecific.gateCount && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: COLORS.fgMuted }}>Gates:</span>
-                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.gateCount}</span>
-                                </div>
-                            )}
-                            {benchmark.quantumSpecific.circuitDepth && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: COLORS.fgMuted }}>Depth:</span>
-                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.circuitDepth}</span>
-                                </div>
-                            )}
-                            {benchmark.quantumSpecific.shots && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: COLORS.fgMuted }}>Shots:</span>
-                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.shots}</span>
-                                </div>
-                            )}
-                            {benchmark.quantumSpecific.circuitVariations && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: COLORS.fgMuted }}>Circuit Variations:</span>
-                                    <span style={{ fontFamily: 'monospace' }}>{benchmark.quantumSpecific.circuitVariations}</span>
-                                </div>
-                            )}
-                        </div>
-                        {benchmark.quantumSpecific.gateBreakdown && (
-                            <div style={{ marginTop: '0.5rem' }}>
-                                <div style={{ fontWeight: '500', marginBottom: '0.25rem', color: COLORS.fgMuted }}>Gate Breakdown:</div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', fontSize: '0.75rem', paddingLeft: '0.5rem' }}>
-                                    {Object.entries(benchmark.quantumSpecific.gateBreakdown).map(([gate, count]) => (
-                                        <div key={gate} className="flex justify-between">
-                                            <span style={{ color: COLORS.fgSubtle }}>{gate.toUpperCase()}:</span>
-                                            <span style={{ fontFamily: 'monospace' }}>{count}</span>
+                    )}
+
+                    {/* Error Rates */}
+                    {benchmark.errorRates && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg }}>Error Rates</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                                {benchmark.errorRates.qubit && (
+                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Qubit Error (Mean)</div>
+                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).mean}</div>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>
+                                            Range: {formatDetailedErrorRate(benchmark.errorRates.qubit).min} - {formatDetailedErrorRate(benchmark.errorRates.qubit).max}
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                )}
+                                {benchmark.errorRates.readout && (
+                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Readout Error (Mean)</div>
+                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.readout).mean}</div>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>
+                                            Range: {formatDetailedErrorRate(benchmark.errorRates.readout).min} - {formatDetailedErrorRate(benchmark.errorRates.readout).max}
+                                        </div>
+                                    </div>
+                                )}
+                                {benchmark.errorRates.singleQubitGate && (
+                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>1Q Gate Error (Mean)</div>
+                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).mean}</div>
+                                    </div>
+                                )}
+                                {benchmark.errorRates.twoQubitGate && (
+                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>2Q Gate Error (Mean)</div>
+                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).mean}</div>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                )}
-                
-                {/* Additional Information */}
-                <div style={{ paddingTop: '0.75rem', borderTop: `1px solid ${COLORS.border}` }}>
-                    <div>
-                        {benchmark.experimentDate && (
-                            <div className="flex justify-between">
-                                <span style={{ color: COLORS.fgMuted }}>Experiment Date:</span>
-                                <span style={{ fontFamily: 'monospace' }}>
-                                    {new Date(benchmark.experimentDate).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })}
-                                </span>
+                        </div>
+                    )}
+
+                    {/* QASM Files */}
+                    {benchmark.qasmFiles && benchmark.qasmFiles.length > 0 && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <FileCode size={16} /> Circuit Files
+                            </h3>
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                {benchmark.qasmFiles.map((file, idx) => (
+                                    <a
+                                        key={idx}
+                                        href={`${CONFIG.githubRepoUrl}/blob/main/submissions/${benchmark.benchmarkFolder}/${file}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem',
+                                            padding: '0.5rem 0.75rem',
+                                            backgroundColor: COLORS.bg,
+                                            border: `1px solid ${COLORS.border}`,
+                                            borderRadius: '0.25rem',
+                                            color: COLORS.accentBlue,
+                                            textDecoration: 'none',
+                                            fontSize: '0.875rem'
+                                        }}
+                                    >
+                                        <FileCode size={14} /> {file}
+                                    </a>
+                                ))}
                             </div>
+                        </div>
+                    )}
+
+                    {/* Links */}
+                    <div style={{ display: 'flex', gap: '1rem', paddingTop: '1rem', borderTop: `1px solid ${COLORS.border}` }}>
+                        {benchmark.paperUrl && (
+                            <a
+                                href={benchmark.paperUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    color: COLORS.accentAqua,
+                                    textDecoration: 'none',
+                                    fontWeight: '500'
+                                }}
+                            >
+                                <FileText size={16} /> Read Paper
+                            </a>
                         )}
-                        {benchmark.contributor && (
-                            <div className="flex justify-between">
-                                <span style={{ color: COLORS.fgMuted }}>Contributor:</span>
-                                <span style={{ fontFamily: 'monospace' }}>{benchmark.contributor}</span>
-                            </div>
-                        )}
-                        {benchmark.description && (
-                            <div style={{ marginTop: '0.5rem' }}>
-                                <div style={{ color: COLORS.fgMuted }}>Description:</div>
-                                <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: COLORS.fgSubtle }}>
-                                    {benchmark.description}
-                                </div>
-                            </div>
-                        )}
-                        {benchmark.notes && (
-                            <div style={{ marginTop: '0.5rem' }}>
-                                <div style={{ color: COLORS.fgMuted }}>Notes:</div>
-                                <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: COLORS.fgSubtle }}>
-                                    {benchmark.notes}
-                                </div>
-                            </div>
-                        )}
+                        <a
+                            href={`${CONFIG.githubRepoUrl}/tree/main/submissions/${benchmark.benchmarkFolder}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                color: COLORS.accentBlue,
+                                textDecoration: 'none',
+                                fontWeight: '500'
+                            }}
+                        >
+                            <FolderOpen size={16} /> View Source
+                        </a>
                     </div>
                 </div>
-                
-                </div>,
-                document.body
-            )}
-        </div>
+            </div>
+        </>,
+        document.body
     );
 }
 
-export default function BenchmarkTable({ 
-    filteredBenchmarks, 
-    isLoading, 
-    searchQuery, 
-    setSearchQuery, 
+export default function BenchmarkTable({
+    filteredBenchmarks,
+    isLoading,
+    searchQuery,
+    setSearchQuery,
     downloadCSV,
     downloadJSON,
     sortConfig,
     onSort
 }) {
+    const [selectedBenchmark, setSelectedBenchmark] = useState(null);
+
     return (
         <div style={{ width: '100%' }}>
             <div style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', borderRadius: '0.5rem', overflow: 'hidden', backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}`, minHeight: 'calc(100vh - 16rem)' }}>
@@ -368,135 +313,140 @@ export default function BenchmarkTable({
                     <h2 style={{ fontSize: '1.5rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <Database style={{ width: '1.5rem', height: '1.5rem', color: COLORS.accentAqua }} /> Benchmark Data
                     </h2>
-                    <SearchBar 
+                    <SearchBar
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                     />
-                    <DownloadDropdown 
+                    <DownloadDropdown
                         onDownloadCSV={downloadCSV}
                         onDownloadJSON={downloadJSON}
                     />
                 </div>
                 <div style={{ maxHeight: 'calc(100vh - 24rem)', overflow: 'auto' }}>
                     <table style={{ width: '100%', textAlign: 'left', tableLayout: 'auto' }}>
-                        <thead style={{ borderBottom: `2px solid ${COLORS.border}` }}>
+                        <thead style={{ borderBottom: `2px solid ${COLORS.border}`, backgroundColor: COLORS.bg }}>
                             <tr style={{ fontWeight: '600' }}>
-                                <SortableHeader 
-                                    sortKey="algorithmName" 
-                                    currentSort={sortConfig} 
+                                <SortableHeader
+                                    sortKey="algorithmName"
+                                    currentSort={sortConfig}
                                     onSort={onSort}
-                                    style={{ padding: '1.25rem 2rem' }}
+                                    style={{ padding: '1rem 1.5rem' }}
                                 >
                                     Experiment
                                 </SortableHeader>
-                                <SortableHeader 
-                                    sortKey="device" 
-                                    currentSort={sortConfig} 
+                                <SortableHeader
+                                    sortKey="device"
+                                    currentSort={sortConfig}
                                     onSort={onSort}
-                                    style={{ padding: '1.25rem 2rem' }}
+                                    style={{ padding: '1rem 1.5rem' }}
                                 >
                                     Device
                                 </SortableHeader>
-                                <SortableHeader 
-                                    sortKey="metricName" 
-                                    currentSort={sortConfig} 
+                                <SortableHeader
+                                    sortKey="quantumSpecific.qubitCount"
+                                    currentSort={sortConfig}
                                     onSort={onSort}
-                                    style={{ padding: '1.25rem 2rem' }}
+                                    style={{ padding: '1rem 1.5rem', textAlign: 'center' }}
+                                >
+                                    Qubits
+                                </SortableHeader>
+                                <SortableHeader
+                                    sortKey="quantumSpecific.circuitDepth"
+                                    currentSort={sortConfig}
+                                    onSort={onSort}
+                                    style={{ padding: '1rem 1.5rem', textAlign: 'center' }}
+                                >
+                                    Depth
+                                </SortableHeader>
+                                <SortableHeader
+                                    sortKey="metricName"
+                                    currentSort={sortConfig}
+                                    onSort={onSort}
+                                    style={{ padding: '1rem 1.5rem' }}
                                 >
                                     Metric
                                 </SortableHeader>
-                                <SortableHeader 
-                                    sortKey="metricValue" 
-                                    currentSort={sortConfig} 
+                                <SortableHeader
+                                    sortKey="metricValue"
+                                    currentSort={sortConfig}
                                     onSort={onSort}
-                                    style={{ padding: '1.25rem 2rem', textAlign: 'right' }}
+                                    style={{ padding: '1rem 1.5rem', textAlign: 'right' }}
                                 >
                                     Value
                                 </SortableHeader>
-                                <SortableHeader 
-                                    sortKey="timestamp" 
-                                    currentSort={sortConfig} 
+                                <SortableHeader
+                                    sortKey="timestamp"
+                                    currentSort={sortConfig}
                                     onSort={onSort}
-                                    style={{ padding: '1.25rem 2rem' }}
+                                    style={{ padding: '1rem 1.5rem' }}
                                 >
-                                    <span style={{
-                                        borderBottom: `2px dotted ${COLORS.fgMuted}`,
-                                        cursor: 'help'
-                                    }} title="Date when the benchmark was submitted to the database">
-                                        Submission
-                                    </span>
+                                    Date
                                 </SortableHeader>
-                                <th style={{ padding: '1.25rem 2rem', textAlign: 'center', color: COLORS.fgMuted }}>Links</th>
+                                <th style={{ padding: '1rem 1.5rem', textAlign: 'center', color: COLORS.fgMuted }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
+                                    <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
                                         Loading...
                                     </td>
                                 </tr>
                             ) : filteredBenchmarks.length > 0 ? (
                                 filteredBenchmarks.map((bm) => (
-                                    <tr key={bm.id} style={{ borderBottom: `1px solid ${COLORS.border}`, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#504945'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                                        <td style={{ padding: '1.25rem 2rem', fontWeight: '500' }}>{bm.algorithmName}</td>
-                                        <td style={{ padding: '1.25rem 2rem' }}>{bm.device}</td>
-                                        <td style={{ padding: '1.25rem 2rem' }}>{bm.metricName}</td>
-                                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                                            <MetricValueWithDetails benchmark={bm} />
+                                    <tr
+                                        key={bm.id}
+                                        style={{ borderBottom: `1px solid ${COLORS.border}`, transition: 'background-color 0.2s', cursor: 'pointer' }}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#504945'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                        onClick={() => setSelectedBenchmark(bm)}
+                                    >
+                                        <td style={{ padding: '1rem 1.5rem', fontWeight: '500' }}>{bm.algorithmName}</td>
+                                        <td style={{ padding: '1rem 1.5rem', color: COLORS.fgMuted }}>{bm.device}</td>
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontFamily: 'monospace', fontSize: '1rem' }}>
+                                            {bm.quantumSpecific?.qubitCount || '-'}
                                         </td>
-                                         <td style={{ padding: '1.25rem 2rem' }}>
-                                            {bm.timestamp.toLocaleDateString('en-US', { 
-                                                year: 'numeric', 
-                                                month: 'short', 
-                                                day: 'numeric'
-                                            })}
-                                        </td>                                            <td style={{ padding: '1.25rem 2rem', textAlign: 'center' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
-                                                    {bm.paperUrl && (
-                                                        <a 
-                                                            href={bm.paperUrl} 
-                                                            target="_blank" 
-                                                            rel="noopener noreferrer" 
-                                                            style={{ transition: 'all 0.2s', cursor: 'pointer', color: COLORS.accentAqua }}
-                                                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'scale(1.1)'; }}
-                                                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
-                                                            title="View Paper"
-                                                        >
-                                                            <FileText style={{ width: '1.25rem', height: '1.25rem' }} />
-                                                        </a>
-                                                    )}
-                                                    <a 
-                                                        href={`${CONFIG.githubRepoUrl}/tree/main/submissions/${bm.benchmarkFolder}`} 
-                                                        target="_blank" 
-                                                        rel="noopener noreferrer" 
-                                                        style={{ transition: 'all 0.2s', cursor: 'pointer', color: COLORS.accentBlue }}
-                                                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'scale(1.1)'; }}
-                                                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
-                                                        title="View Source Files"
-                                                    >
-                                                        <FolderOpen style={{ width: '1.25rem', height: '1.25rem' }} />
-                                                    </a>
-                                                    {bm.contributor && (
-                                                        <a 
-                                                            href={`https://github.com/${bm.contributor}`} 
-                                                            target="_blank" 
-                                                            rel="noopener noreferrer" 
-                                                            style={{ transition: 'all 0.2s', cursor: 'pointer', color: COLORS.fg }}
-                                                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'scale(1.1)'; }}
-                                                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
-                                                            title={`Contributor: ${bm.contributor}`}
-                                                        >
-                                                            <Github style={{ width: '1.25rem', height: '1.25rem' }} />
-                                                        </a>
-                                                    )}
-                                                </div>
-                                            </td>
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontFamily: 'monospace', fontSize: '1rem' }}>
+                                            {bm.quantumSpecific?.circuitDepth || '-'}
+                                        </td>
+                                        <td style={{ padding: '1rem 1.5rem', color: COLORS.fgMuted }}>{bm.metricName}</td>
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
+                                            <span style={{ fontFamily: 'monospace', color: COLORS.accentOrange, fontWeight: 'bold', fontSize: '1.125rem' }}>
+                                                {bm.metricValue}
+                                            </span>
+                                            {bm.uncertainty && (
+                                                <span style={{ fontSize: '0.875rem', color: COLORS.fgMuted, marginLeft: '0.25rem' }}>
+                                                    ±{bm.uncertainty}
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td style={{ padding: '1rem 1.5rem', fontSize: '1rem', color: COLORS.fgMuted }}>
+                                            {bm.timestamp.toLocaleDateString()}
+                                        </td>
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
+                                            <button
+                                                style={{
+                                                    background: 'none',
+                                                    border: `1px solid ${COLORS.border}`,
+                                                    borderRadius: '0.25rem',
+                                                    padding: '0.25rem 0.5rem',
+                                                    color: COLORS.accentBlue,
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.875rem'
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedBenchmark(bm);
+                                                }}
+                                            >
+                                                Details
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
+                                    <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
                                         {searchQuery ? `No results found for "${searchQuery}".` : 'No benchmarks available.'}
                                     </td>
                                 </tr>
@@ -505,6 +455,11 @@ export default function BenchmarkTable({
                     </table>
                 </div>
             </div>
+
+            <BenchmarkDetailsModal
+                benchmark={selectedBenchmark}
+                onClose={() => setSelectedBenchmark(null)}
+            />
         </div>
     );
 }

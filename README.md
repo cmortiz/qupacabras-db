@@ -10,14 +10,15 @@ A community-maintained database for tracking the performance of quantum experime
 - 📈 **Data Export**: Download benchmark data as CSV for analysis
 - 🔬 **Quantum-Specific Metrics**: Track qubits, gates, circuit depth, and more
 
-## Quick Start
+## 🚀 Submit a Benchmark
 
-1. Fork this repository
-2. Copy the `submissions/template/` folder
-3. Fill in your benchmark data
-4. Submit a pull request
+**The easiest way to contribute is via our web form - no coding required!**
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions.
+1. **[Click here to submit a benchmark](https://github.com/cmortiz/qupacabras-db/issues/new?template=benchmark_submission.yml)**
+2. Fill out the form
+3. Click Submit
+
+Our bot will automatically create a Pull Request for you! 🤖
 
 ## Validation
 

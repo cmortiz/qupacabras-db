@@ -11,6 +11,7 @@ function App() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showGuide, setShowGuide] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
+    const [showLightbox, setShowLightbox] = useState(false);
 
     useEffect(() => {
         fetch(process.env.PUBLIC_URL + '/benchmarks.json')
@@ -52,33 +53,36 @@ function App() {
             alert("No data available to download.");
             return;
         }
-        
+
         // Only include the visible columns
-        const headers = ['Algorithm', 'Device', 'Metric', 'Value', 'Submission_Date', 'Paper_URL', 'Source_URL'];
-        
+        const headers = ['Algorithm', 'Device', 'Qubits', 'Depth', 'Metric', 'Value', 'Uncertainty', 'Submission_Date', 'Paper_URL', 'Source_URL'];
+
         const rows = sortedData.map(bm => {
             const sourceUrl = `${CONFIG.githubRepoUrl}/tree/main/submissions/${bm.benchmarkFolder}`;
-            
+
             return [
                 `"${bm.algorithmName}"`,
                 `"${bm.device || 'N/A'}"`,
+                bm.quantumSpecific?.qubitCount || '',
+                bm.quantumSpecific?.circuitDepth || '',
                 `"${bm.metricName}"`,
                 bm.metricValue,
+                bm.uncertainty || '',
                 `"${bm.timestamp.toISOString().split('T')[0]}"`,
                 `"${bm.paperUrl || 'N/A'}"`,
                 `"${sourceUrl}"`
             ].join(',');
         });
 
-        const csvContent = "data:text/csv;charset=utf-8," 
-            + headers.join(',') + "\n" 
+        const csvContent = "data:text/csv;charset=utf-8,"
+            + headers.join(',') + "\n"
             + rows.join('\n');
-            
+
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
         link.setAttribute("download", `quantum_benchmarks_${new Date().toISOString().split('T')[0]}.csv`);
-        
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -100,11 +104,11 @@ function App() {
         const jsonContent = JSON.stringify(dataForExport, null, 2);
         const blob = new Blob([jsonContent], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        
+
         const link = document.createElement("a");
         link.setAttribute("href", url);
         link.setAttribute("download", `quantum_benchmarks_full_${new Date().toISOString().split('T')[0]}.json`);
-        
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -112,45 +116,105 @@ function App() {
     };
 
     return (
-        <div style={{ 
+        <div style={{
             minHeight: '100vh',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-            backgroundColor: COLORS.bg, 
-            color: COLORS.fg 
+            backgroundColor: COLORS.bg,
+            color: COLORS.fg
         }}>
             {/* Header with padding from top */}
             <header style={{ paddingTop: '2rem', paddingBottom: '1.5rem', paddingLeft: '3rem', paddingRight: '3rem' }}>
-                <div style={{ 
+                <div style={{
                     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                     borderRadius: '0.5rem',
                     overflow: 'hidden',
-                    backgroundColor: COLORS.bgCard, 
-                    border: `1px solid ${COLORS.border}` 
+                    backgroundColor: COLORS.bgCard,
+                    border: `1px solid ${COLORS.border}`
                 }}>
                     <div style={{ padding: '1.5rem 2rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <img src={UI_CONSTANTS.quantumIconUrl} alt="Quantum computer icon" style={{ width: '2rem', height: '2rem' }} />
-                            <img src={UI_CONSTANTS.alienIconUrl} alt="Alien icon" style={{ width: '2rem', height: '2rem' }} />
-                            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-                                <span style={{color: COLORS.accentRed}}>Q</span>upacabras-DB
-                            </h1>
-                            <span 
-                                className="app-description"
-                                style={{ 
-                                    fontSize: '1.125rem',
-                                    color: COLORS.fgMuted 
-                                }}
-                            >
-                                {UI_CONSTANTS.appDescription}
-                            </span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2rem' }}>
+                            <div style={{ flex: 1 }}>
+                                <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', lineHeight: '1.2', marginBottom: '0.5rem' }}>
+                                    <span style={{ color: COLORS.accentRed }}>Q</span>upacabras-DB
+                                </h1>
+                                <p
+                                    className="app-description"
+                                    style={{
+                                        fontSize: '1.125rem',
+                                        color: COLORS.fgMuted,
+                                        maxWidth: '600px',
+                                        margin: 0,
+                                        lineHeight: '1.6',
+                                        marginBottom: '1rem'
+                                    }}
+                                >
+                                    {UI_CONSTANTS.appDescription}
+                                </p>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                                <button
+                                    onClick={() => setShowLightbox(true)}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        padding: 0,
+                                        cursor: 'zoom-in',
+                                        transition: 'transform 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                    title="Click to enlarge"
+                                >
+                                    <img
+                                        src={process.env.PUBLIC_URL + '/qupacabras-db.gif'}
+                                        alt="Qupacabras-DB Animation"
+                                        style={{
+                                            height: '10rem',
+                                            width: 'auto',
+                                            borderRadius: '0.5rem',
+                                            imageRendering: 'pixelated',
+                                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)'
+                                        }}
+                                    />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </header>
 
+            {/* Lightbox for Header GIF */}
+            {showLightbox && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        zIndex: 100,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'zoom-out'
+                    }}
+                    onClick={() => setShowLightbox(false)}
+                >
+                    <img
+                        src={process.env.PUBLIC_URL + '/qupacabras-db.gif'}
+                        alt="Qupacabras-DB Animation (Large)"
+                        style={{
+                            maxWidth: '90vw',
+                            maxHeight: '90vh',
+                            imageRendering: 'pixelated',
+                            borderRadius: '0.5rem',
+                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                        }}
+                    />
+                </div>
+            )}
+
             {/* Main content area - full width */}
             <main style={{ paddingLeft: '3rem', paddingRight: '3rem', paddingBottom: '2rem' }}>
-                <BenchmarkTable 
+                <BenchmarkTable
                     filteredBenchmarks={sortedData}
                     isLoading={isLoading}
                     searchQuery={searchQuery}
@@ -165,7 +229,7 @@ function App() {
             {/* Floating Action Button for Contribution Guide */}
             <button
                 onClick={() => setShowGuide(!showGuide)}
-                style={{ 
+                style={{
                     position: 'fixed',
                     bottom: '1.5rem',
                     right: '1.5rem',
@@ -193,8 +257,8 @@ function App() {
             {/* Contribution Guide Panel */}
             {showGuide && (
                 <>
-                    <div 
-                        style={{ 
+                    <div
+                        style={{
                             position: 'fixed',
                             inset: 0,
                             backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -202,8 +266,8 @@ function App() {
                         }}
                         onClick={() => setShowGuide(false)}
                     />
-                    <div 
-                        style={{ 
+                    <div
+                        style={{
                             position: 'fixed',
                             backgroundColor: COLORS.bgCard,
                             right: 0,
@@ -218,7 +282,7 @@ function App() {
                     >
                         <button
                             onClick={() => setShowGuide(false)}
-                            style={{ 
+                            style={{
                                 position: 'absolute',
                                 top: '1rem',
                                 right: '1rem',
@@ -243,7 +307,7 @@ function App() {
             {/* Info Button */}
             <button
                 onClick={() => setShowInfo(!showInfo)}
-                style={{ 
+                style={{
                     position: 'fixed',
                     bottom: '1.5rem',
                     left: '1.5rem',
@@ -257,7 +321,7 @@ function App() {
                     transition: 'all 0.2s',
                     backgroundColor: COLORS.bgCard,
                     border: `1px solid ${COLORS.border}`,
-                    color: COLORS.fgSubtle,
+                    color: COLORS.accentOrange,
                     cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
@@ -270,8 +334,8 @@ function App() {
             {/* Info Modal */}
             {showInfo && (
                 <>
-                    <div 
-                        style={{ 
+                    <div
+                        style={{
                             position: 'fixed',
                             inset: 0,
                             backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -279,8 +343,8 @@ function App() {
                         }}
                         onClick={() => setShowInfo(false)}
                     />
-                    <div 
-                        style={{ 
+                    <div
+                        style={{
                             position: 'fixed',
                             top: '50%',
                             left: '50%',
@@ -296,7 +360,7 @@ function App() {
                     >
                         <button
                             onClick={() => setShowInfo(false)}
-                            style={{ 
+                            style={{
                                 position: 'absolute',
                                 top: '0.5rem',
                                 right: '0.5rem',
@@ -324,9 +388,9 @@ function App() {
                             </p>
                             <p style={{ marginBottom: '0.5rem' }}>
                                 <strong style={{ color: COLORS.fg }}>GitHub:</strong>{' '}
-                                <a 
-                                    href={CONFIG.githubRepoUrl} 
-                                    target="_blank" 
+                                <a
+                                    href={CONFIG.githubRepoUrl}
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     style={{ color: COLORS.accentBlue, textDecoration: 'none' }}
                                     onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
@@ -339,22 +403,10 @@ function App() {
                                 <strong style={{ color: COLORS.fg }}>Credits:</strong>
                             </p>
                             <ul style={{ paddingLeft: '1rem', marginBottom: '0.5rem' }}>
-                                <li>Icons from{' '}
-                                    <a 
-                                        href="https://www.flaticon.com" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        style={{ color: COLORS.accentBlue, textDecoration: 'none' }}
-                                        onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                                        onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
-                                    >
-                                        Flaticon.com
-                                    </a>
-                                </li>
                                 <li>Color theme inspired by{' '}
-                                    <a 
-                                        href="https://github.com/morhetz/gruvbox" 
-                                        target="_blank" 
+                                    <a
+                                        href="https://github.com/morhetz/gruvbox"
+                                        target="_blank"
                                         rel="noopener noreferrer"
                                         style={{ color: COLORS.accentBlue, textDecoration: 'none' }}
                                         onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
@@ -363,6 +415,7 @@ function App() {
                                         Gruvbox
                                     </a>
                                 </li>
+                                <li>GIF generated with Veo 3.1</li>
                             </ul>
                         </div>
                     </div>

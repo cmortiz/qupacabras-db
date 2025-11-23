@@ -1,0 +1,120 @@
+name: 📊 Benchmark Submission
+description: Submit a new quantum benchmark result to the database
+title: "[Submission]: <Algorithm Name> on <Device>"
+labels: ["submission", "automated-pr"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Benchmark Submission
+        
+        Thank you for contributing to Qupacabras-DB! 
+        
+        **How this works:**
+        1. Fill out this form
+        2. Click "Submit New Issue"
+        3. A bot will automatically create a Pull Request for you! 🤖
+        
+  - type: input
+    id: algorithm_name
+    attributes:
+      label: Algorithm Name
+      description: Name of the quantum algorithm (e.g., Grover's Search, QFT, VQE)
+      placeholder: Grover's Algorithm
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Quantum Device
+      description: Name of the device or simulator used
+      placeholder: IBM Sherbrooke
+    validations:
+      required: true
+
+  - type: dropdown
+    id: metric_name
+    attributes:
+      label: Metric Name
+      description: The primary performance metric measured
+      options:
+        - Fidelity
+        - Success Probability
+        - Win Rate
+        - Approximation Ratio
+        - Custom
+    validations:
+      required: true
+
+  - type: input
+    id: metric_value
+    attributes:
+      label: Metric Value
+      description: The numerical result (usually 0.0 to 1.0)
+      placeholder: "0.95"
+    validations:
+      required: true
+
+  - type: input
+    id: uncertainty
+    attributes:
+      label: Uncertainty (Optional)
+      description: The margin of error or standard deviation (e.g., 0.02).
+      placeholder: "0.02"
+    validations:
+      required: false
+
+  - type: input
+    id: uncertainty_definition
+    attributes:
+      label: Uncertainty Definition (Optional)
+      description: How was this uncertainty calculated? (e.g., Standard Deviation, SEM, 95% CI)
+      placeholder: "Standard Error of the Mean"
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Brief description of what was benchmarked and how
+      placeholder: Implemented Grover's search for 3 qubits searching for state |101>...
+    validations:
+      required: false
+
+  - type: input
+    id: paper_url
+    attributes:
+      label: Paper/Preprint URL
+      description: Link to the publication or preprint (arXiv, etc.)
+      placeholder: https://arxiv.org/abs/2301.xxxxx
+    validations:
+      required: false
+
+  - type: input
+    id: qubit_count
+    attributes:
+      label: Qubit Count
+      description: Number of qubits used in the experiment
+      placeholder: "5"
+    validations:
+      required: false
+
+  - type: input
+    id: shots
+    attributes:
+      label: Shots
+      description: Number of measurement shots/repetitions
+      placeholder: "1024"
+    validations:
+      required: false
+
+  - type: textarea
+    id: qasm_content
+    attributes:
+      label: QASM Circuit (Optional)
+      description: Paste your OpenQASM 2.0/3.0 code here
+      render: qasm
+    validations:
+      required: false

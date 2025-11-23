@@ -1,0 +1,209 @@
+name: Convert Issue to Submission PR
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  create-submission-pr:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'submission')
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Parse Issue and Create Benchmark
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Helper to extract value from issue body
+            // This is a simple parser for the issue form format
+            function extractValue(body, header) {
+              const regex = new RegExp(`### ${header}\\s+([\\s\\S]*?)(?=(?:###|$))`);
+              const match = body.match(regex);
+              return match ? match[1].trim() : null;
+            }
+
+            const body = context.payload.issue.body;
+            
+            // Extract fields
+            const algorithmName = extractValue(body, 'Algorithm Name');
+            const device = extractValue(body, 'Quantum Device');
+            const metricName = extractValue(body, 'Metric Name');
+            const metricValueStr = extractValue(body, 'Metric Value');
+            const uncertaintyStr = extractValue(body, 'Uncertainty (Optional)');
+            const description = extractValue(body, 'Description');
+            const paperUrl = extractValue(body, 'Paper/Preprint URL');
+            const qubitCountStr = extractValue(body, 'Qubit Count');
+            const shotsStr = extractValue(body, 'Shots');
+            const qasmContent = extractValue(body, 'QASM Circuit (Optional)');
+
+            if (!algorithmName || !device || !metricName || !metricValueStr) {
+              core.setFailed('Missing required fields');
+              return;
+            }
+
+            // Create ID from algorithm name
+            const id = algorithmName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+            const timestamp = new Date().toISOString();
+            const contributor = context.payload.issue.user.login;
+            
+            // Build benchmark object
+            const benchmark = {
+              id,
+              algorithmName,
+              device,
+              metricName,
+              metricValue: parseFloat(metricValueStr),
+              timestamp, // Creation time
+              lastUpdated: timestamp, // Initial update time
+              contributor,
+              description: description !== '_No response_' ? description : undefined,
+              paperUrl: paperUrl !== '_No response_' ? paperUrl : undefined,
+            };
+
+            // Add uncertainty if provided
+            if (uncertaintyStr && uncertaintyStr !== '_No response_') {
+              benchmark.uncertainty = parseFloat(uncertaintyStr);
+            }
+
+            // Add quantum specifics
+            const quantumSpecific = {};
+            if (qubitCountStr && qubitCountStr !== '_No response_') quantumSpecific.qubitCount = parseInt(qubitCountStr);
+            if (shotsStr && shotsStr !== '_No response_') quantumSpecific.shots = parseInt(shotsStr);
+            
+            if (Object.keys(quantumSpecific).length > 0) {
+              benchmark.quantumSpecific = quantumSpecific;
+            }
+
+            // Prepare directory - use stable name based on ID to allow updates
+            // We append the issue number to avoid collisions between different issues for the same algorithm
+            // This allows users to update THEIR submission by editing THEIR issue
+            const dirName = `${id}_issue${context.issue.number}`;
+            const dirPath = path.join('submissions', dirName);
+            
+            if (!fs.existsSync(dirPath)) {
+              fs.mkdirSync(dirPath, { recursive: true });
+            } else {
+              // If directory exists, we are updating. Preserve original timestamp if possible.
+              try {
+                const existingPath = path.join(dirPath, 'benchmark.json');
+                if (fs.existsSync(existingPath)) {
+                  const existing = JSON.parse(fs.readFileSync(existingPath, 'utf8'));
+                  if (existing.timestamp) {
+                    benchmark.timestamp = existing.timestamp; // Keep original creation date
+                  }
+                }
+              } catch (e) {
+                // Ignore error, just use new timestamp
+              }
+            }
+
+            // Write benchmark.json
+            fs.writeFileSync(
+              path.join(dirPath, 'benchmark.json'), 
+              JSON.stringify(benchmark, null, 2)
+            );
+            
+            // Write QASM if provided
+            if (qasmContent && qasmContent !== '_No response_') {
+              const qasmPath = path.join(dirPath, 'circuit.qasm');
+              fs.writeFileSync(qasmPath, qasmContent);
+              benchmark.qasmFiles = ['circuit.qasm'];
+              
+              // Analyze QASM to extract metrics
+              try {
+                // We need to require the script from the checked out repo
+                // The script is in scripts/analyze-qasm.js
+                const analyzerPath = path.resolve('scripts/analyze-qasm.js');
+                if (fs.existsSync(analyzerPath)) {
+                  const { analyzeQASMFile } = require(analyzerPath);
+                  const analysis = analyzeQASMFile(qasmPath);
+                  
+                  if (analysis) {
+                    console.log('✅ QASM Analysis successful:', JSON.stringify(analysis));
+                    
+                    // Initialize quantumSpecific if needed
+                    if (!benchmark.quantumSpecific) {
+                      benchmark.quantumSpecific = {};
+                    }
+                    
+                    // Merge metrics (prefer manual input if provided, otherwise use extracted)
+                    // We only overwrite if the manual field is missing
+                    if (!benchmark.quantumSpecific.qubitCount && analysis.qubitCount > 0) {
+                      benchmark.quantumSpecific.qubitCount = analysis.qubitCount;
+                    }
+                    
+                    if (!benchmark.quantumSpecific.gateCount) {
+                      benchmark.quantumSpecific.gateCount = analysis.gateCount;
+                    }
+                    
+                    if (!benchmark.quantumSpecific.circuitDepth) {
+                      benchmark.quantumSpecific.circuitDepth = analysis.circuitDepth;
+                    }
+                    
+                    if (!benchmark.quantumSpecific.twoQubitGateCount) {
+                      benchmark.quantumSpecific.twoQubitGateCount = analysis.twoQubitGateCount;
+                    }
+                    
+                    // Note: measurementCount in analysis is number of measure ops, 
+                    // which is different from 'shots' (repetitions). We don't auto-populate shots.
+                  }
+                } else {
+                  console.warn('⚠️ Analyzer script not found at:', analyzerPath);
+                }
+              } catch (error) {
+                console.error('❌ Error analyzing QASM:', error);
+                // Continue without analysis - don't fail the whole submission
+              }
+
+              // Rewrite benchmark.json to include qasmFiles and extracted metrics
+              fs.writeFileSync(
+                path.join(dirPath, 'benchmark.json'), 
+                JSON.stringify(benchmark, null, 2)
+              );
+            }
+
+            // Export for next steps
+            core.setOutput('dir_name', dirName);
+            core.setOutput('algorithm_name', algorithmName);
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "feat: update benchmark for ${{ steps.parse.outputs.algorithm_name }}"
+          title: "feat: update benchmark for ${{ steps.parse.outputs.algorithm_name }}"
+          body: |
+            Automated submission from Issue #${{ github.event.issue.number }}
+            
+            Contributor: @${{ github.event.issue.user.login }}
+            
+            Closes #${{ github.event.issue.number }}
+          branch: "submission/issue-${{ github.event.issue.number }}"
+          delete-branch: true
+          base: main
+
+      - name: Comment on Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "🚀 **Success!** I've created a Pull Request for your submission. You can track its progress there."
+            });
