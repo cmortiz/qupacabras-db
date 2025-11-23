@@ -35,7 +35,7 @@
     },
     "notes": "88 different circuit configurations tested for G14 graph coloring game",
     "id": "g14_graph_coloring_ibm",
-    "timestamp": "2025-11-23T08:48:32.309Z",
+    "timestamp": "2025-11-23T09:03:06.083Z",
     "benchmarkFolder": "g14_graph_coloring_ibm"
   },
   {
