@@ -6,8 +6,13 @@
   "uncertainty": 0.03,
   "paperUrl": "https://arxiv.org/pdf/2311.01363",
   "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-2 84-qubit quantum processor",
-  "team": ["J. Furches", "S. Chehade", "K. Hamilton", "N. Wiebe", "C. Ortiz Marrero"],
-  "qasmFiles": ["g14_graph_coloring_sample.qasm"],
+  "team": [
+    "J. Furches",
+    "S. Chehade",
+    "K. Hamilton",
+    "N. Wiebe",
+    "C. Ortiz Marrero"
+  ],
   "timestamp": "2023-12-20T00:00:00Z",
   "quantumSpecific": {
     "qubitCount": 4,

@@ -6,8 +6,13 @@
   "uncertainty": 0.03,
   "paperUrl": "https://arxiv.org/pdf/2311.01363",
   "description": "G14 graph coloring nonlocal game implementation on IBM quantum devices for a 14-vertex graph coloring problem",
-  "team": ["J. Furches", "S. Chehade", "K. Hamilton", "N. Wiebe", "C. Ortiz Marrero"],
-  "qasmFiles": ["g14_graph_coloring_sample.qasm"],
+  "team": [
+    "J. Furches",
+    "S. Chehade",
+    "K. Hamilton",
+    "N. Wiebe",
+    "C. Ortiz Marrero"
+  ],
   "quantumSpecific": {
     "qubitCount": 4,
     "gateCount": 14,
