@@ -2,7 +2,7 @@
   "name": "qupacabras-db",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://cmortiz.github.io/qupacabras-db",
+  "homepage": "https://qupacabras-db.diy",
   "dependencies": {
     "lucide-react": "^0.395.0",
     "react": "^18.3.1",
