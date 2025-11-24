@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Info } from 'lucide-react';
+import { Github, Info, FilePlus, Rocket } from 'lucide-react';
 import ContributionGuide from './components/ContributionGuide';
 import BenchmarkTable from './components/BenchmarkTable';
 import { COLORS, CONFIG, UI_CONSTANTS } from './constants';
 import { useSortedData } from './hooks/useSortedData';
+import { useWindowSize } from './hooks/useWindowSize';
 
 function App() {
     const [benchmarks, setBenchmarks] = useState([]);
@@ -115,6 +116,9 @@ function App() {
         URL.revokeObjectURL(url);
     };
 
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
+
     return (
         <div style={{
             minHeight: '100vh',
@@ -123,7 +127,12 @@ function App() {
             color: COLORS.fg
         }}>
             {/* Header with padding from top */}
-            <header style={{ paddingTop: '2rem', paddingBottom: '1.5rem', paddingLeft: '3rem', paddingRight: '3rem' }}>
+            <header style={{
+                paddingTop: '2rem',
+                paddingBottom: '1.5rem',
+                paddingLeft: isMobile ? '1rem' : '3rem',
+                paddingRight: isMobile ? '1rem' : '3rem'
+            }}>
                 <div style={{
                     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                     borderRadius: '0.5rem',
@@ -131,10 +140,22 @@ function App() {
                     backgroundColor: COLORS.bgCard,
                     border: `1px solid ${COLORS.border}`
                 }}>
-                    <div style={{ padding: '1.5rem 2rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2rem' }}>
-                            <div style={{ flex: 1 }}>
-                                <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', lineHeight: '1.2', marginBottom: '0.5rem' }}>
+                    <div style={{ padding: isMobile ? '1.5rem 1rem' : '1.5rem 2rem' }}>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: isMobile ? 'column' : 'row',
+                            justifyContent: 'space-between',
+                            alignItems: isMobile ? 'center' : 'stretch',
+                            gap: '2rem',
+                            textAlign: isMobile ? 'center' : 'left'
+                        }}>
+                            <div style={{
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: isMobile ? 'center' : 'flex-start'
+                            }}>
+                                <h1 style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 'bold', lineHeight: '1.2', marginBottom: '0.5rem' }}>
                                     <span style={{ color: COLORS.accentRed }}>Q</span>upacabras-DB
                                 </h1>
                                 <p
@@ -142,7 +163,7 @@ function App() {
                                     style={{
                                         fontSize: '1.125rem',
                                         color: COLORS.fgMuted,
-                                        maxWidth: '600px',
+                                        maxWidth: '100%',
                                         margin: 0,
                                         lineHeight: '1.6',
                                         marginBottom: '1rem'
@@ -150,6 +171,32 @@ function App() {
                                 >
                                     {UI_CONSTANTS.appDescription}
                                 </p>
+                                <div style={{ fontSize: '0.875rem', color: COLORS.fgMuted, marginTop: 'auto' }}>
+                                    <button
+                                        onClick={() => setShowGuide(true)}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            padding: 0,
+                                            color: COLORS.fgMuted,
+                                            cursor: 'pointer',
+                                            fontSize: 'inherit',
+                                            fontFamily: 'inherit',
+                                            textDecoration: 'none',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '0.375rem'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.color = COLORS.accentBlue}
+                                        onMouseLeave={(e) => e.currentTarget.style.color = COLORS.fgMuted}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.125rem' }}>
+                                            <FilePlus style={{ width: '1.25em', height: '1.25em' }} />
+                                            <Rocket style={{ width: '1.25em', height: '1.25em' }} />
+                                        </div>
+                                        <span><strong style={{ color: COLORS.accentBlue }}>Contribute</strong> to the database</span>
+                                    </button>
+                                </div>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                                 <button

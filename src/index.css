@@ -16,6 +16,26 @@ body {
   min-height: 100vh;
 }
 
+/* Global Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #282828; /* COLORS.bg */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #504945; /* COLORS.border */
+  border-radius: 5px;
+  border: 2px solid #282828; /* Creates padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ebdbb2; /* COLORS.fg */
+}
+
 /* Container and layout classes */
 .container {
   max-width: 1200px;

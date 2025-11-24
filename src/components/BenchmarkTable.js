@@ -454,12 +454,13 @@ export default function BenchmarkTable({
                         </tbody>
                     </table>
                 </div>
+
             </div>
 
             <BenchmarkDetailsModal
                 benchmark={selectedBenchmark}
                 onClose={() => setSelectedBenchmark(null)}
             />
-        </div>
+        </div >
     );
 }
