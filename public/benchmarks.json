@@ -27,18 +27,19 @@
         "cx": 4,
         "u": 4,
         "ry": 4
-      }
+      },
+      "sourceLocation": "games/g14/circuits/4q"
     },
     "notes": "88 different circuit configurations tested for G14 graph coloring game",
     "id": "g14_graph_coloring_ibm",
-    "timestamp": "2025-11-23T09:44:22.616Z",
+    "timestamp": "2025-11-24T07:57:51.803Z",
     "benchmarkFolder": "g14_graph_coloring_ibm"
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
     "device": "Rigetti Ankaa-3",
     "metricName": "Win Rate",
-    "metricValue": 0.87,
+    "metricValue": 0.92,
     "uncertainty": 0.02,
     "paperUrl": "https://arxiv.org/pdf/2311.01363",
     "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-3 84-qubit quantum processor",
@@ -49,7 +50,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2024-12-23T00:00:00.000Z",
+    "timestamp": "2024-09-30T00:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -65,7 +66,8 @@
         "cx": 4,
         "u": 4,
         "ry": 4
-      }
+      },
+      "sourceLocation": "games/g14/circuits/4q"
     },
     "errorRates": {
       "twoQubitGate": {
@@ -111,7 +113,8 @@
         "cx": 4,
         "u": 4,
         "ry": 4
-      }
+      },
+      "sourceLocation": "games/g14/circuits/4q"
     },
     "errorRates": {
       "twoQubitGate": {
@@ -125,5 +128,269 @@
     "notes": "Rigetti Ankaa-2 with 98% median 2-qubit gate fidelity (2% error rate). Available via Rigetti QCS from December 20, 2023.",
     "id": "g14_graph_coloring_rigetti_ankaa2",
     "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa2"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "Duke Quantum Blue",
+    "metricName": "Win Rate",
+    "metricValue": 0.98,
+    "uncertainty": 0.02,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Blue trapped ion system",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2024-10-09T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 2,
+      "gateCount": 4,
+      "twoQubitGateCount": 1,
+      "singleQubitGateCount": 3,
+      "architecture": "Trapped Ion",
+      "shots": 2000,
+      "circuitDepth": 3,
+      "circuitVariations": 51,
+      "sourceLocation": "raw_data/duke_collab/circuits"
+    },
+    "id": "g14_graph_coloring_duke_blue",
+    "benchmarkFolder": "g14_graph_coloring_duke_blue"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "Duke Quantum Silver",
+    "metricName": "Win Rate",
+    "metricValue": 0.95,
+    "uncertainty": 0.03,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Silver trapped ion system",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2024-07-18T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 2,
+      "gateCount": 4,
+      "twoQubitGateCount": 1,
+      "singleQubitGateCount": 3,
+      "architecture": "Trapped Ion",
+      "shots": 2000,
+      "circuitDepth": 3,
+      "circuitVariations": 51,
+      "sourceLocation": "raw_data/duke_collab/circuits"
+    },
+    "id": "g14_graph_coloring_duke_silver",
+    "benchmarkFolder": "g14_graph_coloring_duke_silver"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "Duke Quantum Gold",
+    "metricName": "Win Rate",
+    "metricValue": 0.94,
+    "uncertainty": 0.03,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Gold trapped ion system",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2024-11-18T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 2,
+      "gateCount": 4,
+      "twoQubitGateCount": 1,
+      "singleQubitGateCount": 3,
+      "architecture": "Trapped Ion",
+      "shots": 2000,
+      "circuitDepth": 3,
+      "circuitVariations": 51,
+      "sourceLocation": "raw_data/duke_collab/circuits"
+    },
+    "id": "g14_graph_coloring_duke_gold",
+    "benchmarkFolder": "g14_graph_coloring_duke_gold"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IonQ Aria",
+    "metricName": "Win Rate",
+    "metricValue": 0.94,
+    "uncertainty": 0.01,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on IonQ Aria trapped ion system",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2024-11-04T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 2,
+      "gateCount": 4,
+      "twoQubitGateCount": 1,
+      "singleQubitGateCount": 3,
+      "architecture": "Trapped Ion",
+      "shots": 20000,
+      "circuitDepth": 3,
+      "circuitVariations": 51,
+      "sourceLocation": "raw_data/duke_collab/circuits"
+    },
+    "id": "g14_graph_coloring_ionq_aria",
+    "benchmarkFolder": "g14_graph_coloring_ionq_aria"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Lima",
+    "metricName": "Win Rate",
+    "metricValue": 0.86,
+    "uncertainty": 0.01,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Lima",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T16:24:53.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "architecture": "Superconducting",
+      "shots": 1024,
+      "circuitDepth": 5,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      },
+      "sourceLocation": "games/g14/circuits/4q"
+    },
+    "id": "g14_graph_coloring_ibm_lima",
+    "benchmarkFolder": "g14_graph_coloring_ibm_lima"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Nairobi",
+    "metricName": "Win Rate",
+    "metricValue": 0.85,
+    "uncertainty": 0.01,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Nairobi",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T13:15:48.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "architecture": "Superconducting",
+      "shots": 1024,
+      "circuitDepth": 5,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      },
+      "sourceLocation": "games/g14/circuits/4q"
+    },
+    "id": "g14_graph_coloring_ibm_nairobi",
+    "benchmarkFolder": "g14_graph_coloring_ibm_nairobi"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Jakarta",
+    "metricName": "Win Rate",
+    "metricValue": 0.84,
+    "uncertainty": 0.01,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Jakarta",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T14:54:20.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "architecture": "Superconducting",
+      "shots": 1024,
+      "circuitDepth": 5,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      },
+      "sourceLocation": "games/g14/circuits/4q"
+    },
+    "id": "g14_graph_coloring_ibm_jakarta",
+    "benchmarkFolder": "g14_graph_coloring_ibm_jakarta"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Guadalupe",
+    "metricName": "Win Rate",
+    "metricValue": 0.78,
+    "uncertainty": 0.01,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Guadalupe",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T13:54:20.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "architecture": "Superconducting",
+      "shots": 1024,
+      "circuitDepth": 5,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      },
+      "sourceLocation": "games/g14/circuits/4q"
+    },
+    "id": "g14_graph_coloring_ibm_guadalupe",
+    "benchmarkFolder": "g14_graph_coloring_ibm_guadalupe"
   }
 ]

@@ -177,6 +177,14 @@ function BenchmarkDetailsModal({ benchmark, onClose }) {
                                     <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.shots || '-'}</div>
                                 </div>
                             </div>
+                            {benchmark.quantumSpecific.sourceLocation && (
+                                <div style={{ marginTop: '1rem', fontSize: '0.875rem' }}>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Source Location</div>
+                                    <div style={{ fontFamily: 'monospace', color: COLORS.fg, backgroundColor: COLORS.bg, padding: '0.5rem', borderRadius: '0.25rem', border: `1px solid ${COLORS.border}`, wordBreak: 'break-all' }}>
+                                        {benchmark.quantumSpecific.sourceLocation}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
