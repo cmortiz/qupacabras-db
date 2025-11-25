@@ -1,11 +1,11 @@
 {
   "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-  "device": "IBM Quantum Systems",
+  "device": "IBM Sherbrooke",
   "metricName": "Win Rate",
   "metricValue": 0.85,
   "uncertainty": 0.03,
   "paperUrl": "https://arxiv.org/pdf/2311.01363",
-  "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-2 84-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
+  "description": "G14 graph coloring nonlocal game implementation on IBM Sherbrooke 127-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
   "team": [
     "J. Furches",
     "S. Chehade",
@@ -28,5 +28,9 @@
       "ry": 4
     }
   },
-  "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4."
+  "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4.",
+  "one_qubit_fidelity": "0.999",
+  "two_qubit_fidelity": "0.9968",
+  "fidelity_measurement_method": "Standard Randomized Benchmarking (ECR error 3.2e-3)",
+  "fidelity_reference": "https://arxiv.org/abs/2311.01363"
 }
