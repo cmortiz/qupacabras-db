@@ -1,0 +1,29 @@
+{
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "Duke Quantum Silver",
+    "metricName": "Win Rate",
+    "metricValue": 0.95,
+    "uncertainty": 0.03,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Silver trapped ion system",
+    "team": [
+        "J. Furches",
+        "S. Chehade",
+        "K. Hamilton",
+        "N. Wiebe",
+        "C. Ortiz Marrero"
+    ],
+    "timestamp": "2024-07-18T00:00:00.000Z",
+    "quantumSpecific": {
+        "qubitCount": 2,
+        "gateCount": 4,
+        "twoQubitGateCount": 1,
+        "singleQubitGateCount": 3,
+        "architecture": "Trapped Ion",
+        "shots": 2000,
+        "circuitDepth": 3,
+        "circuitVariations": 51,
+        "sourceLocation": "raw_data/duke_collab/circuits"
+    },
+    "id": "g14_graph_coloring_duke_silver"
+}

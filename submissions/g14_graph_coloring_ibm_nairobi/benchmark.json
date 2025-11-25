@@ -1,0 +1,35 @@
+{
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Nairobi",
+    "metricName": "Win Rate",
+    "metricValue": 0.85,
+    "uncertainty": 0.01,
+    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Nairobi",
+    "team": [
+        "J. Furches",
+        "S. Chehade",
+        "K. Hamilton",
+        "N. Wiebe",
+        "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T13:15:48.000Z",
+    "quantumSpecific": {
+        "qubitCount": 4,
+        "gateCount": 14,
+        "twoQubitGateCount": 4,
+        "singleQubitGateCount": 10,
+        "architecture": "Superconducting",
+        "shots": 1024,
+        "circuitDepth": 5,
+        "circuitVariations": 88,
+        "gateBreakdown": {
+            "h": 2,
+            "cx": 4,
+            "u": 4,
+            "ry": 4
+        },
+        "sourceLocation": "games/g14/circuits/4q"
+    },
+    "id": "g14_graph_coloring_ibm_nairobi"
+}
