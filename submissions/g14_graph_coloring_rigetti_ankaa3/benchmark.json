@@ -5,7 +5,7 @@
   "metricValue": 0.87,
   "uncertainty": 0.02,
   "paperUrl": "https://arxiv.org/pdf/2311.01363",
-  "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-3 84-qubit quantum processor",
+  "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-3 84-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
   "team": [
     "J. Furches",
     "S. Chehade",
@@ -40,5 +40,5 @@
       "unit": "fraction"
     }
   },
-  "notes": "Rigetti Ankaa-3 with 99.5% median 2-qubit gate fidelity (0.5% error rate). Note: Ankaa-3 became available December 23, 2024, after paper publication."
+  "notes": "Rigetti Ankaa-3 with 99.5% median 2-qubit gate fidelity (0.5% error rate). Note: Ankaa-3 became available December 23, 2024, after paper publication. Classical chromatic number: 5. Quantum chromatic number: 4."
 }

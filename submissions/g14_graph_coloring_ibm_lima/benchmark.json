@@ -5,7 +5,7 @@
     "metricValue": 0.86,
     "uncertainty": 0.01,
     "paperUrl": "https://arxiv.org/pdf/2311.01363",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Lima",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Lima. Quantum advantage threshold is >97.7% win rate.",
     "team": [
         "J. Furches",
         "S. Chehade",
@@ -31,5 +31,6 @@
         },
         "sourceLocation": "games/g14/circuits/4q"
     },
-    "id": "g14_graph_coloring_ibm_lima"
+    "id": "g14_graph_coloring_ibm_lima",
+    "notes": "Classical chromatic number: 5. Quantum chromatic number: 4."
 }

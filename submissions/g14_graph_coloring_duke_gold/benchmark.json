@@ -5,7 +5,7 @@
     "metricValue": 0.94,
     "uncertainty": 0.03,
     "paperUrl": "https://arxiv.org/pdf/2311.01363",
-    "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Gold trapped ion system",
+    "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Gold trapped ion system. Quantum advantage threshold is >97.7% win rate.",
     "team": [
         "J. Furches",
         "S. Chehade",
@@ -25,5 +25,6 @@
         "circuitVariations": 51,
         "sourceLocation": "raw_data/duke_collab/circuits"
     },
-    "id": "g14_graph_coloring_duke_gold"
+    "id": "g14_graph_coloring_duke_gold",
+    "notes": "Classical chromatic number: 5. Quantum chromatic number: 4."
 }
