@@ -1,318 +1,6 @@
 [
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Mumbai",
-    "metricName": "Win Rate",
-    "metricValue": 0.856,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Mumbai. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 1024,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "id": "g14_graph_coloring_ibm_mumbai",
-    "timestamp": "2025-11-25T03:19:40.706Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_mumbai"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Quito",
-    "metricName": "Win Rate",
-    "metricValue": 0.846,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Quito. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 1024,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "id": "g14_graph_coloring_ibm_quito",
-    "timestamp": "2025-11-25T03:19:40.706Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_quito"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Manila",
-    "metricName": "Win Rate",
-    "metricValue": 0.842,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Manila. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 1024,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "id": "g14_graph_coloring_ibm_manila",
-    "timestamp": "2025-11-25T03:19:40.705Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_manila"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Hanoi",
-    "metricName": "Win Rate",
-    "metricValue": 0.925,
-    "uncertainty": 0.005,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Hanoi. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 1024,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "id": "g14_graph_coloring_ibm_hanoi",
-    "timestamp": "2025-11-25T03:19:40.704Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_hanoi"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Cairo",
-    "metricName": "Win Rate",
-    "metricValue": 0.843,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Cairo. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 1024,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "id": "g14_graph_coloring_ibm_cairo",
-    "timestamp": "2025-11-25T03:19:40.703Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_cairo"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Belem",
-    "metricName": "Win Rate",
-    "metricValue": 0.873,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Belem. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 1024,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "id": "g14_graph_coloring_ibm_belem",
-    "timestamp": "2025-11-25T03:19:40.702Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_belem"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Auckland",
-    "metricName": "Win Rate",
-    "metricValue": 0.839,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Auckland. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 1024,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "id": "g14_graph_coloring_ibm_auckland",
-    "timestamp": "2025-11-25T03:19:40.701Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_auckland"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Sherbrooke",
-    "metricName": "Win Rate",
-    "metricValue": 0.943,
-    "uncertainty": 0.002,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Sherbrooke 127-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "circuitDepth": 5,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "shots": 8192,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      }
-    },
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.9968",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking (ECR error 3.2e-3)",
-    "fidelity_reference": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "id": "g14_graph_coloring_ibm",
-    "timestamp": "2025-11-25T03:19:40.694Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
     "device": "Rigetti Ankaa-3",
     "metricName": "Win Rate",
     "metricValue": 0.87,
@@ -460,6 +148,45 @@
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Sherbrooke",
+    "metricName": "Win Rate",
+    "metricValue": 0.943,
+    "uncertainty": 0.002,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Sherbrooke 127-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2024-09-27T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 8192,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.9968",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking (ECR error 3.2e-3)",
+    "fidelity_reference": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "id": "g14_graph_coloring_ibm",
+    "benchmarkFolder": "g14_graph_coloring_ibm"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
     "device": "Duke Quantum Silver",
     "metricName": "Win Rate",
     "metricValue": 0.95,
@@ -541,47 +268,6 @@
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Lima",
-    "metricName": "Win Rate",
-    "metricValue": 0.858,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Lima. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "timestamp": "2023-09-06T16:24:53.000Z",
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "architecture": "Superconducting",
-      "shots": 1024,
-      "circuitDepth": 5,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      },
-      "sourceLocation": "games/g14/circuits/4q"
-    },
-    "id": "g14_graph_coloring_ibm_lima",
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "benchmarkFolder": "g14_graph_coloring_ibm_lima"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
     "device": "IBM Jakarta",
     "metricName": "Win Rate",
     "metricValue": 0.842,
@@ -623,6 +309,123 @@
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Auckland",
+    "metricName": "Win Rate",
+    "metricValue": 0.839,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Auckland. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 1024,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "id": "g14_graph_coloring_ibm_auckland",
+    "benchmarkFolder": "g14_graph_coloring_ibm_auckland"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Belem",
+    "metricName": "Win Rate",
+    "metricValue": 0.873,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Belem. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 1024,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "id": "g14_graph_coloring_ibm_belem",
+    "benchmarkFolder": "g14_graph_coloring_ibm_belem"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Cairo",
+    "metricName": "Win Rate",
+    "metricValue": 0.843,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Cairo. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 1024,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "id": "g14_graph_coloring_ibm_cairo",
+    "benchmarkFolder": "g14_graph_coloring_ibm_cairo"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
     "device": "IBM Guadalupe",
     "metricName": "Win Rate",
     "metricValue": 0.781,
@@ -636,7 +439,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T13:54:20.000Z",
+    "timestamp": "2023-09-06T00:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -664,6 +467,164 @@
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Hanoi",
+    "metricName": "Win Rate",
+    "metricValue": 0.925,
+    "uncertainty": 0.005,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Hanoi. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 1024,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "id": "g14_graph_coloring_ibm_hanoi",
+    "benchmarkFolder": "g14_graph_coloring_ibm_hanoi"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Lima",
+    "metricName": "Win Rate",
+    "metricValue": 0.858,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Lima. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "architecture": "Superconducting",
+      "shots": 1024,
+      "circuitDepth": 5,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      },
+      "sourceLocation": "games/g14/circuits/4q"
+    },
+    "id": "g14_graph_coloring_ibm_lima",
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "benchmarkFolder": "g14_graph_coloring_ibm_lima"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Manila",
+    "metricName": "Win Rate",
+    "metricValue": 0.842,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Manila. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 1024,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "id": "g14_graph_coloring_ibm_manila",
+    "benchmarkFolder": "g14_graph_coloring_ibm_manila"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Mumbai",
+    "metricName": "Win Rate",
+    "metricValue": 0.856,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Mumbai. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 1024,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "id": "g14_graph_coloring_ibm_mumbai",
+    "benchmarkFolder": "g14_graph_coloring_ibm_mumbai"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
     "device": "IBM Nairobi",
     "metricName": "Win Rate",
     "metricValue": 0.845,
@@ -677,7 +638,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T13:15:48.000Z",
+    "timestamp": "2023-09-06T00:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -702,5 +663,44 @@
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
     "benchmarkFolder": "g14_graph_coloring_ibm_nairobi"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Quito",
+    "metricName": "Win Rate",
+    "metricValue": 0.846,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Quito. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T00:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "circuitDepth": 5,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "shots": 1024,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "id": "g14_graph_coloring_ibm_quito",
+    "benchmarkFolder": "g14_graph_coloring_ibm_quito"
   }
 ]
