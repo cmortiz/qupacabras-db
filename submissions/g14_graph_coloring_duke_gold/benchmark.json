@@ -26,5 +26,5 @@
         "sourceLocation": "raw_data/duke_collab/circuits"
     },
     "id": "g14_graph_coloring_duke_gold",
-    "notes": "Classical chromatic number: 5. Quantum chromatic number: 4."
+    "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates."
 }
