@@ -145,6 +145,16 @@ function BenchmarkDetailsModal({ benchmark, onClose }) {
                         )}
                     </div>
 
+                    {/* Notes */}
+                    {benchmark.notes && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg }}>Notes</h3>
+                            <p style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: '1.5' }}>
+                                {benchmark.notes}
+                            </p>
+                        </div>
+                    )}
+
                     {/* Quantum Specifics */}
                     {benchmark.quantumSpecific && (
                         <div style={{ marginBottom: '1.5rem' }}>
@@ -225,6 +235,36 @@ function BenchmarkDetailsModal({ benchmark, onClose }) {
                                 )}
                             </div>
                         </div>
+
+                    )}
+
+                    {/* Gate Fidelities */}
+                    {(benchmark.one_qubit_fidelity || benchmark.two_qubit_fidelity || benchmark.fidelity_measurement_method) && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg }}>Gate Fidelities</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+                                {benchmark.one_qubit_fidelity && (
+                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>1-Qubit Fidelity</div>
+                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{benchmark.one_qubit_fidelity}</div>
+                                    </div>
+                                )}
+                                {benchmark.two_qubit_fidelity && (
+                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>2-Qubit Fidelity</div>
+                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{benchmark.two_qubit_fidelity}</div>
+                                    </div>
+                                )}
+                            </div>
+                            {benchmark.fidelity_measurement_method && (
+                                <div>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Measurement Method</div>
+                                    <p style={{ fontSize: '0.875rem', color: COLORS.fg, lineHeight: '1.5', margin: 0 }}>
+                                        {benchmark.fidelity_measurement_method}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {/* QASM Files */}
@@ -296,7 +336,7 @@ function BenchmarkDetailsModal({ benchmark, onClose }) {
                         </a>
                     </div>
                 </div>
-            </div>
+            </div >
         </>,
         document.body
     );
