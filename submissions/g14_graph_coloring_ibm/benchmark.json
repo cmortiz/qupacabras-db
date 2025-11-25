@@ -2,8 +2,8 @@
   "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
   "device": "IBM Sherbrooke",
   "metricName": "Win Rate",
-  "metricValue": 0.85,
-  "uncertainty": 0.03,
+  "metricValue": 0.943,
+  "uncertainty": 0.002,
   "paperUrl": "https://arxiv.org/pdf/2311.01363",
   "description": "G14 graph coloring nonlocal game implementation on IBM Sherbrooke 127-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
   "team": [
