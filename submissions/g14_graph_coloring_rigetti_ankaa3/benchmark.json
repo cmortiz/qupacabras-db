@@ -4,7 +4,7 @@
   "metricName": "Win Rate",
   "metricValue": 0.87,
   "uncertainty": 0.02,
-  "paperUrl": "https://arxiv.org/pdf/2311.01363",
+  "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
   "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-3 84-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
   "team": [
     "J. Furches",

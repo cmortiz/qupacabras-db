@@ -1,0 +1,36 @@
+{
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Hanoi",
+    "metricName": "Win Rate",
+    "metricValue": 0.925,
+    "uncertainty": 0.005,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Hanoi. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+        "J. Furches",
+        "S. Chehade",
+        "K. Hamilton",
+        "N. Wiebe",
+        "C. Ortiz Marrero"
+    ],
+    "quantumSpecific": {
+        "qubitCount": 4,
+        "gateCount": 14,
+        "circuitDepth": 5,
+        "twoQubitGateCount": 4,
+        "singleQubitGateCount": 10,
+        "shots": 1024,
+        "circuitVariations": 88,
+        "gateBreakdown": {
+            "h": 2,
+            "cx": 4,
+            "u": 4,
+            "ry": 4
+        }
+    },
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256"
+}

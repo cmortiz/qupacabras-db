@@ -2,9 +2,9 @@
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
     "device": "IBM Jakarta",
     "metricName": "Win Rate",
-    "metricValue": 0.84,
-    "uncertainty": 0.01,
-    "paperUrl": "https://arxiv.org/pdf/2311.01363",
+    "metricValue": 0.842,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
     "description": "G14 graph coloring nonlocal game implementation on IBM Jakarta. Quantum advantage threshold is >97.7% win rate.",
     "team": [
         "J. Furches",

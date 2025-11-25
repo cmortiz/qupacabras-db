@@ -1,0 +1,1528 @@
+{
+    "experiments": {
+        "1": {
+            "attributes": {
+                "edge_win_rate": 0.8820866765202703,
+                "has_counts": true,
+                "job_id": "cjsb5jik1qvd8tcm9kt0",
+                "vertex_win_rate": 0.6346958705357143
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_1.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T14:54:20.039000-04:00",
+            "device": {
+                "name": "jakarta",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005583699943176725,
+                "p_value": 1.0,
+                "value": 0.8427290482954546,
+                "var": 0.12367499958385121
+            }
+        },
+        "10": {
+            "attributes": {
+                "edge_win_rate": 0.8920106630067568,
+                "has_counts": true,
+                "job_id": "cjsb5mvtoe8ecf8p5ob0",
+                "vertex_win_rate": 0.6798967633928571
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_10.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T16:24:53.566000-04:00",
+            "device": {
+                "name": "lima",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0054679345697966,
+                "p_value": 1.0,
+                "value": 0.8582652698863636,
+                "var": 0.11484000899574974
+            }
+        },
+        "11": {
+            "attributes": {
+                "edge_win_rate": 0.8817303631756757,
+                "has_counts": true,
+                "job_id": "cjsb5nnp8blo0km91kg0",
+                "vertex_win_rate": 0.65185546875
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_11.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T13:15:48.246000-04:00",
+            "device": {
+                "name": "nairobi",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005569009766859011,
+                "p_value": 1.0,
+                "value": 0.8451593572443182,
+                "var": 0.12253573807803067
+            }
+        },
+        "12": {
+            "attributes": {
+                "edge_win_rate": 0.9628378378378378,
+                "has_counts": false,
+                "vertex_win_rate": 0.9004642857142857
+            },
+            "circuit_data": {
+                "num_circuits": 51,
+                "qasm_path": "raw_data/duke_collab/circuits",
+                "result_path": "raw_data/duke_collab/silver_unmitigated.csv",
+                "shots": 2000,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-07-18T00:00:00",
+            "device": {
+                "name": "silver",
+                "provider": "duke",
+                "type": "trapped-ion"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": null,
+            "win_rate": {
+                "ci95": 0.003138243705462746,
+                "p_value": 1.0,
+                "value": 0.9457156862745097,
+                "var": 0.05036320833333333
+            }
+        },
+        "13": {
+            "attributes": {
+                "edge_win_rate": 0.9594594594594593,
+                "has_counts": true,
+                "vertex_win_rate": 0.8735714285714288
+            },
+            "circuit_data": {
+                "num_circuits": 51,
+                "qasm_path": "raw_data/duke_collab/circuits",
+                "result_path": "experiments/result_13.json",
+                "shots": 2000,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-11-18T00:00:00",
+            "device": {
+                "name": "gold",
+                "provider": "duke",
+                "type": "trapped-ion"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": null,
+            "win_rate": {
+                "ci95": 0.003278848088003222,
+                "p_value": 1.0,
+                "value": 0.9358823529411764,
+                "var": 0.058056862745098026
+            }
+        },
+        "14": {
+            "attributes": {
+                "edge_win_rate": 0.9865318345021513,
+                "has_counts": true,
+                "vertex_win_rate": 0.959098908712047
+            },
+            "circuit_data": {
+                "num_circuits": 51,
+                "qasm_path": "raw_data/duke_collab/circuits",
+                "result_path": "experiments/result_14.json",
+                "shots": 2000,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-10-09T00:00:00",
+            "device": {
+                "name": "blue",
+                "provider": "duke",
+                "type": "trapped-ion"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": null,
+            "win_rate": {
+                "ci95": 0.0024432720146268135,
+                "p_value": 0.04675268138851943,
+                "value": 0.9790012274225148,
+                "var": 0.020363828642740694
+            }
+        },
+        "15": {
+            "attributes": {
+                "edge_win_rate": 0.9651081081081082,
+                "has_counts": false,
+                "vertex_win_rate": 0.8916571428571427
+            },
+            "circuit_data": {
+                "num_circuits": 51,
+                "qasm_path": "raw_data/duke_collab/circuits",
+                "result_path": "raw_data/duke_collab/ionq_winrates.json",
+                "shots": 20000,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-11-04T00:00:00",
+            "device": {
+                "name": "aria",
+                "provider": "ionq",
+                "type": "trapped-ion"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": null,
+            "win_rate": {
+                "ci95": 0.0007252092471193324,
+                "p_value": 1.0,
+                "value": 0.9449450980392158,
+                "var": 0.05014462921568628
+            }
+        },
+        "16": {
+            "attributes": {
+                "dataID": "HdkrHNcE9oiKMpS38eW4LT",
+                "edge_win_rate": 0.7603726773648649,
+                "has_counts": true,
+                "layout": "5, 12, 13, 6",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.3243931361607143,
+                "wiring": "PARTIAL"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_16.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-29T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-2/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.003965778869647597,
+                "p_value": 1.0,
+                "value": 0.6910122958096591,
+                "var": 0.1867538500915874
+            }
+        },
+        "17": {
+            "attributes": {
+                "dataID": "LQ2T9754kQgXAqzKRYEahg",
+                "edge_win_rate": 0.7988677153716216,
+                "has_counts": true,
+                "layout": "25, 24, 17, 18",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.40366908482142855,
+                "wiring": "NONE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_17.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-2/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0038544610767028966,
+                "p_value": 1.0,
+                "value": 0.7359952059659091,
+                "var": 0.17201912944967096
+            }
+        },
+        "18": {
+            "attributes": {
+                "dataID": "P9jE8J892xabDA9DwGBAvK",
+                "edge_win_rate": 0.7715503589527027,
+                "has_counts": true,
+                "layout": "5, 12, 13, 6",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.32386997767857145,
+                "wiring": "PARTIAL"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_18.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-29T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-2/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.003931602625723624,
+                "p_value": 1.0,
+                "value": 0.7003284801136364,
+                "var": 0.1821656660600142
+            }
+        },
+        "19": {
+            "attributes": {
+                "dataID": "cYbDrnBUJMXb3sqGuViQ3v",
+                "edge_win_rate": 0.7988875105574325,
+                "has_counts": true,
+                "layout": "25, 24, 17, 18",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.42337472098214285,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_19.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-2/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.003860302487050345,
+                "p_value": 1.0,
+                "value": 0.7391468394886364,
+                "var": 0.17277728427540173
+            }
+        },
+        "2": {
+            "attributes": {
+                "edge_win_rate": 0.8336544552364865,
+                "has_counts": true,
+                "job_id": "cjsb5jkiifjafcoacbb0",
+                "vertex_win_rate": 0.5078822544642857
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_2.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T13:54:20.982000-04:00",
+            "device": {
+                "name": "guadalupe",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.00594791545402951,
+                "p_value": 1.0,
+                "value": 0.7818270596590909,
+                "var": 0.15360643646933816
+            }
+        },
+        "20": {
+            "attributes": {
+                "dataID": "g4CNtQXWRZigogHyiDpdii",
+                "edge_win_rate": 0.7729558171452703,
+                "has_counts": true,
+                "layout": "30, 29, 22, 23",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.3717564174107143,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_20.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-29T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-2/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.003931292354670046,
+                "p_value": 1.0,
+                "value": 0.7091286399147727,
+                "var": 0.18212427334351974
+            }
+        },
+        "21": {
+            "attributes": {
+                "dataID": "iqU68NFgURLN6Zfa7orqjb",
+                "edge_win_rate": 0.7616857580236487,
+                "has_counts": true,
+                "layout": "17, 16, 9, 10",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.2705078125,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_21.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-29T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-2/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.003941152264968825,
+                "p_value": 1.0,
+                "value": 0.6835438121448864,
+                "var": 0.18344196677207947
+            }
+        },
+        "22": {
+            "attributes": {
+                "dataID": "DvQztnfrLdu787ys6Vpanz",
+                "edge_win_rate": 0.745579075168919,
+                "has_counts": true,
+                "layout": "5, 2, 1, 4",
+                "shots": 1024.0,
+                "vertex_win_rate": 0.2730189732142857,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_22.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2024-09-27T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-3/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.006306826835612709,
+                "p_value": 1.0,
+                "value": 0.6703990589488636,
+                "var": 0.18627198175950485
+            }
+        },
+        "23": {
+            "attributes": {
+                "dataID": "PcQYDYAuckFAM4dwBiNG4r",
+                "edge_win_rate": 0.9042308910472973,
+                "has_counts": true,
+                "layout": "2, 5, 4, 1",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.7142857142857143,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_23.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-3/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0032702067126468607,
+                "p_value": 1.0,
+                "value": 0.8740123401988636,
+                "var": 0.10461088744076816
+            }
+        },
+        "24": {
+            "attributes": {
+                "dataID": "fBMsnHTS259S64UwgzGVeV",
+                "edge_win_rate": 0.7267604518581081,
+                "has_counts": true,
+                "layout": "4, 1, 2, 5",
+                "shots": 1024.0,
+                "vertex_win_rate": 0.26492745535714285,
+                "wiring": "PARTIAL"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_24.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2024-09-27T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-3/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.006366366435413174,
+                "p_value": 1.0,
+                "value": 0.6532870205965909,
+                "var": 0.191995154727589
+            }
+        },
+        "25": {
+            "attributes": {
+                "dataID": "nshiRzSbM3FfY7XMTKWCwm",
+                "edge_win_rate": 0.8996186127533784,
+                "has_counts": true,
+                "layout": "2, 5, 4, 1",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.6993582589285714,
+                "wiring": "NONE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_25.json",
+                "shots": 2048,
+                "strategy": "4q"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/g14_original/ankaa-3/g14_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0033108608073867435,
+                "p_value": 1.0,
+                "value": 0.8677590110085227,
+                "var": 0.10876149751923302
+            }
+        },
+        "26": {
+            "attributes": {
+                "dataID": "QVcNNCPqJbuixX8agdXVhM",
+                "edge_win_rate": 0.851146801097973,
+                "has_counts": true,
+                "layout": "25, 24, 18, 17",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.586669921875,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_26.json",
+                "shots": 2048,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/bell_pair/ankaa-2/bell_pair_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.003634701333546584,
+                "p_value": 1.0,
+                "value": 0.8090709339488636,
+                "var": 0.1447076743299311
+            }
+        },
+        "27": {
+            "attributes": {
+                "dataID": "ShAKuvwyN47od5PyZELTjf",
+                "edge_win_rate": 0.8481247360641891,
+                "has_counts": true,
+                "layout": "25, 24, 18, 17",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.5806710379464286,
+                "wiring": "NONE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_27.json",
+                "shots": 2048,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-2",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/bell_pair/ankaa-2/bell_pair_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0036515921289736637,
+                "p_value": 1.0,
+                "value": 0.8055752840909091,
+                "var": 0.146723134951158
+            }
+        },
+        "28": {
+            "attributes": {
+                "dataID": "JcDnFNiWbfNgstkzLyxCY8",
+                "edge_win_rate": 0.9359295819256757,
+                "has_counts": true,
+                "layout": "5, 2, 4, 1",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.82763671875,
+                "wiring": "NONE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_28.json",
+                "shots": 2048,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/bell_pair/ankaa-3/bell_pair_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0029259111010577583,
+                "p_value": 1.0,
+                "value": 0.918701171875,
+                "var": 0.07269737395373257
+            }
+        },
+        "29": {
+            "attributes": {
+                "dataID": "TciLSvcZAEag3RAbwkPL6x",
+                "edge_win_rate": 0.9336861275337838,
+                "has_counts": true,
+                "layout": "5, 2, 4, 1",
+                "shots": 2048.0,
+                "vertex_win_rate": 0.8181501116071429,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_29.json",
+                "shots": 2048,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-30T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/bell_pair/ankaa-3/bell_pair_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.002956705153159159,
+                "p_value": 1.0,
+                "value": 0.9153053977272727,
+                "var": 0.07531591437079689
+            }
+        },
+        "3": {
+            "attributes": {
+                "edge_win_rate": 0.9437288851351351,
+                "has_counts": true,
+                "job_id": "cjsb5jmiel5ovfdojlqg",
+                "vertex_win_rate": 0.82861328125
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_3.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T13:11:47.908000-04:00",
+            "device": {
+                "name": "hanoi",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.004745331871141728,
+                "p_value": 1.0,
+                "value": 0.9254150390625,
+                "var": 0.06709169257770885
+            }
+        },
+        "30": {
+            "attributes": {
+                "dataID": "VGE6Yvs2WNhJb6L8NFs8oe",
+                "edge_win_rate": 0.8464025548986487,
+                "has_counts": true,
+                "layout": "5, 2, 4, 1",
+                "shots": 1024.0,
+                "vertex_win_rate": 0.5765904017857143,
+                "wiring": "NAIVE"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_30.json",
+                "shots": 1024,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-27T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/bell_pair/ankaa-3/bell_pair_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005795241501055405,
+                "p_value": 1.0,
+                "value": 0.8034778941761364,
+                "var": 0.14066513018174606
+            }
+        },
+        "31": {
+            "attributes": {
+                "dataID": "jQRFNqYfGbCgGMJXyxPnQS",
+                "edge_win_rate": 0.8219357052364865,
+                "has_counts": true,
+                "layout": "1, 2, 4, 5",
+                "shots": 1024.0,
+                "vertex_win_rate": 0.5502232142857143,
+                "wiring": "PARTIAL"
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": ".",
+                "result_path": "experiments/result_31.json",
+                "shots": 1024,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-27T00:00:00",
+            "device": {
+                "name": "ankaa-3",
+                "provider": "rigetti",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "SPAM-mitigated win rates of the circuits",
+                    "name": "winrate_roem",
+                    "path": "raw_data/rigetti_2024/bell_pair/ankaa-3/bell_pair_win_rate_roem.csv"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005929749470808819,
+                "p_value": 1.0,
+                "value": 0.7787087180397727,
+                "var": 0.15203676440499045
+            }
+        },
+        "32": {
+            "attributes": {
+                "edge_win_rate": 0.9481102195945946,
+                "has_counts": true,
+                "job_id": "cvvdwwvy3grg008nhj60",
+                "vertex_win_rate": 0.8442731584821429
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/bell_pair",
+                "result_path": "experiments/result_32.json",
+                "shots": 4096,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-27T12:33:56.145000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/e0a3b5517bd247d29170b841b82339ca/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0017232762857868635,
+                "p_value": 1.0,
+                "value": 0.9315906871448864,
+                "var": 0.06159978969530626
+            }
+        },
+        "33": {
+            "attributes": {
+                "edge_win_rate": 0.9330526815878378,
+                "has_counts": true,
+                "job_id": "cvw4q2w7cb40008e8qag",
+                "vertex_win_rate": 0.8005022321428571
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/bell_pair",
+                "result_path": "experiments/result_33.json",
+                "shots": 4096,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-28T14:31:39.287000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/969d71ee346e4ab7ae04e9ed87644cff/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0018556028467723235,
+                "p_value": 1.0,
+                "value": 0.9119651100852273,
+                "var": 0.07697390697219154
+            }
+        },
+        "34": {
+            "attributes": {
+                "edge_win_rate": 0.9567541173986487,
+                "has_counts": true,
+                "job_id": "cvwc3gp9z730008396v0",
+                "vertex_win_rate": 0.8716692243303571
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/bell_pair",
+                "result_path": "experiments/result_34.json",
+                "shots": 4096,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-28T22:56:03.099000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/faf56d0303b34b73bed11bf8c0f0fd76/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0016320723425698389,
+                "p_value": 1.0,
+                "value": 0.9432178844105114,
+                "var": 0.051999449052593925
+            }
+        },
+        "35": {
+            "attributes": {
+                "edge_win_rate": 0.9559128220016891,
+                "has_counts": true,
+                "job_id": "cvwr0eh5sat0008j19a0",
+                "vertex_win_rate": 0.8688441685267857
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/bell_pair",
+                "result_path": "experiments/result_35.json",
+                "shots": 4096,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-29T12:28:42.446000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/6d2005c368aa4d7d8e3a34bd19d548c5/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.001643774574033395,
+                "p_value": 1.0,
+                "value": 0.9420609907670454,
+                "var": 0.05318580025976354
+            }
+        },
+        "36": {
+            "attributes": {
+                "edge_win_rate": 0.9442105679898649,
+                "has_counts": true,
+                "job_id": "cvxc3y75sat0008j2pa0",
+                "vertex_win_rate": 0.833251953125
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/bell_pair",
+                "result_path": "experiments/result_36.json",
+                "shots": 4096,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-09-30T11:21:29.282000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/cc2872a618344319a824e97ddd89f96e/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0017614744161032019,
+                "p_value": 1.0,
+                "value": 0.9265580610795454,
+                "var": 0.06586210565133528
+            }
+        },
+        "37": {
+            "attributes": {
+                "edge_win_rate": 0.9500633445945946,
+                "has_counts": true,
+                "job_id": "cvy2f1cwqn10008w5evg",
+                "vertex_win_rate": 0.8507080078125
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/bell_pair",
+                "result_path": "experiments/result_37.json",
+                "shots": 4096,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-10-01T12:47:01.332000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/1b13987be4ff4379922c804ac4e1bc10/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.001705473004873063,
+                "p_value": 1.0,
+                "value": 0.9342568137428977,
+                "var": 0.059661930934949356
+            }
+        },
+        "38": {
+            "attributes": {
+                "edge_win_rate": 0.875,
+                "has_counts": true,
+                "job_id": "cvy2j50smnpg0082p62g",
+                "vertex_win_rate": 0.6516636439732143
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_38.json",
+                "shots": 4096,
+                "strategy": "4q"
+            },
+            "date": "2024-10-01T12:53:40.784000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/1b13987be4ff4379922c804ac4e1bc10/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0021971556055010804,
+                "p_value": 1.0,
+                "value": 0.8394692160866477,
+                "var": 0.12456416609612378
+            }
+        },
+        "39": {
+            "attributes": {
+                "edge_win_rate": 0.9567013302364865,
+                "has_counts": true,
+                "job_id": "cvy53jyfd8tg008xdqv0",
+                "vertex_win_rate": 0.8701869419642857
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/bell_pair",
+                "result_path": "experiments/result_39.json",
+                "shots": 4096,
+                "strategy": "bell_pair"
+            },
+            "date": "2024-10-01T15:47:24.044000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/29c2645daeff412fb066ca796ac4e5c7/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0016356719510493513,
+                "p_value": 1.0,
+                "value": 0.9429376775568182,
+                "var": 0.05236294594678012
+            }
+        },
+        "4": {
+            "attributes": {
+                "edge_win_rate": 0.8796848606418919,
+                "has_counts": true,
+                "job_id": "cjsb5k7toe8ecf8p5lr0",
+                "vertex_win_rate": 0.6291155133928571
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_4.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T13:11:51.796000-04:00",
+            "device": {
+                "name": "auckland",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005601414935075315,
+                "p_value": 1.0,
+                "value": 0.8398215553977273,
+                "var": 0.1250558549707586
+            }
+        },
+        "40": {
+            "attributes": {
+                "edge_win_rate": 0.888576198268581,
+                "has_counts": true,
+                "job_id": "cvy59p6smnpg0082pfg0",
+                "vertex_win_rate": 0.7000732421875
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_40.json",
+                "shots": 4096,
+                "strategy": "4q"
+            },
+            "date": "2024-10-01T16:00:24.905000-04:00",
+            "device": {
+                "name": "sherbrooke",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [
+                {
+                    "description": "Full data including memory, counts, and noise characterization",
+                    "name": "raw data",
+                    "path": "raw_data/ibm_2024/29c2645daeff412fb066ca796ac4e5c7/raw.zip"
+                }
+            ],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.0021304746862185796,
+                "p_value": 1.0,
+                "value": 0.8585870916193182,
+                "var": 0.11437771130691875
+            }
+        },
+        "5": {
+            "attributes": {
+                "edge_win_rate": 0.8836702913851351,
+                "has_counts": true,
+                "job_id": "cjsb5kciifjafcoacbv0",
+                "vertex_win_rate": 0.6515764508928571
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_5.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T20:46:45.308000-04:00",
+            "device": {
+                "name": "quito",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005558722859391119,
+                "p_value": 1.0,
+                "value": 0.8467462713068182,
+                "var": 0.12174109979109331
+            }
+        },
+        "6": {
+            "attributes": {
+                "edge_win_rate": 0.9039273648648649,
+                "has_counts": true,
+                "job_id": "cjsb5lak1qvd8tcm9mh0",
+                "vertex_win_rate": 0.7155412946428571
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_6.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T13:19:14.284000-04:00",
+            "device": {
+                "name": "belem",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005334405936250069,
+                "p_value": 1.0,
+                "value": 0.8739568536931818,
+                "var": 0.10505593906749379
+            }
+        },
+        "7": {
+            "attributes": {
+                "edge_win_rate": 0.880687816722973,
+                "has_counts": true,
+                "job_id": "cjsb5lnp8blo0km91iog",
+                "vertex_win_rate": 0.64892578125
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_7.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T15:26:26.017000-04:00",
+            "device": {
+                "name": "cairo",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005583355005519018,
+                "p_value": 1.0,
+                "value": 0.8438165838068182,
+                "var": 0.12364818833091042
+            }
+        },
+        "8": {
+            "attributes": {
+                "edge_win_rate": 0.8909813133445946,
+                "has_counts": true,
+                "job_id": "cjsb5mftoe8ecf8p5o10",
+                "vertex_win_rate": 0.6766880580357143
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_8.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-06T14:51:33.424000-04:00",
+            "device": {
+                "name": "mumbai",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005481918229267942,
+                "p_value": 1.0,
+                "value": 0.8568892045454546,
+                "var": 0.11588983102278276
+            }
+        },
+        "9": {
+            "attributes": {
+                "edge_win_rate": 0.8817171663851351,
+                "has_counts": true,
+                "job_id": "cjsb5mmiel5ovfdojoj0",
+                "vertex_win_rate": 0.6374162946428571
+            },
+            "circuit_data": {
+                "num_circuits": 88,
+                "qasm_path": "games/g14/circuits/4q",
+                "result_path": "experiments/result_9.json",
+                "shots": 1024,
+                "strategy": "4q"
+            },
+            "date": "2023-09-07T00:33:01.511000-04:00",
+            "device": {
+                "name": "manila",
+                "provider": "ibm",
+                "type": "superconducting"
+            },
+            "game_id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "objects": [],
+            "publication": {
+                "citation": "Furches et al. arXiv 2311.01363 (2025)",
+                "url": "https://arxiv.org/abs/2311.01363"
+            },
+            "win_rate": {
+                "ci95": 0.005585708733939303,
+                "p_value": 1.0,
+                "value": 0.8428511186079546,
+                "var": 0.12383119626478716
+            }
+        }
+    },
+    "games": {
+        "1": {
+            "id": "a820d903-1834-4ab1-8679-2d9c888306a5",
+            "name": "G14",
+            "objects": [
+                {
+                    "description": "NetworkX definition of the G14 graph",
+                    "name": "graph",
+                    "path": "games/g14/g14.nx"
+                }
+            ],
+            "optimal_classical_value": 0.9772727272727273,
+            "optimal_quantum_value": 1.0,
+            "publication": {
+                "citation": "L. Man\u010dinska and D. E. Roberson, Baltic Journal on Modern Computing, 4(4), 846-859, 2016",
+                "url": "https://arxiv.org/abs/1801.03542"
+            },
+            "tags": [
+                "graph-coloring"
+            ]
+        }
+    }
+}
