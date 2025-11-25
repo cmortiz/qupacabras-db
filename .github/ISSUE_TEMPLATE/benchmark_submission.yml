@@ -145,3 +145,39 @@ body:
       render: qasm
     validations:
       required: false
+
+  - type: input
+    id: team
+    attributes:
+      label: Team / Authors
+      description: Comma-separated list of contributors or paper authors
+      placeholder: "Alice Smith, Bob Jones, Charlie Brown"
+    validations:
+      required: false
+
+  - type: input
+    id: circuit_depth
+    attributes:
+      label: Circuit Depth
+      description: Depth of the quantum circuit
+      placeholder: "25"
+    validations:
+      required: false
+
+  - type: input
+    id: gate_count
+    attributes:
+      label: Total Gate Count
+      description: Total number of quantum gates
+      placeholder: "150"
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Any additional context, methodology details, or observations
+      placeholder: "Used error mitigation strategy X..."
+    validations:
+      required: false
