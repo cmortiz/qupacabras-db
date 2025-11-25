@@ -46,6 +46,7 @@
     "two_qubit_fidelity": "0.995",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://www.rigetti.com/news/rigetti-computing-launches-ankaa-2-system-with-2-5x-performance-improvement-compared-to-previous-qpus",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_rigetti_ankaa3",
     "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa3"
   },
@@ -78,6 +79,7 @@
     },
     "id": "g14_graph_coloring_duke_gold",
     "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates.",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "benchmarkFolder": "g14_graph_coloring_duke_gold"
   },
   {
@@ -113,6 +115,7 @@
     "two_qubit_fidelity": "0.996",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://ionq.com/quantum-systems/aria",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "benchmarkFolder": "g14_graph_coloring_ionq_aria"
   },
   {
@@ -144,6 +147,7 @@
     },
     "id": "g14_graph_coloring_duke_blue",
     "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates.",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "benchmarkFolder": "g14_graph_coloring_duke_blue"
   },
   {
@@ -161,7 +165,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2024-09-27T00:00:00.000Z",
+    "timestamp": "2024-09-27T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -182,6 +186,7 @@
     "two_qubit_fidelity": "0.9968",
     "fidelity_measurement_method": "Standard Randomized Benchmarking (ECR error 3.2e-3)",
     "fidelity_reference": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm",
     "benchmarkFolder": "g14_graph_coloring_ibm"
   },
@@ -214,6 +219,7 @@
     },
     "id": "g14_graph_coloring_duke_silver",
     "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates.",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "benchmarkFolder": "g14_graph_coloring_duke_silver"
   },
   {
@@ -263,49 +269,9 @@
     "two_qubit_fidelity": "0.98",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://www.rigetti.com/news/rigetti-computing-launches-ankaa-2-system-with-2-5x-performance-improvement-compared-to-previous-qpus",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_rigetti_ankaa2",
     "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa2"
-  },
-  {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "IBM Jakarta",
-    "metricName": "Win Rate",
-    "metricValue": 0.842,
-    "uncertainty": 0.006,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on IBM Jakarta. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-      "J. Furches",
-      "S. Chehade",
-      "K. Hamilton",
-      "N. Wiebe",
-      "C. Ortiz Marrero"
-    ],
-    "timestamp": "2023-09-06T14:54:20.000Z",
-    "quantumSpecific": {
-      "qubitCount": 4,
-      "gateCount": 14,
-      "twoQubitGateCount": 4,
-      "singleQubitGateCount": 10,
-      "architecture": "Superconducting",
-      "shots": 1024,
-      "circuitDepth": 5,
-      "circuitVariations": 88,
-      "gateBreakdown": {
-        "h": 2,
-        "cx": 4,
-        "u": 4,
-        "ry": 4
-      },
-      "sourceLocation": "games/g14/circuits/4q"
-    },
-    "id": "g14_graph_coloring_ibm_jakarta",
-    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
-    "one_qubit_fidelity": "0.999",
-    "two_qubit_fidelity": "0.99",
-    "fidelity_measurement_method": "Standard Randomized Benchmarking",
-    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
-    "benchmarkFolder": "g14_graph_coloring_ibm_jakarta"
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -322,7 +288,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -343,6 +309,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_auckland",
     "benchmarkFolder": "g14_graph_coloring_ibm_auckland"
   },
@@ -361,7 +328,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -382,6 +349,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_belem",
     "benchmarkFolder": "g14_graph_coloring_ibm_belem"
   },
@@ -400,7 +368,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -421,6 +389,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_cairo",
     "benchmarkFolder": "g14_graph_coloring_ibm_cairo"
   },
@@ -439,7 +408,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -463,6 +432,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "benchmarkFolder": "g14_graph_coloring_ibm_guadalupe"
   },
   {
@@ -480,7 +450,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -501,8 +471,51 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_hanoi",
     "benchmarkFolder": "g14_graph_coloring_ibm_hanoi"
+  },
+  {
+    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+    "device": "IBM Jakarta",
+    "metricName": "Win Rate",
+    "metricValue": 0.842,
+    "uncertainty": 0.006,
+    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+    "description": "G14 graph coloring nonlocal game implementation on IBM Jakarta. Quantum advantage threshold is >97.7% win rate.",
+    "team": [
+      "J. Furches",
+      "S. Chehade",
+      "K. Hamilton",
+      "N. Wiebe",
+      "C. Ortiz Marrero"
+    ],
+    "timestamp": "2023-09-06T12:00:00.000Z",
+    "quantumSpecific": {
+      "qubitCount": 4,
+      "gateCount": 14,
+      "twoQubitGateCount": 4,
+      "singleQubitGateCount": 10,
+      "architecture": "Superconducting",
+      "shots": 1024,
+      "circuitDepth": 5,
+      "circuitVariations": 88,
+      "gateBreakdown": {
+        "h": 2,
+        "cx": 4,
+        "u": 4,
+        "ry": 4
+      },
+      "sourceLocation": "games/g14/circuits/4q"
+    },
+    "id": "g14_graph_coloring_ibm_jakarta",
+    "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation.",
+    "one_qubit_fidelity": "0.999",
+    "two_qubit_fidelity": "0.99",
+    "fidelity_measurement_method": "Standard Randomized Benchmarking",
+    "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
+    "benchmarkFolder": "g14_graph_coloring_ibm_jakarta"
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -519,7 +532,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -543,6 +556,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "benchmarkFolder": "g14_graph_coloring_ibm_lima"
   },
   {
@@ -560,7 +574,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -581,6 +595,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_manila",
     "benchmarkFolder": "g14_graph_coloring_ibm_manila"
   },
@@ -599,7 +614,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -620,6 +635,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_mumbai",
     "benchmarkFolder": "g14_graph_coloring_ibm_mumbai"
   },
@@ -638,7 +654,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -662,6 +678,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "benchmarkFolder": "g14_graph_coloring_ibm_nairobi"
   },
   {
@@ -679,7 +696,7 @@
       "N. Wiebe",
       "C. Ortiz Marrero"
     ],
-    "timestamp": "2023-09-06T00:00:00.000Z",
+    "timestamp": "2023-09-06T12:00:00.000Z",
     "quantumSpecific": {
       "qubitCount": 4,
       "gateCount": 14,
@@ -700,6 +717,7 @@
     "two_qubit_fidelity": "0.99",
     "fidelity_measurement_method": "Standard Randomized Benchmarking",
     "fidelity_reference": "https://research.ibm.com/blog/quantum-volume-256",
+    "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_quito",
     "benchmarkFolder": "g14_graph_coloring_ibm_quito"
   }

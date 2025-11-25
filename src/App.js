@@ -21,7 +21,9 @@ function App() {
                 // Convert timestamp strings to Date objects
                 const processedData = data.map(benchmark => ({
                     ...benchmark,
-                    timestamp: new Date(benchmark.timestamp)
+                    ...benchmark,
+                    timestamp: new Date(benchmark.timestamp),
+                    acceptedDate: benchmark.acceptedDate ? new Date(benchmark.acceptedDate) : null
                 }));
                 setBenchmarks(processedData);
                 setIsLoading(false);

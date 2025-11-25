@@ -1,30 +1,31 @@
 {
-    "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
-    "device": "Duke Quantum Blue",
-    "metricName": "Win Rate",
-    "metricValue": 0.98,
-    "uncertainty": 0.02,
-    "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
-    "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Blue trapped ion system. Quantum advantage threshold is >97.7% win rate.",
-    "team": [
-        "J. Furches",
-        "S. Chehade",
-        "K. Hamilton",
-        "N. Wiebe",
-        "C. Ortiz Marrero"
-    ],
-    "timestamp": "2024-10-09T00:00:00.000Z",
-    "quantumSpecific": {
-        "qubitCount": 2,
-        "gateCount": 4,
-        "twoQubitGateCount": 1,
-        "singleQubitGateCount": 3,
-        "architecture": "Trapped Ion",
-        "shots": 2000,
-        "circuitDepth": 3,
-        "circuitVariations": 51,
-        "sourceLocation": "raw_data/duke_collab/circuits"
-    },
-    "id": "g14_graph_coloring_duke_blue",
-    "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates."
+  "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
+  "device": "Duke Quantum Blue",
+  "metricName": "Win Rate",
+  "metricValue": 0.98,
+  "uncertainty": 0.02,
+  "paperUrl": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+  "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Blue trapped ion system. Quantum advantage threshold is >97.7% win rate.",
+  "team": [
+    "J. Furches",
+    "S. Chehade",
+    "K. Hamilton",
+    "N. Wiebe",
+    "C. Ortiz Marrero"
+  ],
+  "timestamp": "2024-10-09T00:00:00.000Z",
+  "quantumSpecific": {
+    "qubitCount": 2,
+    "gateCount": 4,
+    "twoQubitGateCount": 1,
+    "singleQubitGateCount": 3,
+    "architecture": "Trapped Ion",
+    "shots": 2000,
+    "circuitDepth": 3,
+    "circuitVariations": 51,
+    "sourceLocation": "raw_data/duke_collab/circuits"
+  },
+  "id": "g14_graph_coloring_duke_blue",
+  "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates.",
+  "acceptedDate": "2025-11-24T12:00:00.000Z"
 }

@@ -399,12 +399,12 @@ export default function BenchmarkTable({
                                     Qubits
                                 </SortableHeader>
                                 <SortableHeader
-                                    sortKey="quantumSpecific.circuitDepth"
+                                    sortKey="acceptedDate"
                                     currentSort={sortConfig}
                                     onSort={onSort}
                                     style={{ padding: '1rem 1.5rem', textAlign: 'center' }}
                                 >
-                                    Depth
+                                    Accepted
                                 </SortableHeader>
                                 <SortableHeader
                                     sortKey="metricName"
@@ -454,8 +454,8 @@ export default function BenchmarkTable({
                                         <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontFamily: 'monospace', fontSize: '1rem' }}>
                                             {bm.quantumSpecific?.qubitCount || '-'}
                                         </td>
-                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontFamily: 'monospace', fontSize: '1rem' }}>
-                                            {bm.quantumSpecific?.circuitDepth || '-'}
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', color: COLORS.fgMuted, fontSize: '0.875rem' }}>
+                                            {bm.acceptedDate ? bm.acceptedDate.toLocaleDateString() : '-'}
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem', color: COLORS.fgMuted }}>{bm.metricName}</td>
                                         <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>

@@ -13,7 +13,7 @@
     "N. Wiebe",
     "C. Ortiz Marrero"
   ],
-  "timestamp": "2024-09-27T00:00:00.000Z",
+  "timestamp": "2024-09-27T12:00:00.000Z",
   "quantumSpecific": {
     "qubitCount": 4,
     "gateCount": 14,
@@ -33,5 +33,6 @@
   "one_qubit_fidelity": "0.999",
   "two_qubit_fidelity": "0.9968",
   "fidelity_measurement_method": "Standard Randomized Benchmarking (ECR error 3.2e-3)",
-  "fidelity_reference": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0"
+  "fidelity_reference": "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0",
+  "acceptedDate": "2025-11-24T12:00:00.000Z"
 }
