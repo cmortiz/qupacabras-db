@@ -110,6 +110,33 @@ body:
     validations:
       required: false
 
+  - type: input
+    id: one_qubit_fidelity
+    attributes:
+      label: 1-Qubit Gate Fidelity
+      description: Average fidelity of single-qubit gates (e.g., 0.999)
+      placeholder: "0.999"
+    validations:
+      required: false
+
+  - type: input
+    id: two_qubit_fidelity
+    attributes:
+      label: 2-Qubit Gate Fidelity
+      description: Average fidelity of two-qubit gates (e.g., 0.99)
+      placeholder: "0.99"
+    validations:
+      required: false
+
+  - type: textarea
+    id: fidelity_measurement_method
+    attributes:
+      label: Fidelity Measurement Method
+      description: Describe how the gate fidelities were measured (e.g., Randomized Benchmarking, GST)
+      placeholder: "Standard Randomized Benchmarking with Clifford group..."
+    validations:
+      required: false
+
   - type: textarea
     id: qasm_content
     attributes:
