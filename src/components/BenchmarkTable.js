@@ -398,14 +398,7 @@ export default function BenchmarkTable({
                                 >
                                     Qubits
                                 </SortableHeader>
-                                <SortableHeader
-                                    sortKey="acceptedDate"
-                                    currentSort={sortConfig}
-                                    onSort={onSort}
-                                    style={{ padding: '1rem 1.5rem', textAlign: 'center' }}
-                                >
-                                    Accepted
-                                </SortableHeader>
+
                                 <SortableHeader
                                     sortKey="metricName"
                                     currentSort={sortConfig}
@@ -429,6 +422,14 @@ export default function BenchmarkTable({
                                     style={{ padding: '1rem 1.5rem' }}
                                 >
                                     Date
+                                </SortableHeader>
+                                <SortableHeader
+                                    sortKey="acceptedDate"
+                                    currentSort={sortConfig}
+                                    onSort={onSort}
+                                    style={{ padding: '1rem 1.5rem', textAlign: 'center' }}
+                                >
+                                    Accepted
                                 </SortableHeader>
                                 <th style={{ padding: '1rem 1.5rem', textAlign: 'center', color: COLORS.fgMuted }}>Actions</th>
                             </tr>
@@ -454,9 +455,7 @@ export default function BenchmarkTable({
                                         <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontFamily: 'monospace', fontSize: '1rem' }}>
                                             {bm.quantumSpecific?.qubitCount || '-'}
                                         </td>
-                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', color: COLORS.fgMuted, fontSize: '0.875rem' }}>
-                                            {bm.acceptedDate ? bm.acceptedDate.toLocaleDateString() : '-'}
-                                        </td>
+
                                         <td style={{ padding: '1rem 1.5rem', color: COLORS.fgMuted }}>{bm.metricName}</td>
                                         <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
                                             <span style={{ fontFamily: 'monospace', color: COLORS.accentOrange, fontWeight: 'bold', fontSize: '1.125rem' }}>
@@ -470,6 +469,9 @@ export default function BenchmarkTable({
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem', fontSize: '1rem', color: COLORS.fgMuted }}>
                                             {bm.timestamp.toLocaleDateString()}
+                                        </td>
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', color: COLORS.fgMuted, fontSize: '0.875rem' }}>
+                                            {bm.acceptedDate ? bm.acceptedDate.toLocaleDateString() : '-'}
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
                                             <button
