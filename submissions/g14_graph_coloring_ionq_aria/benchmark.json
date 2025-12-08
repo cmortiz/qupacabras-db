@@ -29,7 +29,7 @@
   "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4.",
   "one_qubit_fidelity": "0.9994",
   "two_qubit_fidelity": "0.994",
-  "fidelity_measurement_method": "Clifford Randomized Benchmarking (1Q), Mølmer-Sørenson (2Q)",
+  "fidelity_measurement_method": "Clifford RB (1Q), Mølmer-Sørenson (2Q) - IonQ Aria specs",
   "fidelity_reference": "https://ionq.com/quantum-systems/aria",
   "acceptedDate": "2025-11-24T12:00:00.000Z"
 }
