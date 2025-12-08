@@ -15,7 +15,7 @@
   ],
   "timestamp": "2024-11-18T00:00:00.000Z",
   "quantumSpecific": {
-    "qubitCount": 2,
+    "qubitCount": 4,
     "gateCount": 4,
     "twoQubitGateCount": 1,
     "singleQubitGateCount": 3,
