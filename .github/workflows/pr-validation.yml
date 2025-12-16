@@ -121,28 +121,23 @@ jobs:
           
           if (submissionFolders.length > 0) {
             const validatedFolders = process.env.VALIDATED_FOLDERS ? process.env.VALIDATED_FOLDERS.trim().split(' ') : [];
-            const comment = `## 🧪 Benchmark Submission Validation
-            
-**Validated submissions:** ${validatedFolders.join(', ')}
-
-✅ All validations passed! The benchmark data has been validated for:
-- **JSON Schema compliance** with comprehensive field validation
-- **Quantum-specific properties** (qubit count, gate count, circuit depth)
-- **QASM file existence and syntax** (if specified)
-- **Numeric field validation** with appropriate ranges
-- **URL format validation**
-- **Duplicate detection** across submissions
-- **Timestamp format** (ISO 8601)
-- **ID/folder name matching**
-
-### Enhanced Validation Features:
-- 📋 Validates against formal JSON Schema
-- 🔬 Quantum-specific field validation (qubits, gates, depth)
-- 🔍 Automatic duplicate submission detection
-- ⚠️  Warnings for missing recommended fields
-- 🛡️  Pre-commit hook ready for local validation
-
-Your submission is ready for review by maintainers.`;
+            const comment = [
+              '## Benchmark Submission Validation',
+              '',
+              '**Validated submissions:** ' + validatedFolders.join(', '),
+              '',
+              'All validations passed! The benchmark data has been validated for:',
+              '- JSON Schema compliance with comprehensive field validation',
+              '- Quantum-specific properties (qubit count, gate count, circuit depth)',
+              '- QASM file existence and syntax (if specified)',
+              '- Numeric field validation with appropriate ranges',
+              '- URL format validation',
+              '- Duplicate detection across submissions',
+              '- Timestamp format (ISO 8601)',
+              '- ID/folder name matching',
+              '',
+              'Your submission is ready for review by maintainers.'
+            ].join('\n');
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
