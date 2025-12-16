@@ -123,7 +123,7 @@ jobs:
             const validatedFolders = process.env.VALIDATED_FOLDERS ? process.env.VALIDATED_FOLDERS.trim().split(' ') : [];
             const comment = `## 🧪 Benchmark Submission Validation
             
-**Validated submissions:** ${validatedFolders.map(f => \`\\\`${f}\\\`\`).join(', ')}
+**Validated submissions:** ${validatedFolders.map(f => '\`' + f + '\`').join(', ')}
 
 ✅ All validations passed! The benchmark data has been validated for:
 - **JSON Schema compliance** with comprehensive field validation
