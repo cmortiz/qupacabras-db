@@ -25,7 +25,7 @@ jobs:
         # cache: 'npm'  # Temporarily disabled to clear stale cache
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Run benchmark generation tests
       run: npm test -- scripts/__tests__/ --passWithNoTests --ci --watchAll=false
@@ -54,7 +54,7 @@ jobs:
         # cache: 'npm'  # Temporarily disabled to clear stale cache
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Run ESLint
       run: npx eslint src/ scripts/ --ext .js,.jsx --max-warnings 0
@@ -73,7 +73,7 @@ jobs:
         # cache: 'npm'  # Temporarily disabled to clear stale cache
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Generate benchmark index
       run: npm run generate-index
