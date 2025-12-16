@@ -59,18 +59,20 @@ describe('BenchmarkTable', () => {
 
   test('renders table headers correctly', () => {
     render(<BenchmarkTable {...defaultProps} />);
-    
-    expect(screen.getByText('Algorithm')).toBeInTheDocument();
+
+    expect(screen.getByText('Experiment')).toBeInTheDocument();
     expect(screen.getByText('Device')).toBeInTheDocument();
+    expect(screen.getByText('Qubits')).toBeInTheDocument();
     expect(screen.getByText('Metric')).toBeInTheDocument();
     expect(screen.getByText('Value')).toBeInTheDocument();
-    expect(screen.getByText('Submission')).toBeInTheDocument();
-    expect(screen.getByText('Links')).toBeInTheDocument();
+    expect(screen.getByText('Date')).toBeInTheDocument();
+    expect(screen.getByText('Accepted')).toBeInTheDocument();
+    expect(screen.getByText('Actions')).toBeInTheDocument();
   });
 
   test('renders benchmark data correctly', () => {
     render(<BenchmarkTable {...defaultProps} />);
-    
+
     expect(screen.getByText('Test Algorithm')).toBeInTheDocument();
     expect(screen.getByText('Test Device')).toBeInTheDocument();
     expect(screen.getByText('Test Metric')).toBeInTheDocument();
@@ -79,7 +81,7 @@ describe('BenchmarkTable', () => {
 
   test('handles missing data gracefully', () => {
     render(<BenchmarkTable {...defaultProps} />);
-    
+
     // The second benchmark should be rendered without errors
     expect(screen.getByText('Another Algorithm')).toBeInTheDocument();
     expect(screen.getByText('Another Device')).toBeInTheDocument();
@@ -88,34 +90,34 @@ describe('BenchmarkTable', () => {
 
   test('displays loading state', () => {
     render(<BenchmarkTable {...defaultProps} isLoading={true} />);
-    
+
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   test('displays empty search results', () => {
     render(<BenchmarkTable {...defaultProps} filteredBenchmarks={[]} searchQuery="nonexistent" />);
-    
+
     expect(screen.getByText('No results found for "nonexistent".')).toBeInTheDocument();
   });
 
   test('download dropdown functionality', () => {
     render(<BenchmarkTable {...defaultProps} />);
-    
+
     // Click the download button to open dropdown
     const downloadButton = screen.getByText('Download');
     fireEvent.click(downloadButton);
-    
+
     // Check that dropdown options appear
     expect(screen.getByText('CSV - Visible Data')).toBeInTheDocument();
     expect(screen.getByText('JSON - All Data')).toBeInTheDocument();
-    
+
     // Click CSV option
     fireEvent.click(screen.getByText('CSV - Visible Data'));
     expect(defaultProps.downloadCSV).toHaveBeenCalledTimes(1);
-    
+
     // Open dropdown again
     fireEvent.click(downloadButton);
-    
+
     // Click JSON option
     fireEvent.click(screen.getByText('JSON - All Data'));
     expect(defaultProps.downloadJSON).toHaveBeenCalledTimes(1);
@@ -123,19 +125,19 @@ describe('BenchmarkTable', () => {
 
   test('calls sort function when header is clicked', () => {
     render(<BenchmarkTable {...defaultProps} />);
-    
-    const algorithmHeader = screen.getByText('Algorithm');
-    fireEvent.click(algorithmHeader);
-    
+
+    const experimentHeader = screen.getByText('Experiment');
+    fireEvent.click(experimentHeader);
+
     expect(defaultProps.onSort).toHaveBeenCalledWith('algorithmName');
   });
 
   test('search functionality works', () => {
     render(<BenchmarkTable {...defaultProps} />);
-    
+
     const searchInput = screen.getByPlaceholderText('Search benchmarks...');
     fireEvent.change(searchInput, { target: { value: 'test query' } });
-    
+
     expect(defaultProps.setSearchQuery).toHaveBeenCalledWith('test query');
   });
 

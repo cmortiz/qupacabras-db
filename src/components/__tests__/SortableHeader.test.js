@@ -9,20 +9,29 @@ const defaultProps = {
   children: 'Test Column'
 };
 
+// Wrapper to properly render th inside table structure
+const TableWrapper = ({ children }) => (
+  <table>
+    <thead>
+      <tr>{children}</tr>
+    </thead>
+  </table>
+);
+
 describe('SortableHeader', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test('renders column title correctly', () => {
-    render(<SortableHeader {...defaultProps} />);
-    
+    render(<SortableHeader {...defaultProps} />, { wrapper: TableWrapper });
+
     expect(screen.getByText('Test Column')).toBeInTheDocument();
   });
 
   test('renders correctly when not currently sorted', () => {
-    render(<SortableHeader {...defaultProps} />);
-    
+    render(<SortableHeader {...defaultProps} />, { wrapper: TableWrapper });
+
     // The header should render with the column text
     expect(screen.getByText('Test Column')).toBeInTheDocument();
   });
@@ -32,9 +41,9 @@ describe('SortableHeader', () => {
       ...defaultProps,
       currentSort: { key: 'testColumn', direction: 'asc' }
     };
-    
-    render(<SortableHeader {...props} />);
-    
+
+    render(<SortableHeader {...props} />, { wrapper: TableWrapper });
+
     // The header should render with the column text
     expect(screen.getByText('Test Column')).toBeInTheDocument();
   });
@@ -44,28 +53,28 @@ describe('SortableHeader', () => {
       ...defaultProps,
       currentSort: { key: 'testColumn', direction: 'desc' }
     };
-    
-    render(<SortableHeader {...props} />);
-    
+
+    render(<SortableHeader {...props} />, { wrapper: TableWrapper });
+
     // The header should render with the column text
     expect(screen.getByText('Test Column')).toBeInTheDocument();
   });
 
   test('calls onSort with correct sortKey when clicked', () => {
-    render(<SortableHeader {...defaultProps} />);
-    
+    render(<SortableHeader {...defaultProps} />, { wrapper: TableWrapper });
+
     const headerText = screen.getByText('Test Column');
     fireEvent.click(headerText);
-    
+
     expect(defaultProps.onSort).toHaveBeenCalledWith('testColumn');
   });
 
   test('responds to click events', () => {
-    render(<SortableHeader {...defaultProps} />);
-    
+    render(<SortableHeader {...defaultProps} />, { wrapper: TableWrapper });
+
     const headerText = screen.getByText('Test Column');
     fireEvent.click(headerText);
-    
+
     expect(defaultProps.onSort).toHaveBeenCalled();
   });
 
@@ -74,9 +83,9 @@ describe('SortableHeader', () => {
       ...defaultProps,
       className: 'custom-class text-right'
     };
-    
-    render(<SortableHeader {...props} />);
-    
+
+    render(<SortableHeader {...props} />, { wrapper: TableWrapper });
+
     // Verify the component renders with custom className
     expect(screen.getByText('Test Column')).toBeInTheDocument();
   });
@@ -86,15 +95,15 @@ describe('SortableHeader', () => {
       ...defaultProps,
       currentSort: { key: 'testColumn', direction: 'asc' }
     };
-    
+
     const inactiveProps = {
       ...defaultProps,
       currentSort: { key: 'otherColumn', direction: 'asc' }
     };
-    
-    const { rerender } = render(<SortableHeader {...activeProps} />);
+
+    const { rerender } = render(<SortableHeader {...activeProps} />, { wrapper: TableWrapper });
     expect(screen.getByText('Test Column')).toBeInTheDocument();
-    
+
     rerender(<SortableHeader {...inactiveProps} />);
     expect(screen.getByText('Test Column')).toBeInTheDocument();
   });

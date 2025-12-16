@@ -67,7 +67,7 @@
     ],
     "timestamp": "2024-11-18T00:00:00.000Z",
     "quantumSpecific": {
-      "qubitCount": 2,
+      "qubitCount": 4,
       "gateCount": 4,
       "twoQubitGateCount": 1,
       "singleQubitGateCount": 3,
@@ -99,7 +99,7 @@
     ],
     "timestamp": "2024-11-04T00:00:00.000Z",
     "quantumSpecific": {
-      "qubitCount": 2,
+      "qubitCount": 4,
       "gateCount": 4,
       "twoQubitGateCount": 1,
       "singleQubitGateCount": 3,
@@ -135,7 +135,7 @@
     ],
     "timestamp": "2024-10-09T00:00:00.000Z",
     "quantumSpecific": {
-      "qubitCount": 2,
+      "qubitCount": 4,
       "gateCount": 4,
       "twoQubitGateCount": 1,
       "singleQubitGateCount": 3,
@@ -207,7 +207,7 @@
     ],
     "timestamp": "2024-07-18T00:00:00.000Z",
     "quantumSpecific": {
-      "qubitCount": 2,
+      "qubitCount": 4,
       "gateCount": 4,
       "twoQubitGateCount": 1,
       "singleQubitGateCount": 3,
