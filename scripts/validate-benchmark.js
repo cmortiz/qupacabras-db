@@ -37,10 +37,10 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
     try {
         // Read and parse the benchmark file
         const benchmarkData = JSON.parse(fs.readFileSync(benchmarkPath, 'utf8'));
-        
+
         // Validate against schema
         const valid = validate(benchmarkData);
-        
+
         if (!valid) {
             result.valid = false;
             result.errors = validate.errors.map(err => ({
@@ -49,9 +49,9 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
                 params: err.params
             }));
         }
-        
+
         // Additional validations beyond schema
-        
+
         // Auto-generate ID if not provided
         if (!benchmarkData.id) {
             benchmarkData.id = folderName;
@@ -65,7 +65,7 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
                 message: `ID '${benchmarkData.id}' doesn't match folder name '${folderName}' (consider using folder name)`
             });
         }
-        
+
         // Validate QASM files exist
         if (benchmarkData.qasmFiles && Array.isArray(benchmarkData.qasmFiles)) {
             const folderPath = path.dirname(benchmarkPath);
@@ -79,7 +79,7 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
                 }
             });
         }
-        
+
         // Auto-generate timestamp if not provided
         if (!benchmarkData.timestamp) {
             benchmarkData.timestamp = new Date().toISOString();
@@ -88,12 +88,12 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
                 message: `Timestamp auto-generated: ${benchmarkData.timestamp}`
             });
         }
-        
+
         // Store the potentially modified data
         result.data = benchmarkData;
-        
+
         return result;
-        
+
     } catch (error) {
         result.valid = false;
         result.errors.push({
@@ -107,6 +107,7 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
 /**
  * Basic QASM content validation
  */
+// eslint-disable-next-line no-unused-vars
 function validateQASMContent(content) {
     // Check for common QASM headers/keywords
     const qasmPatterns = [
@@ -115,13 +116,14 @@ function validateQASMContent(content) {
         /creg\s+\w+\[\d+\]/,
         /include\s+"[\w.]+"/
     ];
-    
+
     return qasmPatterns.some(pattern => pattern.test(content));
 }
 
 /**
  * Validate statistical value consistency
  */
+// eslint-disable-next-line no-unused-vars
 function validateStatisticalConsistency(stats, fieldName, result, checkRange = true) {
     // Check min <= median <= max
     if (stats.min > stats.median) {
@@ -130,14 +132,14 @@ function validateStatisticalConsistency(stats, fieldName, result, checkRange = t
             message: 'Minimum value should not exceed median value'
         });
     }
-    
+
     if (stats.median > stats.max) {
         result.warnings.push({
             field: fieldName,
             message: 'Median value should not exceed maximum value'
         });
     }
-    
+
     if (stats.min > stats.max) {
         result.errors.push({
             field: fieldName,
@@ -145,7 +147,7 @@ function validateStatisticalConsistency(stats, fieldName, result, checkRange = t
         });
         result.valid = false;
     }
-    
+
     // Check mean is within min/max range
     if (stats.mean < stats.min || stats.mean > stats.max) {
         result.warnings.push({
@@ -153,7 +155,7 @@ function validateStatisticalConsistency(stats, fieldName, result, checkRange = t
             message: 'Mean value should be between minimum and maximum values'
         });
     }
-    
+
     // For error rates, warn if values seem too high
     if (checkRange && stats.max > 0.5) {
         result.warnings.push({
@@ -169,11 +171,11 @@ function validateStatisticalConsistency(stats, fieldName, result, checkRange = t
 function checkDuplicates(allBenchmarks) {
     const duplicates = [];
     const seen = new Map();
-    
+
     allBenchmarks.forEach((benchmark) => {
         // Create a signature for comparison
         const signature = `${benchmark.algorithmName}-${benchmark.device}-${benchmark.metricName}`;
-        
+
         if (seen.has(signature)) {
             const existing = seen.get(signature);
             // Check if values are suspiciously similar
@@ -188,7 +190,7 @@ function checkDuplicates(allBenchmarks) {
             seen.set(signature, benchmark);
         }
     });
-    
+
     return duplicates;
 }
 
@@ -197,23 +199,23 @@ function checkDuplicates(allBenchmarks) {
  */
 function validateAllBenchmarks(submissionsDir) {
     console.log('🔍 Validating all benchmarks...\n');
-    
+
     const allBenchmarks = [];
     const validationResults = [];
-    
+
     // Get all submission folders
     const folders = fs.readdirSync(submissionsDir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory() && dirent.name !== 'template')
         .map(dirent => dirent.name);
-    
+
     // Validate each submission
     folders.forEach(folder => {
         const benchmarkPath = path.join(submissionsDir, folder, 'benchmark.json');
-        
+
         if (fs.existsSync(benchmarkPath)) {
             console.log(`📁 Validating ${folder}...`);
             const result = validateBenchmarkFile(benchmarkPath, folder);
-            
+
             if (result.valid) {
                 const benchmarkData = JSON.parse(fs.readFileSync(benchmarkPath, 'utf8'));
                 benchmarkData.benchmarkFolder = folder;
@@ -225,19 +227,19 @@ function validateAllBenchmarks(submissionsDir) {
                     console.log(`   - ${err.field}: ${err.message}`);
                 });
             }
-            
+
             if (result.warnings.length > 0) {
                 console.log(`⚠️  Warnings:`);
                 result.warnings.forEach(warn => {
                     console.log(`   - ${warn.field}: ${warn.message}`);
                 });
             }
-            
+
             validationResults.push({
                 folder,
                 ...result
             });
-            
+
             console.log('');
         } else {
             console.log(`⚠️  ${folder}: No benchmark.json found\n`);
@@ -249,11 +251,11 @@ function validateAllBenchmarks(submissionsDir) {
             });
         }
     });
-    
+
     // Check for duplicates
     console.log('🔍 Checking for duplicate submissions...');
     const duplicates = checkDuplicates(allBenchmarks);
-    
+
     if (duplicates.length > 0) {
         console.log('⚠️  Potential duplicates found:');
         duplicates.forEach(dup => {
@@ -262,7 +264,7 @@ function validateAllBenchmarks(submissionsDir) {
     } else {
         console.log('✅ No duplicates found');
     }
-    
+
     // Summary
     console.log('\n📊 Summary:');
     const validCount = validationResults.filter(r => r.valid).length;
@@ -271,7 +273,7 @@ function validateAllBenchmarks(submissionsDir) {
     console.log(`   Valid: ${validCount}`);
     console.log(`   Invalid: ${invalidCount}`);
     console.log(`   Duplicates: ${duplicates.length}`);
-    
+
     return {
         results: validationResults,
         duplicates,
@@ -282,7 +284,7 @@ function validateAllBenchmarks(submissionsDir) {
 // CLI functionality
 if (require.main === module) {
     const args = process.argv.slice(2);
-    
+
     if (args.length === 0) {
         // Validate all submissions
         const submissionsDir = path.join(__dirname, '../submissions');
@@ -293,7 +295,7 @@ if (require.main === module) {
         const benchmarkPath = path.resolve(args[1]);
         const folderName = path.basename(path.dirname(benchmarkPath));
         const result = validateBenchmarkFile(benchmarkPath, folderName);
-        
+
         console.log(`Validating ${benchmarkPath}...`);
         if (result.valid) {
             console.log('✅ Valid');
@@ -303,14 +305,14 @@ if (require.main === module) {
                 console.log(`   - ${err.field}: ${err.message}`);
             });
         }
-        
+
         if (result.warnings.length > 0) {
             console.log('⚠️  Warnings:');
             result.warnings.forEach(warn => {
                 console.log(`   - ${warn.field}: ${warn.message}`);
             });
         }
-        
+
         process.exit(result.valid ? 0 : 1);
     } else {
         console.log('Usage:');
