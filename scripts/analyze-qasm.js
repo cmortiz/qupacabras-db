@@ -119,6 +119,8 @@ function analyzeDirectory(dirPath) {
     
     // Aggregate statistics
     if (analyses.length > 0) {
+        const qubitCounts = analyses.map(a => a.qubitCount).filter(v => typeof v === 'number');
+        const circuitDepths = analyses.map(a => a.circuitDepth).filter(v => typeof v === 'number');
         const aggregate = {
             totalCircuits: analyses.length,
             avgQubitCount: analyses.reduce((sum, a) => sum + a.qubitCount, 0) / analyses.length,
@@ -126,7 +128,13 @@ function analyzeDirectory(dirPath) {
             avgCircuitDepth: analyses.reduce((sum, a) => sum + a.circuitDepth, 0) / analyses.length,
             avgSingleQubitGates: analyses.reduce((sum, a) => sum + a.singleQubitGateCount, 0) / analyses.length,
             avgTwoQubitGates: analyses.reduce((sum, a) => sum + a.twoQubitGateCount, 0) / analyses.length,
-            totalGateTypes: {}
+            totalGateTypes: {},
+            qubitRange: qubitCounts.length > 0
+                ? { min: Math.min(...qubitCounts), max: Math.max(...qubitCounts) }
+                : null,
+            depthRange: circuitDepths.length > 0
+                ? { min: Math.min(...circuitDepths), max: Math.max(...circuitDepths) }
+                : null
         };
         
         // Aggregate gate types

@@ -66,8 +66,8 @@ function App() {
             return [
                 `"${bm.algorithmName}"`,
                 `"${bm.device || 'N/A'}"`,
-                bm.quantumSpecific?.qubitCount || '',
-                bm.quantumSpecific?.circuitDepth || '',
+                bm.problemSpecific?.qubitRange?.max ?? bm.quantumSpecific?.qubitCount ?? '',
+                bm.generalMetrics?.circuitDepth ?? bm.quantumSpecific?.circuitDepth ?? '',
                 `"${bm.metricName}"`,
                 bm.metricValue,
                 bm.uncertainty || '',

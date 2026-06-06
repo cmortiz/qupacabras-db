@@ -12,9 +12,141 @@ const { analyzeQASMFile } = require('./analyze-qasm');
 
 const SUBMISSIONS_DIR = path.join(__dirname, '../submissions');
 const OUTPUT_FILE = path.join(__dirname, '../public/benchmarks.json');
+const LAMBDA1_INDEX_FILE = path.join(__dirname, '../public/lambda1-index.json');
+
+function loadLambda1Index() {
+    if (!fs.existsSync(LAMBDA1_INDEX_FILE)) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(fs.readFileSync(LAMBDA1_INDEX_FILE, 'utf8'));
+    } catch (error) {
+        console.warn(`⚠️  Failed to parse lambda1 index at ${LAMBDA1_INDEX_FILE}: ${error.message}`);
+        return {};
+    }
+}
+
+function computeQubitTimeVolume(benchmark) {
+    const qubitCount = benchmark.quantumSpecific?.qubitCount;
+    const circuitDuration = benchmark.timing?.circuitDuration;
+    const t2 = benchmark.timing?.t2;
+
+    if (
+        qubitCount === null || qubitCount === undefined ||
+        circuitDuration === null || circuitDuration === undefined ||
+        Number.isNaN(Number(qubitCount)) || Number.isNaN(Number(circuitDuration))
+    ) {
+        return { raw: null, normalized: null };
+    }
+
+    const raw = Number(qubitCount) * Number(circuitDuration);
+    const normalized = (t2 !== null && t2 !== undefined && !Number.isNaN(Number(t2)) && Number(t2) > 0)
+        ? raw / Number(t2)
+        : null;
+
+    return { raw, normalized };
+}
+
+function toNumberOrNull(value) {
+    if (value === null || value === undefined || value === '') return null;
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? null : parsed;
+}
+
+function deriveFidelity(explicitValue, errorStats) {
+    const explicit = toNumberOrNull(explicitValue);
+    if (explicit !== null) return explicit;
+    const mean = toNumberOrNull(errorStats?.mean);
+    if (mean === null) return null;
+    return 1 - mean;
+}
+
+function buildMetricCategories(benchmarkData, lambda1Entry, qasmRangeData) {
+    const primaryMetric = {
+        name: benchmarkData.problemSpecific?.primaryMetric?.name || benchmarkData.metricName || null,
+        definition: benchmarkData.problemSpecific?.primaryMetric?.definition || benchmarkData.primaryMetricDefinition || null,
+        value: toNumberOrNull(benchmarkData.problemSpecific?.primaryMetric?.value ?? benchmarkData.metricValue),
+        uncertainty: toNumberOrNull(benchmarkData.problemSpecific?.primaryMetric?.uncertainty ?? benchmarkData.uncertainty),
+        uncertaintyDefinition: benchmarkData.problemSpecific?.primaryMetric?.uncertaintyDefinition || benchmarkData.uncertaintyDefinition || null
+    };
+
+    const timing = benchmarkData.generalMetrics?.timing || benchmarkData.timing || null;
+    const qubitCount = toNumberOrNull(
+        benchmarkData.problemSpecific?.qubitRange?.max ??
+        benchmarkData.quantumSpecific?.qubitCount
+    );
+    const circuitDepth = toNumberOrNull(
+        benchmarkData.generalMetrics?.circuitDepth ?? benchmarkData.quantumSpecific?.circuitDepth
+    );
+
+    const generalMetrics = {
+        ...(benchmarkData.generalMetrics || {}),
+        lambda1: lambda1Entry.lambda1 ?? benchmarkData.generalMetrics?.lambda1 ?? benchmarkData.lambda1 ?? null,
+        lambda1Source: lambda1Entry.lambda1Source ?? benchmarkData.generalMetrics?.lambda1Source ?? benchmarkData.lambda1Source ?? null,
+        circuitDepth,
+        gateFidelity: {
+            ...(benchmarkData.generalMetrics?.gateFidelity || {}),
+            oneQubit: deriveFidelity(benchmarkData.generalMetrics?.gateFidelity?.oneQubit ?? benchmarkData.one_qubit_fidelity, benchmarkData.errorRates?.singleQubitGate),
+            twoQubit: deriveFidelity(benchmarkData.generalMetrics?.gateFidelity?.twoQubit ?? benchmarkData.two_qubit_fidelity, benchmarkData.errorRates?.twoQubitGate),
+            measurementMethod: benchmarkData.generalMetrics?.gateFidelity?.measurementMethod || benchmarkData.fidelity_measurement_method || null,
+            reference: benchmarkData.generalMetrics?.gateFidelity?.reference || null
+        },
+        readoutFidelity: deriveFidelity(benchmarkData.generalMetrics?.readoutFidelity, benchmarkData.errorRates?.readout),
+        qubitFidelity: deriveFidelity(benchmarkData.generalMetrics?.qubitFidelity ?? benchmarkData.qubitFidelity, benchmarkData.errorRates?.qubit),
+        timing: timing ? {
+            circuitDuration: toNumberOrNull(timing.circuitDuration),
+            t1: toNumberOrNull(timing.t1),
+            t2: toNumberOrNull(timing.t2),
+            unit: timing.unit || 'us'
+        } : null,
+        runtimeOverT1: null,
+        runtimeOverT2: null,
+        qubitTimeVolume: null,
+        qubitTimeVolumeNormalized: null
+    };
+
+    const qtv = computeQubitTimeVolume({ quantumSpecific: { qubitCount }, timing: generalMetrics.timing });
+    generalMetrics.qubitTimeVolume = qtv.raw;
+    generalMetrics.qubitTimeVolumeNormalized = qtv.normalized;
+
+    const duration = toNumberOrNull(generalMetrics.timing?.circuitDuration);
+    const t1 = toNumberOrNull(generalMetrics.timing?.t1);
+    const t2 = toNumberOrNull(generalMetrics.timing?.t2);
+    if (duration !== null && t1 !== null && t1 > 0) {
+        generalMetrics.runtimeOverT1 = duration / t1;
+    }
+    if (duration !== null && t2 !== null && t2 > 0) {
+        generalMetrics.runtimeOverT2 = duration / t2;
+    }
+
+    const problemSpecific = {
+        ...(benchmarkData.problemSpecific || {}),
+        description: benchmarkData.problemSpecific?.description || benchmarkData.description || null,
+        primaryMetric,
+        qubitRange: benchmarkData.problemSpecific?.qubitRange || qasmRangeData.qubitRange || (qubitCount !== null ? { min: qubitCount, max: qubitCount } : null),
+        depthRange: benchmarkData.problemSpecific?.depthRange || qasmRangeData.depthRange || (circuitDepth !== null ? { min: circuitDepth, max: circuitDepth } : null),
+        shots: toNumberOrNull(benchmarkData.problemSpecific?.shots ?? benchmarkData.quantumSpecific?.shots),
+        methodology: benchmarkData.problemSpecific?.methodology || benchmarkData.methodology || null,
+        notes: benchmarkData.problemSpecific?.notes || benchmarkData.notes || null
+    };
+
+    benchmarkData.metricName = primaryMetric.name;
+    benchmarkData.metricValue = primaryMetric.value;
+    benchmarkData.uncertainty = primaryMetric.uncertainty;
+    benchmarkData.uncertaintyDefinition = primaryMetric.uncertaintyDefinition;
+
+    benchmarkData.generalMetrics = generalMetrics;
+    benchmarkData.problemSpecific = problemSpecific;
+    benchmarkData.qubitTimeVolume = generalMetrics.qubitTimeVolume;
+    benchmarkData.qubitTimeVolumeNormalized = generalMetrics.qubitTimeVolumeNormalized;
+    benchmarkData.lambda1 = generalMetrics.lambda1;
+    benchmarkData.lambda1Source = generalMetrics.lambda1Source;
+}
 
 function generateBenchmarkIndex() {
     console.log('🔍 Scanning submissions directory...');
+    const lambda1Index = loadLambda1Index();
     
     const benchmarks = [];
     const submissionFolders = fs.readdirSync(SUBMISSIONS_DIR, { withFileTypes: true })
@@ -38,6 +170,9 @@ function generateBenchmarkIndex() {
                     
                     // Ensure benchmarkFolder matches the actual folder name
                     benchmarkData.benchmarkFolder = folder;
+
+                    // Attach computed spectral gap fields if available
+                    const lambda1Entry = lambda1Index[folder] || {};
                     
                     // Auto-generate ID if not present
                     if (!benchmarkData.id) {
@@ -53,10 +188,12 @@ function generateBenchmarkIndex() {
                     }
                     
                     // Auto-populate quantum properties from QASM files if available
+                    let qasmRangeData = { qubitRange: null, depthRange: null };
                     if (benchmarkData.qasmFiles && benchmarkData.qasmFiles.length > 0) {
                         console.log(`   📊 Analyzing QASM files for ${folder}...`);
                         let totalAnalysis = null;
                         let fileCount = 0;
+                        const perFileAnalyses = [];
                         
                         for (const qasmFile of benchmarkData.qasmFiles) {
                             const qasmPath = path.join(folderPath, qasmFile);
@@ -64,6 +201,7 @@ function generateBenchmarkIndex() {
                                 const analysis = analyzeQASMFile(qasmPath);
                                 if (analysis) {
                                     fileCount++;
+                                    perFileAnalyses.push(analysis);
                                     // If this is the first file, use it as base
                                     if (!totalAnalysis) {
                                         totalAnalysis = analysis;
@@ -127,8 +265,17 @@ function generateBenchmarkIndex() {
                             } else {
                                 console.log(`   ℹ️  All quantum properties already present, skipping auto-population`);
                             }
+
+                            const qubitCounts = perFileAnalyses.map(a => a.qubitCount).filter(v => typeof v === 'number');
+                            const depthCounts = perFileAnalyses.map(a => a.circuitDepth).filter(v => typeof v === 'number');
+                            qasmRangeData = {
+                                qubitRange: qubitCounts.length > 0 ? { min: Math.min(...qubitCounts), max: Math.max(...qubitCounts) } : null,
+                                depthRange: depthCounts.length > 0 ? { min: Math.min(...depthCounts), max: Math.max(...depthCounts) } : null
+                            };
                         }
                     }
+
+                    buildMetricCategories(benchmarkData, lambda1Entry, qasmRangeData);
                     
                     benchmarks.push(benchmarkData);
                     console.log(`✅ Added benchmark: ${benchmarkData.algorithmName} (${folder})`);

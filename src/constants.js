@@ -26,22 +26,30 @@ export const UI_CONSTANTS = {
 };
 
 export const FIELD_DESCRIPTIONS = {
+    generalMetrics: {
+        title: 'General Platform Metrics',
+        description: 'Hardware and circuit-structural metrics that are comparable across different problems.'
+    },
+    problemSpecific: {
+        title: 'Problem-Specific Metrics',
+        description: 'Experiment-specific definitions and outcomes tied to a given nonlocal game or task instance.'
+    },
     errorRates: {
         qubit: {
-            title: 'Qubit Error',
-            description: 'Statistical error rates aggregated across all qubits used in the execution of the QASM files. This represents the overall qubit performance during the experiment.'
+            title: 'Qubit Fidelity',
+            description: 'Fidelity (computed as 1 - error) aggregated across all qubits used in the execution of the QASM files. This represents overall qubit performance during the experiment.'
         },
         readout: {
-            title: 'Readout Error',
-            description: 'Statistical readout/measurement error rates aggregated across all experiments performed. This captures the accuracy of qubit state measurement.'
+            title: 'Readout Fidelity',
+            description: 'Readout fidelity (computed as 1 - error) aggregated across all experiments performed. This captures the accuracy of qubit state measurement.'
         },
         twoQubitGate: {
-            title: '2Q Gate Error',
-            description: 'Statistical error rates for two-qubit basis gates aggregated across all 2Q gates used in the circuit execution.'
+            title: '2Q Gate Fidelity',
+            description: 'Two-qubit gate fidelity (computed as 1 - error) aggregated across all 2Q basis gates used in circuit execution.'
         },
         singleQubitGate: {
-            title: '1Q Gate Error',
-            description: 'Statistical error rates for single-qubit basis gates aggregated across all 1Q gates used in the circuit execution.'
+            title: '1Q Gate Fidelity',
+            description: 'Single-qubit gate fidelity (computed as 1 - error) aggregated across all 1Q basis gates used in circuit execution.'
         }
     },
     executionTime: {

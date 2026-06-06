@@ -33,7 +33,8 @@ jobs:
             // Helper to extract value from issue body
             // This is a simple parser for the issue form format
             function extractValue(body, header) {
-              const regex = new RegExp(`### ${header}\\s+([\\s\\S]*?)(?=(?:###|$))`);
+              const escapedHeader = header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              const regex = new RegExp(`### ${escapedHeader}\\s+([\\s\\S]*?)(?=(?:###|$))`);
               const match = body.match(regex);
               return match ? match[1].trim() : null;
             }
@@ -46,11 +47,23 @@ jobs:
             const metricName = extractValue(body, 'Metric Name');
             const metricValueStr = extractValue(body, 'Metric Value');
             const uncertaintyStr = extractValue(body, 'Uncertainty (Optional)');
+            const uncertaintyDefinition = extractValue(body, 'Uncertainty Definition (Optional)');
             const description = extractValue(body, 'Description');
             const paperUrl = extractValue(body, 'Paper/Preprint URL');
             const qubitCountStr = extractValue(body, 'Qubit Count');
             const shotsStr = extractValue(body, 'Shots');
             const qasmContent = extractValue(body, 'QASM Circuit (Optional)');
+            const circuitDurationStr = extractValue(body, 'Circuit Duration in microseconds');
+            const t1Str = extractValue(body, 'T1 in microseconds');
+            const t2Str = extractValue(body, 'T2 in microseconds');
+            const primaryMetricDefinition = extractValue(body, 'Primary Metric Definition');
+            const oneQubitFidelityStr = extractValue(body, '1-Qubit Gate Fidelity');
+            const twoQubitFidelityStr = extractValue(body, '2-Qubit Gate Fidelity');
+            const qubitFidelityStr = extractValue(body, 'Qubit Fidelity');
+            const readoutFidelityStr = extractValue(body, 'Readout Fidelity');
+            const fidelityMeasurementMethod = extractValue(body, 'Fidelity Measurement Method');
+            const methodology = extractValue(body, 'Methodology');
+            const notes = extractValue(body, 'Notes');
 
             if (!algorithmName || !device || !metricName || !metricValueStr) {
               core.setFailed('Missing required fields');
@@ -72,13 +85,15 @@ jobs:
               timestamp, // Creation time
               lastUpdated: timestamp, // Initial update time
               contributor,
-              description: description !== '_No response_' ? description : undefined,
               paperUrl: paperUrl !== '_No response_' ? paperUrl : undefined,
             };
 
             // Add uncertainty if provided
             if (uncertaintyStr && uncertaintyStr !== '_No response_') {
               benchmark.uncertainty = parseFloat(uncertaintyStr);
+            }
+            if (uncertaintyDefinition && uncertaintyDefinition !== '_No response_') {
+              benchmark.uncertaintyDefinition = uncertaintyDefinition;
             }
 
             // Add quantum specifics
@@ -88,6 +103,40 @@ jobs:
             
             if (Object.keys(quantumSpecific).length > 0) {
               benchmark.quantumSpecific = quantumSpecific;
+            }
+
+            benchmark.generalMetrics = {
+              gateFidelity: {
+                oneQubit: oneQubitFidelityStr && oneQubitFidelityStr !== '_No response_' ? parseFloat(oneQubitFidelityStr) : undefined,
+                twoQubit: twoQubitFidelityStr && twoQubitFidelityStr !== '_No response_' ? parseFloat(twoQubitFidelityStr) : undefined,
+                measurementMethod: fidelityMeasurementMethod && fidelityMeasurementMethod !== '_No response_' ? fidelityMeasurementMethod : undefined
+              },
+              qubitFidelity: qubitFidelityStr && qubitFidelityStr !== '_No response_' ? parseFloat(qubitFidelityStr) : undefined,
+              readoutFidelity: readoutFidelityStr && readoutFidelityStr !== '_No response_' ? parseFloat(readoutFidelityStr) : undefined
+            };
+
+            benchmark.problemSpecific = {
+              description: description !== '_No response_' ? description : undefined,
+              primaryMetric: {
+                name: metricName,
+                definition: primaryMetricDefinition && primaryMetricDefinition !== '_No response_' ? primaryMetricDefinition : undefined,
+                value: parseFloat(metricValueStr),
+                uncertainty: uncertaintyStr && uncertaintyStr !== '_No response_' ? parseFloat(uncertaintyStr) : undefined,
+                uncertaintyDefinition: uncertaintyDefinition && uncertaintyDefinition !== '_No response_' ? uncertaintyDefinition : undefined
+              },
+              shots: shotsStr && shotsStr !== '_No response_' ? parseInt(shotsStr) : undefined,
+              methodology: methodology && methodology !== '_No response_' ? methodology : undefined,
+              notes: notes && notes !== '_No response_' ? notes : undefined
+            };
+
+            // Add timing and coherence inputs when provided
+            const timing = {};
+            if (circuitDurationStr && circuitDurationStr !== '_No response_') timing.circuitDuration = parseFloat(circuitDurationStr);
+            if (t1Str && t1Str !== '_No response_') timing.t1 = parseFloat(t1Str);
+            if (t2Str && t2Str !== '_No response_') timing.t2 = parseFloat(t2Str);
+            if (Object.keys(timing).length > 0) {
+              timing.unit = 'us';
+              benchmark.timing = timing;
             }
 
             // Prepare directory - use stable name based on ID to allow updates

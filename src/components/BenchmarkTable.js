@@ -9,20 +9,62 @@ import DownloadDropdown from './DownloadDropdown';
 // Modal component for detailed benchmark view
 function BenchmarkDetailsModal({ benchmark, onClose }) {
     if (!benchmark) return null;
+    const gm = benchmark.generalMetrics || {};
+    const ps = benchmark.problemSpecific || {};
+    const primaryMetric = ps.primaryMetric || {};
 
-    const formatErrorRate = (val) => {
-        if (val === null || val === undefined) return 'N/A';
-        return (val * 100).toFixed(3) + '%';
+    const lambda1SourceLabel = {
+        explicit: 'from problem graph',
+        qasm: 'from circuit connectivity'
     };
 
-    const formatDetailedErrorRate = (stats) => {
-        if (!stats) return { mean: 'N/A', min: 'N/A', median: 'N/A', max: 'N/A' };
+    const formatFidelity = (val) => {
+        if (val === null || val === undefined || Number.isNaN(Number(val))) return 'N/A';
+        return (1 - Number(val)).toFixed(5);
+    };
+
+    const formatFidelityRange = (stats) => {
+        if (!stats) return { best: 'N/A', worst: 'N/A' };
         return {
-            mean: formatErrorRate(stats.mean),
-            min: formatErrorRate(stats.min),
-            median: formatErrorRate(stats.median),
-            max: formatErrorRate(stats.max)
+            best: formatFidelity(stats.min),
+            worst: formatFidelity(stats.max)
         };
+    };
+
+    const toDisplayFidelity = (explicitValue, errorStats) => {
+        const explicit = explicitValue !== null && explicitValue !== undefined ? Number(explicitValue) : null;
+        if (explicit !== null && !Number.isNaN(explicit)) return explicit.toFixed(5);
+        return formatFidelity(errorStats?.mean);
+    };
+
+    const formatLambda1 = (val) => {
+        if (val === null || val === undefined || Number.isNaN(Number(val))) return 'N/A';
+        return Number(val).toFixed(4);
+    };
+
+    const coherenceFraction = (dur, coh) => {
+        if (dur === null || dur === undefined || coh === null || coh === undefined || Number(coh) === 0) {
+            return 'N/A';
+        }
+        if (Number.isNaN(Number(dur)) || Number.isNaN(Number(coh))) {
+            return 'N/A';
+        }
+        return ((Number(dur) / Number(coh)) * 100).toFixed(2) + '%';
+    };
+
+    const formatQtvRaw = (val) => {
+        if (val === null || val === undefined || Number.isNaN(Number(val))) return 'N/A';
+        return `${Number(val).toFixed(3)} qubit*us`;
+    };
+
+    const formatQtvNormalized = (val) => {
+        if (val === null || val === undefined || Number.isNaN(Number(val))) return 'N/A';
+        return Number(val).toFixed(3);
+    };
+
+    const formatQubitRange = (range) => {
+        if (!range || range.min === undefined || range.max === undefined) return 'N/A';
+        return `${range.min}-${range.max}`;
     };
 
     return ReactDOM.createPortal(
@@ -112,158 +154,173 @@ function BenchmarkDetailsModal({ benchmark, onClose }) {
                     }}>
                         <div>
                             <div style={{ color: COLORS.fgMuted, fontSize: '0.875rem', marginBottom: '0.25rem' }}>Primary Metric</div>
-                            <div style={{ fontSize: '1.125rem', fontWeight: '600', color: COLORS.accentAqua }}>{benchmark.metricName}</div>
+                            <div style={{ fontSize: '1.125rem', fontWeight: '600', color: COLORS.accentAqua }}>{primaryMetric.name || benchmark.metricName}</div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
                             <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: COLORS.accentOrange, fontFamily: 'monospace' }}>
-                                {benchmark.metricValue}
-                                {benchmark.uncertainty && <span style={{ fontSize: '1rem', color: COLORS.fgMuted, marginLeft: '0.5rem' }}>± {benchmark.uncertainty}</span>}
+                                {primaryMetric.value ?? benchmark.metricValue}
+                                {(primaryMetric.uncertainty ?? benchmark.uncertainty) && <span style={{ fontSize: '1rem', color: COLORS.fgMuted, marginLeft: '0.5rem' }}>± {primaryMetric.uncertainty ?? benchmark.uncertainty}</span>}
                             </div>
-                            {benchmark.uncertaintyDefinition && (
+                            {(primaryMetric.uncertaintyDefinition || benchmark.uncertaintyDefinition) && (
                                 <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>
-                                    ({benchmark.uncertaintyDefinition})
+                                    ({primaryMetric.uncertaintyDefinition || benchmark.uncertaintyDefinition})
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* Description & Methodology */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                        <div>
-                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg }}>Description</h3>
-                            <p style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: '1.5' }}>
-                                {benchmark.description || 'No description provided.'}
-                            </p>
+                    {/* General Platform Metrics */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Cpu size={16} /> General Platform Metrics
+                        </h3>
+
+                        {/* Spectral */}
+                        <div style={{ marginBottom: '0.75rem' }}>
+                            <div style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', color: COLORS.accentBlue, marginBottom: '0.5rem' }}>
+                                Spectral Properties
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', backgroundColor: COLORS.bg, padding: '1rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>λ₁ (normalized Laplacian)</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{formatLambda1(gm.lambda1 ?? benchmark.lambda1)}</div>
+                                    {(gm.lambda1Source || benchmark.lambda1Source) && (
+                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>
+                                            {lambda1SourceLabel[gm.lambda1Source || benchmark.lambda1Source] || gm.lambda1Source || benchmark.lambda1Source}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                        {benchmark.methodology && (
-                            <div>
-                                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg }}>Methodology</h3>
-                                <p style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: '1.5' }}>
-                                    {benchmark.methodology}
+
+                        {/* Timing & Coherence */}
+                        <div style={{ marginBottom: '0.75rem' }}>
+                            <div style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', color: COLORS.accentAqua, marginBottom: '0.5rem' }}>
+                                Timing &amp; Coherence
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', backgroundColor: COLORS.bg, padding: '1rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Circuit Duration ({gm.timing?.unit || benchmark.timing?.unit || 'us'})</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{gm.timing?.circuitDuration ?? benchmark.timing?.circuitDuration ?? 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>T1 ({gm.timing?.unit || benchmark.timing?.unit || 'us'})</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{gm.timing?.t1 ?? benchmark.timing?.t1 ?? 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>T2 ({gm.timing?.unit || benchmark.timing?.unit || 'us'})</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{gm.timing?.t2 ?? benchmark.timing?.t2 ?? 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Runtime / T1</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.accentGreen }}>
+                                        {gm.runtimeOverT1 != null ? `${(Number(gm.runtimeOverT1) * 100).toFixed(2)}%` : coherenceFraction(gm.timing?.circuitDuration ?? benchmark.timing?.circuitDuration, gm.timing?.t1 ?? benchmark.timing?.t1)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Runtime / T2</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.accentGreen }}>
+                                        {gm.runtimeOverT2 != null ? `${(Number(gm.runtimeOverT2) * 100).toFixed(2)}%` : coherenceFraction(gm.timing?.circuitDuration ?? benchmark.timing?.circuitDuration, gm.timing?.t2 ?? benchmark.timing?.t2)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>QTV (raw)</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.accentGreen }}>{formatQtvRaw(gm.qubitTimeVolume ?? benchmark.qubitTimeVolume)}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>QTV (normalized /T2)</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.accentGreen }}>{formatQtvNormalized(gm.qubitTimeVolumeNormalized ?? benchmark.qubitTimeVolumeNormalized)}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Fidelities */}
+                        <div>
+                            <div style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', color: COLORS.accentGreen, marginBottom: '0.5rem' }}>
+                                Fidelities
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '0.75rem' }}>
+                                <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>1-Qubit Gate Fidelity</div>
+                                    <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{toDisplayFidelity(gm.gateFidelity?.oneQubit ?? benchmark.one_qubit_fidelity, benchmark.errorRates?.singleQubitGate)}</div>
+                                </div>
+                                <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>2-Qubit Gate Fidelity</div>
+                                    <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{toDisplayFidelity(gm.gateFidelity?.twoQubit ?? benchmark.two_qubit_fidelity, benchmark.errorRates?.twoQubitGate)}</div>
+                                </div>
+                                <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Qubit Fidelity</div>
+                                    <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{toDisplayFidelity(gm.qubitFidelity, benchmark.errorRates?.qubit)}</div>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>Range: {formatFidelityRange(benchmark.errorRates?.qubit).best} – {formatFidelityRange(benchmark.errorRates?.qubit).worst}</div>
+                                </div>
+                                <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Readout Fidelity</div>
+                                    <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{toDisplayFidelity(gm.readoutFidelity, benchmark.errorRates?.readout)}</div>
+                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>Range: {formatFidelityRange(benchmark.errorRates?.readout).best} – {formatFidelityRange(benchmark.errorRates?.readout).worst}</div>
+                                </div>
+                            </div>
+                            <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Measurement Method</div>
+                                <p style={{ fontSize: '0.875rem', color: COLORS.fg, lineHeight: '1.5', margin: 0 }}>
+                                    {gm.gateFidelity?.measurementMethod || benchmark.fidelity_measurement_method || 'N/A'}
                                 </p>
                             </div>
-                        )}
+                        </div>
+                    </div>
+
+                    {/* Problem-Specific Metrics */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Activity size={16} /> Problem-Specific Metrics
+                        </h3>
+
+                        {/* Circuit Parameters */}
+                        <div style={{ marginBottom: '0.75rem' }}>
+                            <div style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', color: COLORS.accentOrange, marginBottom: '0.5rem' }}>
+                                Circuit Parameters
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', backgroundColor: COLORS.bg, padding: '1rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Qubit Range</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{formatQubitRange(ps.qubitRange)}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Depth Range</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{formatQubitRange(ps.depthRange)}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Shots</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{ps.shots ?? benchmark.quantumSpecific?.shots ?? 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Gates</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific?.gateCount ?? 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Experiment Definition */}
+                        <div>
+                            <div style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', color: COLORS.accentRed, marginBottom: '0.5rem' }}>
+                                Experiment Definition
+                            </div>
+                            <div style={{ backgroundColor: COLORS.bg, padding: '1rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
+                                <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Primary Metric Definition</div>
+                                <div style={{ fontSize: '0.875rem', color: COLORS.fg, lineHeight: '1.5', marginBottom: '0.75rem' }}>{primaryMetric.definition || 'N/A'}</div>
+                                <div style={{ fontSize: '0.8rem', color: COLORS.fgMuted, marginBottom: '0.2rem' }}>Description</div>
+                                <div style={{ fontSize: '0.875rem', color: COLORS.fg, lineHeight: '1.5' }}>{ps.description || benchmark.description || 'No description provided.'}</div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Notes */}
-                    {benchmark.notes && (
+                    {(ps.notes || benchmark.notes || ps.methodology || benchmark.methodology) && (
                         <div style={{ marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg }}>Notes</h3>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: COLORS.fg }}>Methodology & Notes</h3>
                             <p style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: '1.5' }}>
-                                {benchmark.notes}
+                                {ps.methodology || benchmark.methodology || 'N/A'}
                             </p>
-                        </div>
-                    )}
-
-                    {/* Quantum Specifics */}
-                    {benchmark.quantumSpecific && (
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <Activity size={16} /> Quantum Circuit Details
-                            </h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(4, 1fr)',
-                                gap: '1rem',
-                                backgroundColor: COLORS.bg,
-                                padding: '1rem',
-                                borderRadius: '0.5rem',
-                                border: `1px solid ${COLORS.border}`
-                            }}>
-                                <div>
-                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Qubits</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.qubitCount || '-'}</div>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Depth</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.circuitDepth || '-'}</div>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Gates</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.gateCount || '-'}</div>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted }}>Shots</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', color: COLORS.fg }}>{benchmark.quantumSpecific.shots || '-'}</div>
-                                </div>
-                            </div>
-                            {benchmark.quantumSpecific.sourceLocation && (
-                                <div style={{ marginTop: '1rem', fontSize: '0.875rem' }}>
-                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Source Location</div>
-                                    <div style={{ fontFamily: 'monospace', color: COLORS.fg, backgroundColor: COLORS.bg, padding: '0.5rem', borderRadius: '0.25rem', border: `1px solid ${COLORS.border}`, wordBreak: 'break-all' }}>
-                                        {benchmark.quantumSpecific.sourceLocation}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Error Rates */}
-                    {benchmark.errorRates && (
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg }}>Error Rates</h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-                                {benchmark.errorRates.qubit && (
-                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Qubit Error (Mean)</div>
-                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.qubit).mean}</div>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>
-                                            Range: {formatDetailedErrorRate(benchmark.errorRates.qubit).min} - {formatDetailedErrorRate(benchmark.errorRates.qubit).max}
-                                        </div>
-                                    </div>
-                                )}
-                                {benchmark.errorRates.readout && (
-                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Readout Error (Mean)</div>
-                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.readout).mean}</div>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}>
-                                            Range: {formatDetailedErrorRate(benchmark.errorRates.readout).min} - {formatDetailedErrorRate(benchmark.errorRates.readout).max}
-                                        </div>
-                                    </div>
-                                )}
-                                {benchmark.errorRates.singleQubitGate && (
-                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>1Q Gate Error (Mean)</div>
-                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.singleQubitGate).mean}</div>
-                                    </div>
-                                )}
-                                {benchmark.errorRates.twoQubitGate && (
-                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>2Q Gate Error (Mean)</div>
-                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentOrange }}>{formatDetailedErrorRate(benchmark.errorRates.twoQubitGate).mean}</div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                    )}
-
-                    {/* Gate Fidelities */}
-                    {(benchmark.one_qubit_fidelity || benchmark.two_qubit_fidelity || benchmark.fidelity_measurement_method) && (
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem', color: COLORS.fg }}>Gate Fidelities</h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
-                                {benchmark.one_qubit_fidelity && (
-                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>1-Qubit Fidelity</div>
-                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{benchmark.one_qubit_fidelity}</div>
-                                    </div>
-                                )}
-                                {benchmark.two_qubit_fidelity && (
-                                    <div style={{ backgroundColor: COLORS.bg, padding: '0.75rem', borderRadius: '0.5rem', border: `1px solid ${COLORS.border}` }}>
-                                        <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>2-Qubit Fidelity</div>
-                                        <div style={{ fontFamily: 'monospace', color: COLORS.accentGreen, fontSize: '1.125rem' }}>{benchmark.two_qubit_fidelity}</div>
-                                    </div>
-                                )}
-                            </div>
-                            {benchmark.fidelity_measurement_method && (
-                                <div>
-                                    <div style={{ fontSize: '0.75rem', color: COLORS.fgMuted, marginBottom: '0.25rem' }}>Measurement Method</div>
-                                    <p style={{ fontSize: '0.875rem', color: COLORS.fg, lineHeight: '1.5', margin: 0 }}>
-                                        {benchmark.fidelity_measurement_method}
-                                    </p>
-                                </div>
-                            )}
+                            <p style={{ fontSize: '0.875rem', color: COLORS.fgMuted, lineHeight: '1.5' }}>{ps.notes || benchmark.notes || 'N/A'}</p>
                         </div>
                     )}
 
@@ -354,6 +411,15 @@ export default function BenchmarkTable({
 }) {
     const [selectedBenchmark, setSelectedBenchmark] = useState(null);
 
+    const formatQubitsForTable = (benchmark) => {
+        const range = benchmark.problemSpecific?.qubitRange;
+        if (range && range.min !== undefined && range.max !== undefined) {
+            if (range.min === range.max) return range.min;
+            return `${range.min}-${range.max}`;
+        }
+        return benchmark.quantumSpecific?.qubitCount || '-';
+    };
+
     return (
         <div style={{ width: '100%' }}>
             <div style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', borderRadius: '0.5rem', overflow: 'hidden', backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}`, minHeight: 'calc(100vh - 16rem)' }}>
@@ -391,7 +457,7 @@ export default function BenchmarkTable({
                                     Device
                                 </SortableHeader>
                                 <SortableHeader
-                                    sortKey="quantumSpecific.qubitCount"
+                                    sortKey="problemSpecific.qubitRange.max"
                                     currentSort={sortConfig}
                                     onSort={onSort}
                                     style={{ padding: '1rem 1.5rem', textAlign: 'center' }}
@@ -453,7 +519,7 @@ export default function BenchmarkTable({
                                         <td style={{ padding: '1rem 1.5rem', fontWeight: '500' }}>{bm.algorithmName}</td>
                                         <td style={{ padding: '1rem 1.5rem', color: COLORS.fgMuted }}>{bm.device}</td>
                                         <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontFamily: 'monospace', fontSize: '1rem' }}>
-                                            {bm.quantumSpecific?.qubitCount || '-'}
+                                            {formatQubitsForTable(bm)}
                                         </td>
 
                                         <td style={{ padding: '1rem 1.5rem', color: COLORS.fgMuted }}>{bm.metricName}</td>

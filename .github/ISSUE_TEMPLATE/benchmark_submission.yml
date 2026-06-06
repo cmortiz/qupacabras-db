@@ -57,6 +57,15 @@ body:
       required: true
 
   - type: input
+    id: primary_metric_definition
+    attributes:
+      label: Primary Metric Definition
+      description: Briefly define how the primary metric is computed for this problem instance.
+      placeholder: Fraction of winning outputs over total shots
+    validations:
+      required: false
+
+  - type: input
     id: uncertainty
     attributes:
       label: Uncertainty (Optional)
@@ -128,6 +137,24 @@ body:
     validations:
       required: false
 
+  - type: input
+    id: qubit_fidelity
+    attributes:
+      label: Qubit Fidelity
+      description: Representative qubit fidelity for the run.
+      placeholder: "0.99"
+    validations:
+      required: false
+
+  - type: input
+    id: readout_fidelity
+    attributes:
+      label: Readout Fidelity
+      description: Representative readout fidelity for the run.
+      placeholder: "0.97"
+    validations:
+      required: false
+
   - type: textarea
     id: fidelity_measurement_method
     attributes:
@@ -170,6 +197,33 @@ body:
       label: Total Gate Count
       description: Total number of quantum gates
       placeholder: "150"
+    validations:
+      required: false
+
+  - type: input
+    id: circuit_duration
+    attributes:
+      label: Circuit Duration in microseconds
+      description: Hardware circuit execution duration in microseconds. Report a representative value such as the median over qubits used.
+      placeholder: "12.5"
+    validations:
+      required: false
+
+  - type: input
+    id: t1
+    attributes:
+      label: T1 in microseconds
+      description: Representative T1 coherence time in microseconds, such as the median across qubits used.
+      placeholder: "120"
+    validations:
+      required: false
+
+  - type: input
+    id: t2
+    attributes:
+      label: T2 in microseconds
+      description: Representative T2 coherence time in microseconds, such as the median across qubits used.
+      placeholder: "80"
     validations:
       required: false
 

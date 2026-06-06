@@ -48,7 +48,51 @@
     "fidelity_reference": "https://www.rigetti.com/what-we-build",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_rigetti_ankaa3",
-    "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa3"
+    "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa3",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": 1,
+      "lambda1Source": "qasm",
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.999,
+        "twoQubit": 0.995,
+        "measurementMethod": "Randomized Benchmarking (Rigetti Ankaa-3 launch specs, Dec 2024)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-3 84-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.87,
+        "uncertainty": 0.02,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 8192,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": 1,
+    "lambda1Source": "qasm"
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -80,7 +124,51 @@
     "id": "g14_graph_coloring_duke_gold",
     "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates.",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_duke_gold"
+    "benchmarkFolder": "g14_graph_coloring_duke_gold",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 3,
+      "gateFidelity": {
+        "oneQubit": null,
+        "twoQubit": null,
+        "measurementMethod": null,
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Gold trapped ion system. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.94,
+        "uncertainty": 0.03,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 3,
+        "max": 3
+      },
+      "shots": 2000,
+      "methodology": null,
+      "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -116,7 +204,51 @@
     "fidelity_measurement_method": "Clifford RB (1Q), Mølmer-Sørenson (2Q) - IonQ Aria specs",
     "fidelity_reference": "https://ionq.com/quantum-systems/aria",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_ionq_aria"
+    "benchmarkFolder": "g14_graph_coloring_ionq_aria",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 3,
+      "gateFidelity": {
+        "oneQubit": 0.9994,
+        "twoQubit": 0.994,
+        "measurementMethod": "Clifford RB (1Q), Mølmer-Sørenson (2Q) - IonQ Aria specs",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IonQ Aria trapped ion system. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.94,
+        "uncertainty": 0.01,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 3,
+        "max": 3
+      },
+      "shots": 20000,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -148,7 +280,51 @@
     "id": "g14_graph_coloring_duke_blue",
     "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates.",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_duke_blue"
+    "benchmarkFolder": "g14_graph_coloring_duke_blue",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 3,
+      "gateFidelity": {
+        "oneQubit": null,
+        "twoQubit": null,
+        "measurementMethod": null,
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Blue trapped ion system. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.98,
+        "uncertainty": 0.02,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 3,
+        "max": 3
+      },
+      "shots": 2000,
+      "methodology": null,
+      "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -188,7 +364,51 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm",
-    "benchmarkFolder": "g14_graph_coloring_ibm"
+    "benchmarkFolder": "g14_graph_coloring_ibm",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": 1,
+      "lambda1Source": "qasm",
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99979,
+        "twoQubit": 0.99251,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 4)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Sherbrooke 127-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.943,
+        "uncertainty": 0.002,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 8192,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": 1,
+    "lambda1Source": "qasm"
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -220,7 +440,51 @@
     "id": "g14_graph_coloring_duke_silver",
     "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates.",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_duke_silver"
+    "benchmarkFolder": "g14_graph_coloring_duke_silver",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 3,
+      "gateFidelity": {
+        "oneQubit": null,
+        "twoQubit": null,
+        "measurementMethod": null,
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on Duke Quantum Silver trapped ion system. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.95,
+        "uncertainty": 0.03,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 3,
+        "max": 3
+      },
+      "shots": 2000,
+      "methodology": null,
+      "notes": "Classical chromatic number: 5. Quantum chromatic number: 4. Manual compilation of gates."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -271,7 +535,51 @@
     "fidelity_reference": "https://www.rigetti.com/what-we-build",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_rigetti_ankaa2",
-    "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa2"
+    "benchmarkFolder": "g14_graph_coloring_rigetti_ankaa2",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": 1,
+      "lambda1Source": "qasm",
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.998,
+        "twoQubit": 0.98,
+        "measurementMethod": "Randomized Benchmarking (Rigetti Ankaa-2 launch specs, Dec 2023)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on Rigetti Ankaa-2 84-qubit quantum processor. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.84,
+        "uncertainty": 0.03,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 8192,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": 1,
+    "lambda1Source": "qasm"
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -311,7 +619,51 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_auckland",
-    "benchmarkFolder": "g14_graph_coloring_ibm_auckland"
+    "benchmarkFolder": "g14_graph_coloring_ibm_auckland",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99974,
+        "twoQubit": 0.99107,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 12)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Auckland. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.839,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -351,7 +703,51 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_belem",
-    "benchmarkFolder": "g14_graph_coloring_ibm_belem"
+    "benchmarkFolder": "g14_graph_coloring_ibm_belem",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99972,
+        "twoQubit": 0.99335,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 25)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Belem. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.873,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -391,7 +787,51 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_cairo",
-    "benchmarkFolder": "g14_graph_coloring_ibm_cairo"
+    "benchmarkFolder": "g14_graph_coloring_ibm_cairo",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99975,
+        "twoQubit": 0.9893,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 11)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Cairo. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.843,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -433,7 +873,51 @@
     "fidelity_measurement_method": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 17)",
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_guadalupe"
+    "benchmarkFolder": "g14_graph_coloring_ibm_guadalupe",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99973,
+        "twoQubit": 0.9912,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 17)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Guadalupe. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.781,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -473,7 +957,51 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_hanoi",
-    "benchmarkFolder": "g14_graph_coloring_ibm_hanoi"
+    "benchmarkFolder": "g14_graph_coloring_ibm_hanoi",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.9998,
+        "twoQubit": 0.99117,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 13)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Hanoi. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.925,
+        "uncertainty": 0.005,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -515,7 +1043,51 @@
     "fidelity_measurement_method": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 22)",
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_jakarta"
+    "benchmarkFolder": "g14_graph_coloring_ibm_jakarta",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.9998,
+        "twoQubit": 0.99223,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 22)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Jakarta. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.842,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -557,7 +1129,51 @@
     "fidelity_measurement_method": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 26)",
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_lima"
+    "benchmarkFolder": "g14_graph_coloring_ibm_lima",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99931,
+        "twoQubit": 0.98887,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 26)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Lima. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.858,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -597,7 +1213,51 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_manila",
-    "benchmarkFolder": "g14_graph_coloring_ibm_manila"
+    "benchmarkFolder": "g14_graph_coloring_ibm_manila",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99975,
+        "twoQubit": 0.99263,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 23)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Manila. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.842,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -637,7 +1297,51 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_mumbai",
-    "benchmarkFolder": "g14_graph_coloring_ibm_mumbai"
+    "benchmarkFolder": "g14_graph_coloring_ibm_mumbai",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99974,
+        "twoQubit": 0.99085,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 10)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Mumbai. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.856,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -679,7 +1383,51 @@
     "fidelity_measurement_method": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 20)",
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
-    "benchmarkFolder": "g14_graph_coloring_ibm_nairobi"
+    "benchmarkFolder": "g14_graph_coloring_ibm_nairobi",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99972,
+        "twoQubit": 0.99083,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 20)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Nairobi. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.845,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   },
   {
     "algorithmName": "G14 Graph Coloring (Nonlocal Game)",
@@ -719,6 +1467,50 @@
     "fidelity_reference": "https://link.springer.com/article/10.1007/s11227-025-07047-7",
     "acceptedDate": "2025-11-24T12:00:00.000Z",
     "id": "g14_graph_coloring_ibm_quito",
-    "benchmarkFolder": "g14_graph_coloring_ibm_quito"
+    "benchmarkFolder": "g14_graph_coloring_ibm_quito",
+    "uncertaintyDefinition": null,
+    "generalMetrics": {
+      "lambda1": null,
+      "lambda1Source": null,
+      "circuitDepth": 5,
+      "gateFidelity": {
+        "oneQubit": 0.99962,
+        "twoQubit": 0.98825,
+        "measurementMethod": "Randomized Benchmarking (AbuGhanem, J Supercomput 2025, Table 24)",
+        "reference": null
+      },
+      "readoutFidelity": null,
+      "qubitFidelity": null,
+      "timing": null,
+      "runtimeOverT1": null,
+      "runtimeOverT2": null,
+      "qubitTimeVolume": null,
+      "qubitTimeVolumeNormalized": null
+    },
+    "problemSpecific": {
+      "description": "G14 graph coloring nonlocal game implementation on IBM Quito. Quantum advantage threshold is >97.7% win rate.",
+      "primaryMetric": {
+        "name": "Win Rate",
+        "definition": null,
+        "value": 0.846,
+        "uncertainty": 0.006,
+        "uncertaintyDefinition": null
+      },
+      "qubitRange": {
+        "min": 4,
+        "max": 4
+      },
+      "depthRange": {
+        "min": 5,
+        "max": 5
+      },
+      "shots": 1024,
+      "methodology": null,
+      "notes": "88 different circuit configurations tested for G14 graph coloring game. Classical chromatic number: 5. Quantum chromatic number: 4. OPENQASM submission with provider compilation."
+    },
+    "qubitTimeVolume": null,
+    "qubitTimeVolumeNormalized": null,
+    "lambda1": null,
+    "lambda1Source": null
   }
 ]

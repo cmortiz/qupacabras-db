@@ -327,4 +327,41 @@ measure q -> c;
       expect.any(String)
     );
   });
+
+  test('builds nested category metrics and computes QTV', () => {
+    const benchmark = {
+      id: 'nested_case',
+      algorithmName: 'Nested Algorithm',
+      device: 'Device X',
+      metricName: 'Win Rate',
+      metricValue: 0.9,
+      uncertainty: 0.01,
+      uncertaintyDefinition: '95% CI',
+      timestamp: '2024-01-01T10:00:00Z',
+      quantumSpecific: { qubitCount: 4, circuitDepth: 8, shots: 1024 },
+      timing: { circuitDuration: 10, t2: 80, t1: 120, unit: 'us' },
+      errorRates: { readout: { mean: 0.02 }, qubit: { mean: 0.01 } }
+    };
+
+    fs.readdirSync.mockReturnValue([
+      { name: 'nested_case', isDirectory: () => true },
+      { name: 'template', isDirectory: () => true }
+    ]);
+
+    fs.existsSync.mockImplementation((filePath) => filePath.includes('benchmark.json') || filePath.includes('/public'));
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('benchmark.json')) return JSON.stringify(benchmark);
+      if (filePath.includes('lambda1-index.json')) return JSON.stringify({ nested_case: { lambda1: 1.2, lambda1Source: 'qasm' } });
+      return '';
+    });
+    fs.writeFileSync.mockImplementation(() => {});
+    fs.mkdirSync.mockImplementation(() => {});
+
+    const result = generateBenchmarkIndex();
+    expect(result).toHaveLength(1);
+    expect(result[0].generalMetrics.lambda1).toBe(1.2);
+    expect(result[0].generalMetrics.qubitTimeVolume).toBe(40);
+    expect(result[0].generalMetrics.qubitTimeVolumeNormalized).toBe(0.5);
+    expect(result[0].problemSpecific.primaryMetric.name).toBe('Win Rate');
+  });
 });

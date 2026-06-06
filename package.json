@@ -12,10 +12,11 @@
   },
   "scripts": {
     "start": "cross-env NODE_OPTIONS=\"--experimental-webstorage --localstorage-file=/tmp/qupacabras-localstorage.db\" react-scripts start",
-    "build": "node scripts/generate-benchmark-index.js && react-scripts build",
-    "build:ci": "node scripts/generate-benchmark-index.js && react-scripts build",
+    "build": "(python3 scripts/compute_lambda1.py || echo 'skip lambda1') && node scripts/generate-benchmark-index.js && react-scripts build",
+    "build:ci": "(python3 scripts/compute_lambda1.py || echo 'skip lambda1') && node scripts/generate-benchmark-index.js && react-scripts build",
     "test": "react-scripts test",
     "test:ci": "react-scripts test --coverage --ci --watchAll=false",
+    "compute:lambda1": "python3 scripts/compute_lambda1.py",
     "generate-index": "node scripts/generate-benchmark-index.js",
     "validate": "node scripts/validate-benchmark.js",
     "validate:file": "node scripts/validate-benchmark.js --file",

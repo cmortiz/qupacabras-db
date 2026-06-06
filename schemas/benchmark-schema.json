@@ -107,6 +107,118 @@
       "minItems": 0,
       "maxItems": 50
     },
+    "graph": {
+      "type": "object",
+      "description": "Optional submitter-provided explicit graph used as preferred lambda1 source, e.g. { \"edges\": [[0,1],[1,2]] }",
+      "properties": {
+        "edges": {
+          "type": "array",
+          "description": "Undirected edge list as integer node index pairs",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "lambda1": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Computed second-smallest normalized-Laplacian eigenvalue (spectral gap)"
+    },
+    "lambda1Source": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Computed lambda1 source: explicit or qasm",
+      "enum": [
+        "explicit",
+        "qasm",
+        null
+      ]
+    },
+    "generalMetrics": {
+      "type": "object",
+      "description": "General platform metrics comparable across problem types",
+      "properties": {
+        "lambda1": { "type": ["number", "null"] },
+        "lambda1Source": { "type": ["string", "null"], "enum": ["explicit", "qasm", null] },
+        "circuitDepth": { "type": ["number", "null"], "minimum": 0 },
+        "gateFidelity": {
+          "type": "object",
+          "properties": {
+            "oneQubit": { "type": ["number", "null"], "minimum": 0 },
+            "twoQubit": { "type": ["number", "null"], "minimum": 0 },
+            "measurementMethod": { "type": ["string", "null"] },
+            "reference": { "type": ["string", "null"] }
+          },
+          "additionalProperties": true
+        },
+        "readoutFidelity": { "type": ["number", "null"], "minimum": 0 },
+        "qubitFidelity": { "type": ["number", "null"], "minimum": 0 },
+        "timing": {
+          "type": ["object", "null"],
+          "properties": {
+            "circuitDuration": { "type": ["number", "null"], "minimum": 0 },
+            "t1": { "type": ["number", "null"], "minimum": 0 },
+            "t2": { "type": ["number", "null"], "minimum": 0 },
+            "unit": { "type": ["string", "null"] }
+          },
+          "additionalProperties": true
+        },
+        "runtimeOverT1": { "type": ["number", "null"], "minimum": 0 },
+        "runtimeOverT2": { "type": ["number", "null"], "minimum": 0 },
+        "qubitTimeVolume": { "type": ["number", "null"], "minimum": 0 },
+        "qubitTimeVolumeNormalized": { "type": ["number", "null"], "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "problemSpecific": {
+      "type": "object",
+      "description": "Problem-specific metrics and context",
+      "properties": {
+        "description": { "type": ["string", "null"] },
+        "primaryMetric": {
+          "type": "object",
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "definition": { "type": ["string", "null"] },
+            "value": { "type": ["number", "null"] },
+            "uncertainty": { "type": ["number", "null"], "minimum": 0 },
+            "uncertaintyDefinition": { "type": ["string", "null"] }
+          },
+          "additionalProperties": true
+        },
+        "qubitRange": {
+          "type": ["object", "null"],
+          "properties": {
+            "min": { "type": "number", "minimum": 0 },
+            "max": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": true
+        },
+        "depthRange": {
+          "type": ["object", "null"],
+          "properties": {
+            "min": { "type": "number", "minimum": 0 },
+            "max": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": true
+        },
+        "shots": { "type": ["number", "null"], "minimum": 0 },
+        "methodology": { "type": ["string", "null"] },
+        "notes": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
     "description": {
       "type": "string",
       "description": "Brief description of the benchmark",
@@ -158,6 +270,47 @@
       "type": "object",
       "description": "Optional error rate measurements",
       "additionalProperties": true
+    },
+    "timing": {
+      "type": "object",
+      "description": "Optional submitter-reported circuit timing and coherence values",
+      "properties": {
+        "circuitDuration": {
+          "type": "number",
+          "description": "Hardware circuit execution duration",
+          "minimum": 0
+        },
+        "t1": {
+          "type": "number",
+          "description": "Representative T1 coherence time",
+          "minimum": 0
+        },
+        "t2": {
+          "type": "number",
+          "description": "Representative T2 coherence time",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "description": "Timing unit for circuitDuration, t1, and t2",
+          "default": "us"
+        }
+      },
+      "additionalProperties": true
+    },
+    "qubitTimeVolume": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Computed qubit time volume: qubitCount * timing.circuitDuration (qubit*us)"
+    },
+    "qubitTimeVolumeNormalized": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Computed normalized qubit time volume: (qubitCount * timing.circuitDuration) / timing.t2"
     },
     "executionTime": {
       "type": "object",

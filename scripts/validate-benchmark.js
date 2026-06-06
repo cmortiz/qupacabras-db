@@ -52,6 +52,38 @@ function validateBenchmarkFile(benchmarkPath, folderName) {
 
         // Additional validations beyond schema
 
+        if (benchmarkData.generalMetrics && typeof benchmarkData.generalMetrics !== 'object') {
+            result.warnings.push({
+                field: 'generalMetrics',
+                message: 'generalMetrics should be an object when provided'
+            });
+        }
+
+        if (benchmarkData.problemSpecific && typeof benchmarkData.problemSpecific !== 'object') {
+            result.warnings.push({
+                field: 'problemSpecific',
+                message: 'problemSpecific should be an object when provided'
+            });
+        }
+
+        if (benchmarkData.problemSpecific?.primaryMetric?.name && benchmarkData.metricName && benchmarkData.problemSpecific.primaryMetric.name !== benchmarkData.metricName) {
+            result.warnings.push({
+                field: 'problemSpecific.primaryMetric.name',
+                message: 'primary metric name differs from top-level metricName'
+            });
+        }
+
+        if (benchmarkData.problemSpecific?.primaryMetric?.value !== undefined && benchmarkData.metricValue !== undefined) {
+            const topLevel = Number(benchmarkData.metricValue);
+            const nested = Number(benchmarkData.problemSpecific.primaryMetric.value);
+            if (!Number.isNaN(topLevel) && !Number.isNaN(nested) && Math.abs(topLevel - nested) > 1e-9) {
+                result.warnings.push({
+                    field: 'problemSpecific.primaryMetric.value',
+                    message: 'primary metric value differs from top-level metricValue'
+                });
+            }
+        }
+
         // Auto-generate ID if not provided
         if (!benchmarkData.id) {
             benchmarkData.id = folderName;

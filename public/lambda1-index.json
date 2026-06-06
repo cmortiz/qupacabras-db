@@ -1,0 +1,74 @@
+{
+  "g14_graph_coloring_duke_blue": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_duke_gold": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_duke_silver": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm": {
+    "lambda1": 1.0,
+    "lambda1Source": "qasm"
+  },
+  "g14_graph_coloring_ibm_auckland": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_belem": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_cairo": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_guadalupe": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_hanoi": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_jakarta": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_lima": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_manila": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_mumbai": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_nairobi": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ibm_quito": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_ionq_aria": {
+    "lambda1": null,
+    "lambda1Source": null
+  },
+  "g14_graph_coloring_rigetti_ankaa2": {
+    "lambda1": 1.0,
+    "lambda1Source": "qasm"
+  },
+  "g14_graph_coloring_rigetti_ankaa3": {
+    "lambda1": 1.0,
+    "lambda1Source": "qasm"
+  }
+}
