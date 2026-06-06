@@ -102,11 +102,20 @@ body:
       required: false
 
   - type: input
-    id: qubit_count
+    id: qubit_range_min
     attributes:
-      label: Qubit Count
-      description: Number of qubits used in the experiment
-      placeholder: "5"
+      label: Qubit Range (Min)
+      description: Minimum number of qubits used across experiments in this submission
+      placeholder: "2"
+    validations:
+      required: false
+
+  - type: input
+    id: qubit_range_max
+    attributes:
+      label: Qubit Range (Max)
+      description: Maximum number of qubits used across experiments in this submission
+      placeholder: "8"
     validations:
       required: false
 
@@ -183,11 +192,20 @@ body:
       required: false
 
   - type: input
-    id: circuit_depth
+    id: depth_range_min
     attributes:
-      label: Circuit Depth
-      description: Depth of the quantum circuit
-      placeholder: "25"
+      label: Circuit Depth Range (Min)
+      description: Minimum circuit depth across experiments in this submission
+      placeholder: "10"
+    validations:
+      required: false
+
+  - type: input
+    id: depth_range_max
+    attributes:
+      label: Circuit Depth Range (Max)
+      description: Maximum circuit depth across experiments in this submission
+      placeholder: "50"
     validations:
       required: false
 
@@ -197,6 +215,44 @@ body:
       label: Total Gate Count
       description: Total number of quantum gates
       placeholder: "150"
+    validations:
+      required: false
+
+  - type: input
+    id: lambda1
+    attributes:
+      label: λ₁ (Normalized Laplacian)
+      description: Largest eigenvalue of the normalized Laplacian of the problem or circuit graph
+      placeholder: "1.732"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: lambda1_source
+    attributes:
+      label: λ₁ Source
+      description: How was λ₁ derived?
+      options:
+        - explicit (from problem graph)
+        - qasm (from circuit connectivity)
+    validations:
+      required: false
+
+  - type: input
+    id: qubit_time_volume
+    attributes:
+      label: Qubit Time Volume (Raw)
+      description: Raw qubit-time volume in qubit·microseconds (qubits × circuit duration)
+      placeholder: "24.5"
+    validations:
+      required: false
+
+  - type: input
+    id: qubit_time_volume_normalized
+    attributes:
+      label: Qubit Time Volume (Normalized /T2)
+      description: Qubit time volume divided by T2 coherence time (dimensionless)
+      placeholder: "0.306"
     validations:
       required: false
 

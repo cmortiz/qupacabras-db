@@ -29,9 +29,8 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
-            
-            // Helper to extract value from issue body
-            // This is a simple parser for the issue form format
+
+            // Extract a field value from the issue body
             function extractValue(body, header) {
               const escapedHeader = header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
               const regex = new RegExp(`### ${escapedHeader}\\s+([\\s\\S]*?)(?=(?:###|$))`);
@@ -39,195 +38,269 @@ jobs:
               return match ? match[1].trim() : null;
             }
 
-            const body = context.payload.issue.body;
-            
-            // Extract fields
-            const algorithmName = extractValue(body, 'Algorithm Name');
-            const device = extractValue(body, 'Quantum Device');
-            const metricName = extractValue(body, 'Metric Name');
-            const metricValueStr = extractValue(body, 'Metric Value');
-            const uncertaintyStr = extractValue(body, 'Uncertainty (Optional)');
-            const uncertaintyDefinition = extractValue(body, 'Uncertainty Definition (Optional)');
-            const description = extractValue(body, 'Description');
-            const paperUrl = extractValue(body, 'Paper/Preprint URL');
-            const qubitCountStr = extractValue(body, 'Qubit Count');
-            const shotsStr = extractValue(body, 'Shots');
-            const qasmContent = extractValue(body, 'QASM Circuit (Optional)');
-            const circuitDurationStr = extractValue(body, 'Circuit Duration in microseconds');
-            const t1Str = extractValue(body, 'T1 in microseconds');
-            const t2Str = extractValue(body, 'T2 in microseconds');
-            const primaryMetricDefinition = extractValue(body, 'Primary Metric Definition');
-            const oneQubitFidelityStr = extractValue(body, '1-Qubit Gate Fidelity');
-            const twoQubitFidelityStr = extractValue(body, '2-Qubit Gate Fidelity');
-            const qubitFidelityStr = extractValue(body, 'Qubit Fidelity');
-            const readoutFidelityStr = extractValue(body, 'Readout Fidelity');
-            const fidelityMeasurementMethod = extractValue(body, 'Fidelity Measurement Method');
-            const methodology = extractValue(body, 'Methodology');
-            const notes = extractValue(body, 'Notes');
+            // Returns true if the field was left blank / skipped
+            function isEmpty(val) {
+              return !val || val === '_No response_' || val.trim() === '';
+            }
 
-            if (!algorithmName || !device || !metricName || !metricValueStr) {
-              core.setFailed('Missing required fields');
+            // Parse and validate a float field. Returns the number or null.
+            // Pushes a human-readable error string into `errors` on failure.
+            function parseNum(raw, label, errors, opts = {}) {
+              if (isEmpty(raw)) return null;
+              const n = parseFloat(raw);
+              if (isNaN(n)) {
+                errors.push(`**${label}**: \`${raw}\` is not a valid number`);
+                return null;
+              }
+              if (opts.min !== undefined && n < opts.min) {
+                errors.push(`**${label}**: ${n} must be ≥ ${opts.min}`);
+              }
+              if (opts.max !== undefined && n > opts.max) {
+                errors.push(`**${label}**: ${n} must be ≤ ${opts.max}`);
+              }
+              return n;
+            }
+
+            // Parse and validate an integer field.
+            function parseIntField(raw, label, errors, opts = {}) {
+              if (isEmpty(raw)) return null;
+              const n = parseInt(raw, 10);
+              if (isNaN(n)) {
+                errors.push(`**${label}**: \`${raw}\` is not a valid integer`);
+                return null;
+              }
+              if (opts.min !== undefined && n < opts.min) {
+                errors.push(`**${label}**: ${n} must be ≥ ${opts.min}`);
+              }
+              return n;
+            }
+
+            const body = context.payload.issue.body;
+            const validationErrors = [];
+
+            // ── Extract all fields ──────────────────────────────────────────
+            const algorithmName           = extractValue(body, 'Algorithm Name');
+            const device                  = extractValue(body, 'Quantum Device');
+            const metricName              = extractValue(body, 'Metric Name');
+            const metricValueStr          = extractValue(body, 'Metric Value');
+            const uncertaintyStr          = extractValue(body, 'Uncertainty (Optional)');
+            const uncertaintyDefinition   = extractValue(body, 'Uncertainty Definition (Optional)');
+            const description             = extractValue(body, 'Description');
+            const paperUrl                = extractValue(body, 'Paper/Preprint URL');
+            const qubitRangeMinStr        = extractValue(body, 'Qubit Range (Min)');
+            const qubitRangeMaxStr        = extractValue(body, 'Qubit Range (Max)');
+            const depthRangeMinStr        = extractValue(body, 'Circuit Depth Range (Min)');
+            const depthRangeMaxStr        = extractValue(body, 'Circuit Depth Range (Max)');
+            const shotsStr                = extractValue(body, 'Shots');
+            const gateCountStr            = extractValue(body, 'Total Gate Count');
+            const lambda1Str              = extractValue(body, 'λ₁ (Normalized Laplacian)');
+            const lambda1Source           = extractValue(body, 'λ₁ Source');
+            const qtvRawStr               = extractValue(body, 'Qubit Time Volume (Raw)');
+            const qtvNormStr              = extractValue(body, 'Qubit Time Volume (Normalized /T2)');
+            const circuitDurationStr      = extractValue(body, 'Circuit Duration in microseconds');
+            const t1Str                   = extractValue(body, 'T1 in microseconds');
+            const t2Str                   = extractValue(body, 'T2 in microseconds');
+            const primaryMetricDefinition = extractValue(body, 'Primary Metric Definition');
+            const oneQubitFidelityStr     = extractValue(body, '1-Qubit Gate Fidelity');
+            const twoQubitFidelityStr     = extractValue(body, '2-Qubit Gate Fidelity');
+            const qubitFidelityStr        = extractValue(body, 'Qubit Fidelity');
+            const readoutFidelityStr      = extractValue(body, 'Readout Fidelity');
+            const fidelityMeasurementMethod = extractValue(body, 'Fidelity Measurement Method');
+            const qasmContent             = extractValue(body, 'QASM Circuit (Optional)');
+            const methodology             = extractValue(body, 'Methodology');
+            const notes                   = extractValue(body, 'Notes');
+
+            // ── Required field checks ────────────────────────────────────────
+            if (isEmpty(algorithmName)) validationErrors.push('**Algorithm Name**: required');
+            if (isEmpty(device))        validationErrors.push('**Quantum Device**: required');
+            if (isEmpty(metricName))    validationErrors.push('**Metric Name**: required');
+            if (isEmpty(metricValueStr)) validationErrors.push('**Metric Value**: required');
+
+            // ── Numeric validation ───────────────────────────────────────────
+            const metricValue      = parseNum(metricValueStr,      'Metric Value',                      validationErrors, { min: 0, max: 1 });
+            const uncertainty      = parseNum(uncertaintyStr,      'Uncertainty',                       validationErrors, { min: 0 });
+            const oneQubitFidelity = parseNum(oneQubitFidelityStr, '1-Qubit Gate Fidelity',             validationErrors, { min: 0, max: 1 });
+            const twoQubitFidelity = parseNum(twoQubitFidelityStr, '2-Qubit Gate Fidelity',             validationErrors, { min: 0, max: 1 });
+            const qubitFidelity    = parseNum(qubitFidelityStr,    'Qubit Fidelity',                    validationErrors, { min: 0, max: 1 });
+            const readoutFidelity  = parseNum(readoutFidelityStr,  'Readout Fidelity',                  validationErrors, { min: 0, max: 1 });
+            const circuitDuration  = parseNum(circuitDurationStr,  'Circuit Duration in microseconds',  validationErrors, { min: 0 });
+            const t1               = parseNum(t1Str,               'T1 in microseconds',                validationErrors, { min: 0 });
+            const t2               = parseNum(t2Str,               'T2 in microseconds',                validationErrors, { min: 0 });
+            const lambda1          = parseNum(lambda1Str,          'λ₁ (Normalized Laplacian)', validationErrors, { min: 0, max: 2 });
+            const qtvRaw           = parseNum(qtvRawStr,           'Qubit Time Volume (Raw)',            validationErrors, { min: 0 });
+            const qtvNorm          = parseNum(qtvNormStr,          'Qubit Time Volume (Normalized /T2)', validationErrors, { min: 0 });
+            const qubitRangeMin    = parseIntField(qubitRangeMinStr, 'Qubit Range (Min)',          validationErrors, { min: 1 });
+            const qubitRangeMax    = parseIntField(qubitRangeMaxStr, 'Qubit Range (Max)',          validationErrors, { min: 1 });
+            const depthRangeMin    = parseIntField(depthRangeMinStr, 'Circuit Depth Range (Min)',  validationErrors, { min: 1 });
+            const depthRangeMax    = parseIntField(depthRangeMaxStr, 'Circuit Depth Range (Max)',  validationErrors, { min: 1 });
+            const shots            = parseIntField(shotsStr,         'Shots',                      validationErrors, { min: 1 });
+            const gateCount        = parseIntField(gateCountStr,     'Total Gate Count',           validationErrors, { min: 0 });
+
+            // ── Range consistency checks ─────────────────────────────────────
+            if (qubitRangeMin !== null && qubitRangeMax !== null && qubitRangeMin > qubitRangeMax) {
+              validationErrors.push(`**Qubit Range**: Min (${qubitRangeMin}) cannot be greater than Max (${qubitRangeMax})`);
+            }
+            if (depthRangeMin !== null && depthRangeMax !== null && depthRangeMin > depthRangeMax) {
+              validationErrors.push(`**Circuit Depth Range**: Min (${depthRangeMin}) cannot be greater than Max (${depthRangeMax})`);
+            }
+            if (t1 !== null && t2 !== null && circuitDuration !== null) {
+              if (circuitDuration > t1 * 10) {
+                validationErrors.push(`**Circuit Duration** (${circuitDuration} µs) is more than 10× T1 (${t1} µs) — please double-check the value`);
+              }
+            }
+
+            // ── Fail early with a comment if there are validation errors ──────
+            if (validationErrors.length > 0) {
+              const errorList = validationErrors.map(e => `- ${e}`).join('\n');
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: [
+                  '❌ **Submission validation failed.** Please fix the following errors and edit your issue to resubmit:',
+                  '',
+                  errorList,
+                  '',
+                  '_No Pull Request has been created. Correct the errors above and the bot will retry automatically._'
+                ].join('\n')
+              });
+              core.setFailed(`Validation failed with ${validationErrors.length} error(s)`);
               return;
             }
 
-            // Create ID from algorithm name
+            // ── Build benchmark JSON ─────────────────────────────────────────
             const id = algorithmName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
             const timestamp = new Date().toISOString();
             const contributor = context.payload.issue.user.login;
-            
-            // Build benchmark object
+
             const benchmark = {
               id,
               algorithmName,
               device,
               metricName,
-              metricValue: parseFloat(metricValueStr),
-              timestamp, // Creation time
-              lastUpdated: timestamp, // Initial update time
+              metricValue,
+              timestamp,
+              lastUpdated: timestamp,
               contributor,
-              paperUrl: paperUrl !== '_No response_' ? paperUrl : undefined,
+              paperUrl: !isEmpty(paperUrl) ? paperUrl : undefined,
             };
 
-            // Add uncertainty if provided
-            if (uncertaintyStr && uncertaintyStr !== '_No response_') {
-              benchmark.uncertainty = parseFloat(uncertaintyStr);
-            }
-            if (uncertaintyDefinition && uncertaintyDefinition !== '_No response_') {
-              benchmark.uncertaintyDefinition = uncertaintyDefinition;
-            }
+            if (uncertainty !== null)           benchmark.uncertainty = uncertainty;
+            if (!isEmpty(uncertaintyDefinition)) benchmark.uncertaintyDefinition = uncertaintyDefinition;
 
-            // Add quantum specifics
+            // Qubit/depth ranges
             const quantumSpecific = {};
-            if (qubitCountStr && qubitCountStr !== '_No response_') quantumSpecific.qubitCount = parseInt(qubitCountStr);
-            if (shotsStr && shotsStr !== '_No response_') quantumSpecific.shots = parseInt(shotsStr);
-            
-            if (Object.keys(quantumSpecific).length > 0) {
-              benchmark.quantumSpecific = quantumSpecific;
+            if (qubitRangeMin !== null || qubitRangeMax !== null) {
+              quantumSpecific.qubitRange = {
+                min: qubitRangeMin ?? qubitRangeMax,
+                max: qubitRangeMax ?? qubitRangeMin
+              };
             }
+            if (depthRangeMin !== null || depthRangeMax !== null) {
+              quantumSpecific.depthRange = {
+                min: depthRangeMin ?? depthRangeMax,
+                max: depthRangeMax ?? depthRangeMin
+              };
+            }
+            if (shots !== null)     quantumSpecific.shots = shots;
+            if (gateCount !== null) quantumSpecific.gateCount = gateCount;
+            if (Object.keys(quantumSpecific).length > 0) benchmark.quantumSpecific = quantumSpecific;
 
-            benchmark.generalMetrics = {
-              gateFidelity: {
-                oneQubit: oneQubitFidelityStr && oneQubitFidelityStr !== '_No response_' ? parseFloat(oneQubitFidelityStr) : undefined,
-                twoQubit: twoQubitFidelityStr && twoQubitFidelityStr !== '_No response_' ? parseFloat(twoQubitFidelityStr) : undefined,
-                measurementMethod: fidelityMeasurementMethod && fidelityMeasurementMethod !== '_No response_' ? fidelityMeasurementMethod : undefined
-              },
-              qubitFidelity: qubitFidelityStr && qubitFidelityStr !== '_No response_' ? parseFloat(qubitFidelityStr) : undefined,
-              readoutFidelity: readoutFidelityStr && readoutFidelityStr !== '_No response_' ? parseFloat(readoutFidelityStr) : undefined
-            };
+            // General metrics
+            const generalMetrics = {};
+            if (oneQubitFidelity !== null || twoQubitFidelity !== null || !isEmpty(fidelityMeasurementMethod)) {
+              generalMetrics.gateFidelity = {
+                oneQubit: oneQubitFidelity ?? undefined,
+                twoQubit: twoQubitFidelity ?? undefined,
+                measurementMethod: !isEmpty(fidelityMeasurementMethod) ? fidelityMeasurementMethod : undefined
+              };
+            }
+            if (qubitFidelity !== null)  generalMetrics.qubitFidelity  = qubitFidelity;
+            if (readoutFidelity !== null) generalMetrics.readoutFidelity = readoutFidelity;
+            if (lambda1 !== null)         generalMetrics.lambda1         = lambda1;
+            if (!isEmpty(lambda1Source))  generalMetrics.lambda1Source   = lambda1Source.startsWith('explicit') ? 'explicit' : 'qasm';
+            if (qtvRaw !== null)          generalMetrics.qubitTimeVolume           = qtvRaw;
+            if (qtvNorm !== null)         generalMetrics.qubitTimeVolumeNormalized = qtvNorm;
+            if (Object.keys(generalMetrics).length > 0) benchmark.generalMetrics = generalMetrics;
 
-            benchmark.problemSpecific = {
-              description: description !== '_No response_' ? description : undefined,
+            // Problem-specific
+            const problemSpecific = {
               primaryMetric: {
                 name: metricName,
-                definition: primaryMetricDefinition && primaryMetricDefinition !== '_No response_' ? primaryMetricDefinition : undefined,
-                value: parseFloat(metricValueStr),
-                uncertainty: uncertaintyStr && uncertaintyStr !== '_No response_' ? parseFloat(uncertaintyStr) : undefined,
-                uncertaintyDefinition: uncertaintyDefinition && uncertaintyDefinition !== '_No response_' ? uncertaintyDefinition : undefined
+                definition: !isEmpty(primaryMetricDefinition) ? primaryMetricDefinition : undefined,
+                value: metricValue,
+                uncertainty: uncertainty ?? undefined,
+                uncertaintyDefinition: !isEmpty(uncertaintyDefinition) ? uncertaintyDefinition : undefined
               },
-              shots: shotsStr && shotsStr !== '_No response_' ? parseInt(shotsStr) : undefined,
-              methodology: methodology && methodology !== '_No response_' ? methodology : undefined,
-              notes: notes && notes !== '_No response_' ? notes : undefined
+              description: !isEmpty(description) ? description : undefined,
+              shots: shots ?? undefined,
+              methodology: !isEmpty(methodology) ? methodology : undefined,
+              notes: !isEmpty(notes) ? notes : undefined
             };
+            if (qubitRangeMin !== null || qubitRangeMax !== null) {
+              problemSpecific.qubitRange = { min: qubitRangeMin ?? qubitRangeMax, max: qubitRangeMax ?? qubitRangeMin };
+            }
+            if (depthRangeMin !== null || depthRangeMax !== null) {
+              problemSpecific.depthRange = { min: depthRangeMin ?? depthRangeMax, max: depthRangeMax ?? depthRangeMin };
+            }
+            benchmark.problemSpecific = problemSpecific;
 
-            // Add timing and coherence inputs when provided
-            const timing = {};
-            if (circuitDurationStr && circuitDurationStr !== '_No response_') timing.circuitDuration = parseFloat(circuitDurationStr);
-            if (t1Str && t1Str !== '_No response_') timing.t1 = parseFloat(t1Str);
-            if (t2Str && t2Str !== '_No response_') timing.t2 = parseFloat(t2Str);
-            if (Object.keys(timing).length > 0) {
-              timing.unit = 'us';
-              benchmark.timing = timing;
+            // Timing
+            if (circuitDuration !== null || t1 !== null || t2 !== null) {
+              benchmark.timing = {
+                unit: 'us',
+                circuitDuration: circuitDuration ?? undefined,
+                t1: t1 ?? undefined,
+                t2: t2 ?? undefined
+              };
             }
 
-            // Prepare directory - use stable name based on ID to allow updates
-            // We append the issue number to avoid collisions between different issues for the same algorithm
-            // This allows users to update THEIR submission by editing THEIR issue
+            // ── Write files ──────────────────────────────────────────────────
             const dirName = `${id}_issue${context.issue.number}`;
             const dirPath = path.join('submissions', dirName);
-            
+
             if (!fs.existsSync(dirPath)) {
               fs.mkdirSync(dirPath, { recursive: true });
             } else {
-              // If directory exists, we are updating. Preserve original timestamp if possible.
               try {
                 const existingPath = path.join(dirPath, 'benchmark.json');
                 if (fs.existsSync(existingPath)) {
                   const existing = JSON.parse(fs.readFileSync(existingPath, 'utf8'));
-                  if (existing.timestamp) {
-                    benchmark.timestamp = existing.timestamp; // Keep original creation date
-                  }
+                  if (existing.timestamp) benchmark.timestamp = existing.timestamp;
                 }
-              } catch (e) {
-                // Ignore error, just use new timestamp
-              }
+              } catch (e) { /* use new timestamp */ }
             }
 
-            // Write benchmark.json
-            fs.writeFileSync(
-              path.join(dirPath, 'benchmark.json'), 
-              JSON.stringify(benchmark, null, 2)
-            );
-            
-            // Write QASM if provided
-            if (qasmContent && qasmContent !== '_No response_') {
+            fs.writeFileSync(path.join(dirPath, 'benchmark.json'), JSON.stringify(benchmark, null, 2));
+
+            if (!isEmpty(qasmContent)) {
               const qasmPath = path.join(dirPath, 'circuit.qasm');
               fs.writeFileSync(qasmPath, qasmContent);
               benchmark.qasmFiles = ['circuit.qasm'];
-              
-              // Analyze QASM to extract metrics
+
               try {
-                // We need to require the script from the checked out repo
-                // The script is in scripts/analyze-qasm.js
                 const analyzerPath = path.resolve('scripts/analyze-qasm.js');
                 if (fs.existsSync(analyzerPath)) {
                   const { analyzeQASMFile } = require(analyzerPath);
                   const analysis = analyzeQASMFile(qasmPath);
-                  
                   if (analysis) {
                     console.log('✅ QASM Analysis successful:', JSON.stringify(analysis));
-                    
-                    // Initialize quantumSpecific if needed
-                    if (!benchmark.quantumSpecific) {
-                      benchmark.quantumSpecific = {};
+                    if (!benchmark.quantumSpecific) benchmark.quantumSpecific = {};
+                    if (!benchmark.quantumSpecific.qubitRange && analysis.qubitCount > 0) {
+                      benchmark.quantumSpecific.qubitRange = { min: analysis.qubitCount, max: analysis.qubitCount };
                     }
-                    
-                    // Merge metrics (prefer manual input if provided, otherwise use extracted)
-                    // We only overwrite if the manual field is missing
-                    if (!benchmark.quantumSpecific.qubitCount && analysis.qubitCount > 0) {
-                      benchmark.quantumSpecific.qubitCount = analysis.qubitCount;
-                    }
-                    
-                    if (!benchmark.quantumSpecific.gateCount) {
-                      benchmark.quantumSpecific.gateCount = analysis.gateCount;
-                    }
-                    
-                    if (!benchmark.quantumSpecific.circuitDepth) {
-                      benchmark.quantumSpecific.circuitDepth = analysis.circuitDepth;
-                    }
-                    
-                    if (!benchmark.quantumSpecific.twoQubitGateCount) {
-                      benchmark.quantumSpecific.twoQubitGateCount = analysis.twoQubitGateCount;
-                    }
-                    
-                    // Note: measurementCount in analysis is number of measure ops, 
-                    // which is different from 'shots' (repetitions). We don't auto-populate shots.
+                    if (!benchmark.quantumSpecific.gateCount)    benchmark.quantumSpecific.gateCount    = analysis.gateCount;
+                    if (!benchmark.quantumSpecific.circuitDepth) benchmark.quantumSpecific.circuitDepth = analysis.circuitDepth;
+                    if (!benchmark.quantumSpecific.twoQubitGateCount) benchmark.quantumSpecific.twoQubitGateCount = analysis.twoQubitGateCount;
                   }
-                } else {
-                  console.warn('⚠️ Analyzer script not found at:', analyzerPath);
                 }
               } catch (error) {
                 console.error('❌ Error analyzing QASM:', error);
-                // Continue without analysis - don't fail the whole submission
               }
 
-              // Rewrite benchmark.json to include qasmFiles and extracted metrics
-              fs.writeFileSync(
-                path.join(dirPath, 'benchmark.json'), 
-                JSON.stringify(benchmark, null, 2)
-              );
+              fs.writeFileSync(path.join(dirPath, 'benchmark.json'), JSON.stringify(benchmark, null, 2));
             }
 
-            // Export for next steps
             core.setOutput('dir_name', dirName);
             core.setOutput('algorithm_name', algorithmName);
 
