@@ -204,8 +204,8 @@ describe('BenchmarkTable', () => {
 
     fireEvent.click(screen.getByText('Test Algorithm'));
 
-    expect(screen.getByText('Qubit Time Volume (raw)')).toBeInTheDocument();
-    expect(screen.getByText('Qubit Time Volume (normalized, /T2)')).toBeInTheDocument();
+    expect(screen.getByText('QTV (raw)')).toBeInTheDocument();
+    expect(screen.getByText('QTV (normalized /T2)')).toBeInTheDocument();
     expect(screen.getByText('48.000 qubit*us')).toBeInTheDocument();
     expect(screen.getByText('0.600')).toBeInTheDocument();
   });
@@ -217,8 +217,8 @@ describe('BenchmarkTable', () => {
 
     expect(screen.getByText('Timing & Coherence')).toBeInTheDocument();
     expect(screen.getByText('Circuit Duration (us)')).toBeInTheDocument();
-    expect(screen.getByText('Qubit Time Volume (raw)')).toBeInTheDocument();
-    expect(screen.getByText('Qubit Time Volume (normalized, /T2)')).toBeInTheDocument();
+    expect(screen.getByText('QTV (raw)')).toBeInTheDocument();
+    expect(screen.getByText('QTV (normalized /T2)')).toBeInTheDocument();
     expect(screen.getAllByText('N/A').length).toBeGreaterThan(0);
   });
 
