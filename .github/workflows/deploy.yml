@@ -1,3 +1,20 @@
+# Deploy is the hard verification gate, and the only one.
+#
+# Pull-request checks cannot be the gate: a pull request opened with the default GITHUB_TOKEN
+# raises no `pull_request` event, so those workflows never start, and `main` carries no branch
+# protection, so even a red check is advisory. Every number that reaches the published site passes
+# through the build step below, which regenerates public/benchmarks.json before the bundler copies
+# it. See docs/verification.md.
+#
+# The failure mode is deliberate and must be preserved:
+#   `build:ci` chains the index generator and the bundler with `&&`, so a generator that exits
+#   nonzero skips the bundler, fails this job, and skips `deploy` through its `needs: build`.
+#   GitHub Pages then keeps serving the last artifact that passed. A misfire freezes the site on
+#   good data; it cannot publish bad data.
+#
+# Do not add `continue-on-error`, `|| true`, or `if: always()` to the build or deploy jobs, and do
+# not reorder the generator behind the bundler. Any of those turns the gate off silently.
+
 name: Deploy to GitHub Pages
 
 on:
@@ -39,6 +56,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # This is the gate. `build:ci` runs the index generator first; under the `enforce` policy the
+      # generator throws before it writes public/benchmarks.json, so nothing downstream sees a
+      # half-checked index.
+      #
+      # `CI: false` only stops the bundler from promoting its own lint warnings to errors. It does
+      # not reach the generator and does not soften verification.
       - name: Build
         run: npm run build:ci
         env:

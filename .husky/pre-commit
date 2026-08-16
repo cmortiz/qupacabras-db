@@ -1,51 +1,93 @@
 #!/bin/sh
 
-# Pre-commit hook to validate benchmark submissions
+# Pre-commit hook: the fastest and least trusted of the three verification layers.
+#
+# Layer 1 is the build step in .github/workflows/deploy.yml, which is the gate.
+# Layer 2 is .github/workflows/pr-validation.yml, which is advisory.
+# Layer 3 is this hook, which is local, skippable with --no-verify, and exists to catch a mistake
+# in seconds rather than in a deploy run.
+#
+# Keep it quick. Nothing here builds the site. See docs/verification.md.
 
 echo "🔍 Running pre-commit validation..."
 
-# Get list of staged JSON files in submissions directory
-STAGED_BENCHMARKS=$(git diff --cached --name-only --diff-filter=ACM | grep "^submissions/.*/benchmark\.json$" || true)
+FAILED=0
 
+# Staged benchmark documents, and the submission folders any staged file belongs to.
+STAGED_BENCHMARKS=$(git diff --cached --name-only --diff-filter=ACM | grep "^submissions/.*/benchmark\.json$" || true)
+STAGED_FOLDERS=$(git diff --cached --name-only --diff-filter=ACM |
+    grep "^submissions/[^/][^/]*/" |
+    cut -d'/' -f2 |
+    sort -u || true)
+STAGED_SCRIPTS=$(git diff --cached --name-only --diff-filter=ACM | grep "^scripts/" || true)
+
+# 1. Schema validation of each staged benchmark document.
 if [ -n "$STAGED_BENCHMARKS" ]; then
     echo "📋 Found benchmark files to validate:"
     echo "$STAGED_BENCHMARKS"
     echo ""
-    
-    # Track validation status
-    VALIDATION_FAILED=0
-    
-    # Validate each staged benchmark file
+
     for file in $STAGED_BENCHMARKS; do
         if [ -f "$file" ]; then
             echo "🔍 Validating $file..."
-            
-            # Run validation
+
             if node scripts/validate-benchmark.js --file "$file"; then
                 echo "✅ $file passed validation"
             else
                 echo "❌ $file failed validation"
-                VALIDATION_FAILED=1
+                FAILED=1
             fi
             echo ""
         fi
     done
-    
-    # Check if any validation failed
-    if [ $VALIDATION_FAILED -eq 1 ]; then
-        echo "❌ Pre-commit validation failed!"
-        echo "Please fix the validation errors before committing."
-        exit 1
-    fi
 fi
 
-# Run the full index generation to catch any other issues
+# 2. Recompute the reported result from the submitted counts, for every staged submission folder.
+# A folder carrying no nonlocalGame block reports "nothing to verify" and does not fail.
+if [ -n "$STAGED_FOLDERS" ]; then
+    echo "🔬 Recomputing results from submitted counts..."
+
+    # Word splitting is intended: these are folder names, one per line.
+    # shellcheck disable=SC2086
+    if node scripts/verify-nonlocal-game.js $STAGED_FOLDERS; then
+        echo "✅ Submitted counts reproduce the reported results"
+    else
+        echo "❌ A submitted result does not reproduce from its counts"
+        echo "Run 'npm run verify' to see the full report."
+        FAILED=1
+    fi
+    echo ""
+fi
+
+# 3. The verification core's own tests, only when something under scripts/ is staged. They take
+# well under a second, and a broken verifier is worse than a broken submission.
+if [ -n "$STAGED_SCRIPTS" ]; then
+    echo "🧪 Running verification tests..."
+
+    if npm run --silent test:scripts > /dev/null 2>&1; then
+        echo "✅ Verification tests passed"
+    else
+        echo "❌ Verification tests failed"
+        echo "Run 'npm run test:scripts' to see which."
+        FAILED=1
+    fi
+    echo ""
+fi
+
+# 4. Full index generation, which is the same code path the deploy build gates on.
 echo "🔧 Testing benchmark index generation..."
 if node scripts/generate-benchmark-index.js > /dev/null 2>&1; then
     echo "✅ Benchmark index generation successful"
 else
     echo "❌ Benchmark index generation failed!"
     echo "Run 'npm run generate-index' to see detailed errors."
+    FAILED=1
+fi
+
+if [ "$FAILED" -eq 1 ]; then
+    echo ""
+    echo "❌ Pre-commit validation failed!"
+    echo "Please fix the errors above before committing."
     exit 1
 fi
 

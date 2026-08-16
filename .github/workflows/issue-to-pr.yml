@@ -1,8 +1,36 @@
+# Turn a submission issue into a draft pull request.
+#
+# Everything in the issue body was typed by whoever opened the issue, and this job holds
+# `contents: write` and `pull-requests: write`. Three rules hold that boundary, and they are the
+# same three that hold in pr-validation.yml:
+#
+#   1. No `${{ ... }}` appears inside a `run:` body. A workflow expression is pasted into the body
+#      as text before the shell sees it, so a contributor who types `$(...)` or `'; ...` into a form
+#      field gets that text executed. Values reach a body only through the step's `env:` block and
+#      are read as `"$NAME"`, quoted. Expressions in `if:`, `with:` and `env:` are evaluated rather
+#      than pasted and are fine.
+#   2. Parsing lives in scripts/ci/issue-submission.js, not in a `script:` block here. That file is
+#      covered by eslint, runs on its own, and cannot break this file's YAML. This repository has
+#      broken workflow YAML three times inlining scripts into it (ae940e0, 3cca84a, 9ad6d26).
+#   3. Nothing reaches `submissions/` until the real schema and the real verifier have both accepted
+#      it. A submission whose counts do not reproduce its win rate is reported back on the issue
+#      rather than turned into a pull request that is certain to fail the deploy gate.
+#
+# The pull request is opened as a draft, deliberately. A pull request created with the default
+# GITHUB_TOKEN raises no `pull_request` event, so pr-validation.yml and test.yml stay dark on it.
+# `draft: always-true` means a human has to click "Ready for review", and that click fires the
+# `ready_for_review` trigger pr-validation.yml listens for, re-arming the whole suite without anyone
+# needing a personal access token. `always-true` rather than `true` so a pull request updated by a
+# later edit of the issue goes back to draft and has to be re-armed again.
+
 name: Convert Issue to Submission PR
 
 on:
   issues:
     types: [opened, edited]
+
+permissions:
+  contents: read
 
 jobs:
   create-submission-pr:
@@ -12,320 +40,81 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20.x
 
-      - name: Parse Issue and Create Benchmark
-        id: parse
-        uses: actions/github-script@v7
+      # The parser validates against the committed schema with ajv and recomputes the win rate with
+      # the verification core, so the dependencies have to be present before it runs.
+      - name: Install dependencies
+        run: npm install
+
+      # Injection point, closed. The issue body is submitter-controlled text and is handed to the
+      # parser through env, never interpolated into this body. The parser writes
+      # issue-submission-report.md whatever the outcome, so both comment steps below always have a
+      # body to post, and it exits nonzero when it refused to write a submission folder.
+      - name: Build the submission from the issue
+        id: submission
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: node scripts/ci/issue-submission.js
+
+      # Reported rather than opened: a pull request that cannot pass the gate helps nobody, and the
+      # contributor can fix it by editing the issue, which re-runs this workflow.
+      - name: Report the rejection on the issue
+        if: failure() && steps.submission.outputs.ok == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: gh issue comment "$ISSUE_NUMBER" --body-file issue-submission-report.md
+
+      # TODO(maintainer): pin this to a commit SHA rather than a mutable tag. A tag can be moved to
+      # point at different code without the reference here changing.
+      #
+      # `add-paths` keeps the commit to the submission folder. Without it, `npm install` touching
+      # package-lock.json and the report file written above would both be swept into the branch.
+      - name: Open the draft pull request
+        id: pull-request
+        uses: peter-evans/create-pull-request@v7
         with:
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-
-            // Extract a field value from the issue body
-            function extractValue(body, header) {
-              const escapedHeader = header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-              const regex = new RegExp(`### ${escapedHeader}\\s+([\\s\\S]*?)(?=(?:###|$))`);
-              const match = body.match(regex);
-              return match ? match[1].trim() : null;
-            }
-
-            // Returns true if the field was left blank / skipped
-            function isEmpty(val) {
-              return !val || val === '_No response_' || val.trim() === '';
-            }
-
-            // Parse and validate a float field. Returns the number or null.
-            // Pushes a human-readable error string into `errors` on failure.
-            function parseNum(raw, label, errors, opts = {}) {
-              if (isEmpty(raw)) return null;
-              const n = parseFloat(raw);
-              if (isNaN(n)) {
-                errors.push(`**${label}**: \`${raw}\` is not a valid number`);
-                return null;
-              }
-              if (opts.min !== undefined && n < opts.min) {
-                errors.push(`**${label}**: ${n} must be ≥ ${opts.min}`);
-              }
-              if (opts.max !== undefined && n > opts.max) {
-                errors.push(`**${label}**: ${n} must be ≤ ${opts.max}`);
-              }
-              return n;
-            }
-
-            // Parse and validate an integer field.
-            function parseIntField(raw, label, errors, opts = {}) {
-              if (isEmpty(raw)) return null;
-              const n = parseInt(raw, 10);
-              if (isNaN(n)) {
-                errors.push(`**${label}**: \`${raw}\` is not a valid integer`);
-                return null;
-              }
-              if (opts.min !== undefined && n < opts.min) {
-                errors.push(`**${label}**: ${n} must be ≥ ${opts.min}`);
-              }
-              return n;
-            }
-
-            const body = context.payload.issue.body;
-            const validationErrors = [];
-
-            // ── Extract all fields ──────────────────────────────────────────
-            const algorithmName           = extractValue(body, 'Algorithm Name');
-            const device                  = extractValue(body, 'Quantum Device');
-            const metricName              = extractValue(body, 'Metric Name');
-            const metricValueStr          = extractValue(body, 'Metric Value');
-            const uncertaintyStr          = extractValue(body, 'Uncertainty (Optional)');
-            const uncertaintyDefinition   = extractValue(body, 'Uncertainty Definition (Optional)');
-            const description             = extractValue(body, 'Description');
-            const paperUrl                = extractValue(body, 'Paper/Preprint URL');
-            const qubitRangeMinStr        = extractValue(body, 'Qubit Range (Min)');
-            const qubitRangeMaxStr        = extractValue(body, 'Qubit Range (Max)');
-            const depthRangeMinStr        = extractValue(body, 'Circuit Depth Range (Min)');
-            const depthRangeMaxStr        = extractValue(body, 'Circuit Depth Range (Max)');
-            const shotsStr                = extractValue(body, 'Shots');
-            const gateCountStr            = extractValue(body, 'Total Gate Count');
-            const lambda1Str              = extractValue(body, 'λ₁ (Normalized Laplacian)');
-            const lambda1Source           = extractValue(body, 'λ₁ Source');
-            const qtvRawStr               = extractValue(body, 'Qubit Time Volume (Raw)');
-            const qtvNormStr              = extractValue(body, 'Qubit Time Volume (Normalized /T2)');
-            const circuitDurationStr      = extractValue(body, 'Circuit Duration in microseconds');
-            const t1Str                   = extractValue(body, 'T1 in microseconds');
-            const t2Str                   = extractValue(body, 'T2 in microseconds');
-            const primaryMetricDefinition = extractValue(body, 'Primary Metric Definition');
-            const oneQubitFidelityStr     = extractValue(body, '1-Qubit Gate Fidelity');
-            const twoQubitFidelityStr     = extractValue(body, '2-Qubit Gate Fidelity');
-            const qubitFidelityStr        = extractValue(body, 'Qubit Fidelity');
-            const readoutFidelityStr      = extractValue(body, 'Readout Fidelity');
-            const fidelityMeasurementMethod = extractValue(body, 'Fidelity Measurement Method');
-            const qasmContent             = extractValue(body, 'QASM Circuit (Optional)');
-            const methodology             = extractValue(body, 'Methodology');
-            const notes                   = extractValue(body, 'Notes');
-
-            // ── Required field checks ────────────────────────────────────────
-            if (isEmpty(algorithmName)) validationErrors.push('**Algorithm Name**: required');
-            if (isEmpty(device))        validationErrors.push('**Quantum Device**: required');
-            if (isEmpty(metricName))    validationErrors.push('**Metric Name**: required');
-            if (isEmpty(metricValueStr)) validationErrors.push('**Metric Value**: required');
-
-            // ── Numeric validation ───────────────────────────────────────────
-            const metricValue      = parseNum(metricValueStr,      'Metric Value',                      validationErrors, { min: 0, max: 1 });
-            const uncertainty      = parseNum(uncertaintyStr,      'Uncertainty',                       validationErrors, { min: 0 });
-            const oneQubitFidelity = parseNum(oneQubitFidelityStr, '1-Qubit Gate Fidelity',             validationErrors, { min: 0, max: 1 });
-            const twoQubitFidelity = parseNum(twoQubitFidelityStr, '2-Qubit Gate Fidelity',             validationErrors, { min: 0, max: 1 });
-            const qubitFidelity    = parseNum(qubitFidelityStr,    'Qubit Fidelity',                    validationErrors, { min: 0, max: 1 });
-            const readoutFidelity  = parseNum(readoutFidelityStr,  'Readout Fidelity',                  validationErrors, { min: 0, max: 1 });
-            const circuitDuration  = parseNum(circuitDurationStr,  'Circuit Duration in microseconds',  validationErrors, { min: 0 });
-            const t1               = parseNum(t1Str,               'T1 in microseconds',                validationErrors, { min: 0 });
-            const t2               = parseNum(t2Str,               'T2 in microseconds',                validationErrors, { min: 0 });
-            const lambda1          = parseNum(lambda1Str,          'λ₁ (Normalized Laplacian)', validationErrors, { min: 0, max: 2 });
-            const qtvRaw           = parseNum(qtvRawStr,           'Qubit Time Volume (Raw)',            validationErrors, { min: 0 });
-            const qtvNorm          = parseNum(qtvNormStr,          'Qubit Time Volume (Normalized /T2)', validationErrors, { min: 0 });
-            const qubitRangeMin    = parseIntField(qubitRangeMinStr, 'Qubit Range (Min)',          validationErrors, { min: 1 });
-            const qubitRangeMax    = parseIntField(qubitRangeMaxStr, 'Qubit Range (Max)',          validationErrors, { min: 1 });
-            const depthRangeMin    = parseIntField(depthRangeMinStr, 'Circuit Depth Range (Min)',  validationErrors, { min: 1 });
-            const depthRangeMax    = parseIntField(depthRangeMaxStr, 'Circuit Depth Range (Max)',  validationErrors, { min: 1 });
-            const shots            = parseIntField(shotsStr,         'Shots',                      validationErrors, { min: 1 });
-            const gateCount        = parseIntField(gateCountStr,     'Total Gate Count',           validationErrors, { min: 0 });
-
-            // ── Range consistency checks ─────────────────────────────────────
-            if (qubitRangeMin !== null && qubitRangeMax !== null && qubitRangeMin > qubitRangeMax) {
-              validationErrors.push(`**Qubit Range**: Min (${qubitRangeMin}) cannot be greater than Max (${qubitRangeMax})`);
-            }
-            if (depthRangeMin !== null && depthRangeMax !== null && depthRangeMin > depthRangeMax) {
-              validationErrors.push(`**Circuit Depth Range**: Min (${depthRangeMin}) cannot be greater than Max (${depthRangeMax})`);
-            }
-            if (t1 !== null && t2 !== null && circuitDuration !== null) {
-              if (circuitDuration > t1 * 10) {
-                validationErrors.push(`**Circuit Duration** (${circuitDuration} µs) is more than 10× T1 (${t1} µs) — please double-check the value`);
-              }
-            }
-
-            // ── Fail early with a comment if there are validation errors ──────
-            if (validationErrors.length > 0) {
-              const errorList = validationErrors.map(e => `- ${e}`).join('\n');
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: [
-                  '❌ **Submission validation failed.** Please fix the following errors and edit your issue to resubmit:',
-                  '',
-                  errorList,
-                  '',
-                  '_No Pull Request has been created. Correct the errors above and the bot will retry automatically._'
-                ].join('\n')
-              });
-              core.setFailed(`Validation failed with ${validationErrors.length} error(s)`);
-              return;
-            }
-
-            // ── Build benchmark JSON ─────────────────────────────────────────
-            const id = algorithmName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
-            const timestamp = new Date().toISOString();
-            const contributor = context.payload.issue.user.login;
-
-            const benchmark = {
-              id,
-              algorithmName,
-              device,
-              metricName,
-              metricValue,
-              timestamp,
-              lastUpdated: timestamp,
-              contributor,
-              paperUrl: !isEmpty(paperUrl) ? paperUrl : undefined,
-            };
-
-            if (uncertainty !== null)           benchmark.uncertainty = uncertainty;
-            if (!isEmpty(uncertaintyDefinition)) benchmark.uncertaintyDefinition = uncertaintyDefinition;
-
-            // Qubit/depth ranges
-            const quantumSpecific = {};
-            if (qubitRangeMin !== null || qubitRangeMax !== null) {
-              quantumSpecific.qubitRange = {
-                min: qubitRangeMin ?? qubitRangeMax,
-                max: qubitRangeMax ?? qubitRangeMin
-              };
-            }
-            if (depthRangeMin !== null || depthRangeMax !== null) {
-              quantumSpecific.depthRange = {
-                min: depthRangeMin ?? depthRangeMax,
-                max: depthRangeMax ?? depthRangeMin
-              };
-            }
-            if (shots !== null)     quantumSpecific.shots = shots;
-            if (gateCount !== null) quantumSpecific.gateCount = gateCount;
-            if (Object.keys(quantumSpecific).length > 0) benchmark.quantumSpecific = quantumSpecific;
-
-            // General metrics
-            const generalMetrics = {};
-            if (oneQubitFidelity !== null || twoQubitFidelity !== null || !isEmpty(fidelityMeasurementMethod)) {
-              generalMetrics.gateFidelity = {
-                oneQubit: oneQubitFidelity ?? undefined,
-                twoQubit: twoQubitFidelity ?? undefined,
-                measurementMethod: !isEmpty(fidelityMeasurementMethod) ? fidelityMeasurementMethod : undefined
-              };
-            }
-            if (qubitFidelity !== null)  generalMetrics.qubitFidelity  = qubitFidelity;
-            if (readoutFidelity !== null) generalMetrics.readoutFidelity = readoutFidelity;
-            if (lambda1 !== null)         generalMetrics.lambda1         = lambda1;
-            if (!isEmpty(lambda1Source))  generalMetrics.lambda1Source   = lambda1Source.startsWith('explicit') ? 'explicit' : 'qasm';
-            if (qtvRaw !== null)          generalMetrics.qubitTimeVolume           = qtvRaw;
-            if (qtvNorm !== null)         generalMetrics.qubitTimeVolumeNormalized = qtvNorm;
-            if (Object.keys(generalMetrics).length > 0) benchmark.generalMetrics = generalMetrics;
-
-            // Problem-specific
-            const problemSpecific = {
-              primaryMetric: {
-                name: metricName,
-                definition: !isEmpty(primaryMetricDefinition) ? primaryMetricDefinition : undefined,
-                value: metricValue,
-                uncertainty: uncertainty ?? undefined,
-                uncertaintyDefinition: !isEmpty(uncertaintyDefinition) ? uncertaintyDefinition : undefined
-              },
-              description: !isEmpty(description) ? description : undefined,
-              shots: shots ?? undefined,
-              methodology: !isEmpty(methodology) ? methodology : undefined,
-              notes: !isEmpty(notes) ? notes : undefined
-            };
-            if (qubitRangeMin !== null || qubitRangeMax !== null) {
-              problemSpecific.qubitRange = { min: qubitRangeMin ?? qubitRangeMax, max: qubitRangeMax ?? qubitRangeMin };
-            }
-            if (depthRangeMin !== null || depthRangeMax !== null) {
-              problemSpecific.depthRange = { min: depthRangeMin ?? depthRangeMax, max: depthRangeMax ?? depthRangeMin };
-            }
-            benchmark.problemSpecific = problemSpecific;
-
-            // Timing
-            if (circuitDuration !== null || t1 !== null || t2 !== null) {
-              benchmark.timing = {
-                unit: 'us',
-                circuitDuration: circuitDuration ?? undefined,
-                t1: t1 ?? undefined,
-                t2: t2 ?? undefined
-              };
-            }
-
-            // ── Write files ──────────────────────────────────────────────────
-            const dirName = `${id}_issue${context.issue.number}`;
-            const dirPath = path.join('submissions', dirName);
-
-            if (!fs.existsSync(dirPath)) {
-              fs.mkdirSync(dirPath, { recursive: true });
-            } else {
-              try {
-                const existingPath = path.join(dirPath, 'benchmark.json');
-                if (fs.existsSync(existingPath)) {
-                  const existing = JSON.parse(fs.readFileSync(existingPath, 'utf8'));
-                  if (existing.timestamp) benchmark.timestamp = existing.timestamp;
-                }
-              } catch (e) { /* use new timestamp */ }
-            }
-
-            fs.writeFileSync(path.join(dirPath, 'benchmark.json'), JSON.stringify(benchmark, null, 2));
-
-            if (!isEmpty(qasmContent)) {
-              const qasmPath = path.join(dirPath, 'circuit.qasm');
-              fs.writeFileSync(qasmPath, qasmContent);
-              benchmark.qasmFiles = ['circuit.qasm'];
-
-              try {
-                const analyzerPath = path.resolve('scripts/analyze-qasm.js');
-                if (fs.existsSync(analyzerPath)) {
-                  const { analyzeQASMFile } = require(analyzerPath);
-                  const analysis = analyzeQASMFile(qasmPath);
-                  if (analysis) {
-                    console.log('✅ QASM Analysis successful:', JSON.stringify(analysis));
-                    if (!benchmark.quantumSpecific) benchmark.quantumSpecific = {};
-                    if (!benchmark.quantumSpecific.qubitRange && analysis.qubitCount > 0) {
-                      benchmark.quantumSpecific.qubitRange = { min: analysis.qubitCount, max: analysis.qubitCount };
-                    }
-                    if (!benchmark.quantumSpecific.gateCount)    benchmark.quantumSpecific.gateCount    = analysis.gateCount;
-                    if (!benchmark.quantumSpecific.circuitDepth) benchmark.quantumSpecific.circuitDepth = analysis.circuitDepth;
-                    if (!benchmark.quantumSpecific.twoQubitGateCount) benchmark.quantumSpecific.twoQubitGateCount = analysis.twoQubitGateCount;
-                  }
-                }
-              } catch (error) {
-                console.error('❌ Error analyzing QASM:', error);
-              }
-
-              fs.writeFileSync(path.join(dirPath, 'benchmark.json'), JSON.stringify(benchmark, null, 2));
-            }
-
-            core.setOutput('dir_name', dirName);
-            core.setOutput('algorithm_name', algorithmName);
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: "feat: update benchmark for ${{ steps.parse.outputs.algorithm_name }}"
-          title: "feat: update benchmark for ${{ steps.parse.outputs.algorithm_name }}"
+          commit-message: "feat: benchmark submission from issue #${{ github.event.issue.number }}"
+          title: "feat: ${{ steps.submission.outputs.algorithm_name }} (issue #${{ github.event.issue.number }})"
           body: |
-            Automated submission from Issue #${{ github.event.issue.number }}
-            
+            Automated submission built from issue #${{ github.event.issue.number }}.
+
             Contributor: @${{ github.event.issue.user.login }}
-            
+            Folder: `submissions/${{ steps.submission.outputs.dir_name }}/`
+            Ships counts: `${{ steps.submission.outputs.has_counts }}`
+
+            This pull request is a **draft** on purpose. It was opened with the default workflow
+            token, which raises no `pull_request` event, so the validation suite has not run on it.
+            Clicking "Ready for review" fires `ready_for_review` and starts the full suite.
+
             Closes #${{ github.event.issue.number }}
           branch: "submission/issue-${{ github.event.issue.number }}"
           delete-branch: true
           base: main
+          draft: always-true
+          add-paths: submissions
 
-      - name: Comment on Issue
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "🚀 **Success!** I've created a Pull Request for your submission. You can track its progress there."
-            });
+      # Silent when the run changed nothing, which is the common case for an issue edited for
+      # reasons that do not touch the submission.
+      - name: Point the contributor at the pull request
+        if: steps.pull-request.outputs.pull-request-operation != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+        run: |
+          printf '\nDraft pull request: %s\n\n%s\n' "$PR_URL" \
+            'It is a draft until a maintainer clicks "Ready for review", which starts the validation suite.' \
+            >> issue-submission-report.md
+          gh issue comment "$ISSUE_NUMBER" --body-file issue-submission-report.md

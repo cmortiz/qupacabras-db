@@ -1,3 +1,11 @@
+# Exercises scripts/add-pr-metadata.js end to end on a throwaway submission folder.
+#
+# `test_username` is a workflow_dispatch input, so only someone who can already run workflows in
+# this repository can set it. It is still read through `env:` and quoted in the shell rather than
+# interpolated into the `run:` body, because a workflow expression is pasted into the body as text
+# before the shell parses it, and a value containing `$(...)` or `'; ...` would be executed. The
+# same rule holds in every workflow here; see docs/verification.md.
+
 name: Test Auto-populate PR Metadata
 
 on:
@@ -8,19 +16,22 @@ on:
         required: true
         default: 'test-user'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          
+
       - name: Create test submission
         run: |
           mkdir -p submissions/test_auto_populate
@@ -32,26 +43,30 @@ jobs:
             "metricValue": 0.99
           }
           EOF
-          
+
       - name: Run add-pr-metadata script
+        env:
+          TEST_USERNAME: ${{ github.event.inputs.test_username }}
         run: |
           chmod +x scripts/add-pr-metadata.js
-          node scripts/add-pr-metadata.js submissions/test_auto_populate/benchmark.json "${{ github.event.inputs.test_username }}" "2025-07-24T10:30:00Z"
-          
+          node scripts/add-pr-metadata.js submissions/test_auto_populate/benchmark.json "$TEST_USERNAME" "2025-07-24T10:30:00Z"
+
       - name: Verify contributor and timestamp were added
+        env:
+          TEST_USERNAME: ${{ github.event.inputs.test_username }}
         run: |
           echo "Contents of benchmark.json after adding contributor:"
           cat submissions/test_auto_populate/benchmark.json
-          
+
           # Verify contributor field exists and matches
           CONTRIBUTOR=$(jq -r '.contributor' submissions/test_auto_populate/benchmark.json)
-          if [ "$CONTRIBUTOR" = "${{ github.event.inputs.test_username }}" ]; then
+          if [ "$CONTRIBUTOR" = "$TEST_USERNAME" ]; then
             echo "✅ Success: Contributor field correctly added"
           else
-            echo "❌ Failed: Expected contributor '${{ github.event.inputs.test_username }}', got '$CONTRIBUTOR'"
+            echo "❌ Failed: Expected contributor '$TEST_USERNAME', got '$CONTRIBUTOR'"
             exit 1
           fi
-          
+
           # Verify timestamp field exists
           TIMESTAMP=$(jq -r '.timestamp' submissions/test_auto_populate/benchmark.json)
           if [ "$TIMESTAMP" = "2025-07-24T10:30:00Z" ]; then
@@ -60,16 +75,18 @@ jobs:
             echo "❌ Failed: Expected timestamp '2025-07-24T10:30:00Z', got '$TIMESTAMP'"
             exit 1
           fi
-          
+
       - name: Test idempotency
+        env:
+          TEST_USERNAME: ${{ github.event.inputs.test_username }}
         run: |
           # Run again - should not modify
           node scripts/add-pr-metadata.js submissions/test_auto_populate/benchmark.json "different-user" "2025-07-25T12:00:00Z"
-          
+
           # Verify they didn't change
           CONTRIBUTOR=$(jq -r '.contributor' submissions/test_auto_populate/benchmark.json)
           TIMESTAMP=$(jq -r '.timestamp' submissions/test_auto_populate/benchmark.json)
-          if [ "$CONTRIBUTOR" = "${{ github.event.inputs.test_username }}" ]; then
+          if [ "$CONTRIBUTOR" = "$TEST_USERNAME" ]; then
             echo "✅ Success: Contributor field was not overwritten"
           else
             echo "❌ Failed: Contributor was overwritten to '$CONTRIBUTOR'"
@@ -81,7 +98,7 @@ jobs:
             echo "❌ Failed: Timestamp was overwritten to '$TIMESTAMP'"
             exit 1
           fi
-          
+
       - name: Cleanup
         if: always()
         run: |

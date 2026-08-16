@@ -1,3 +1,9 @@
+# Advisory test suite. Like pr-validation.yml, this does not run on a pull request opened with the
+# default GITHUB_TOKEN, and nothing here blocks a merge into main. The gate is deploy.yml.
+#
+# No `${{ ... }}` appears inside any `run:` body in this file. Expressions belong in `if:`, `with:`
+# and `env:`, which are not executed as text.
+
 name: Tests
 
 on:
@@ -5,6 +11,9 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
+
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -22,19 +31,23 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        # cache: 'npm'  # Temporarily disabled to clear stale cache
 
     - name: Install dependencies
       run: npm install
 
-    - name: Run benchmark generation tests
-      run: npm test -- scripts/__tests__/ --passWithNoTests --ci --watchAll=false
+    # The verification core: statistics, game registry, counts, verifier and I/O. Run on every
+    # matrix leg, because these are the tests that decide whether a published number is true and
+    # they use nothing newer than Node 18 offers. The npm script passes an unquoted shell glob, so
+    # the shell expands it into file paths before Node sees it; a bare directory argument fails on
+    # Node 22 and Node's own positional globbing is Node 21 and later.
+    - name: Run verification tests
+      run: npm run test:scripts
 
     - name: Run React component tests
       run: npm test -- src/ --coverage --ci --watchAll=false
 
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: matrix.node-version == '20.x'
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -51,13 +64,28 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20.x
-        # cache: 'npm'  # Temporarily disabled to clear stale cache
 
     - name: Install dependencies
       run: npm install
 
     - name: Run ESLint
       run: npx eslint src/ scripts/ --ext .js,.jsx --max-warnings 0
+
+    # actionlint parses every workflow and reports expression, shell and action errors that a plain
+    # YAML parser accepts. It is downloaded at a pinned version and checked against a pinned digest
+    # rather than taken from a mutable tag.
+    - name: Install actionlint
+      env:
+        ACTIONLINT_VERSION: 1.7.12
+        ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+      run: |
+        curl --fail --silent --show-error --location --output actionlint.tar.gz \
+          "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+        printf '%s  actionlint.tar.gz\n' "${ACTIONLINT_SHA256}" | sha256sum --check --strict
+        tar --extract --gzip --file actionlint.tar.gz actionlint
+
+    - name: Run actionlint
+      run: ./actionlint -color
 
   build:
     runs-on: ubuntu-latest
@@ -70,7 +98,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20.x
-        # cache: 'npm'  # Temporarily disabled to clear stale cache
 
     - name: Install dependencies
       run: npm install

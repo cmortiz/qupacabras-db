@@ -283,6 +283,97 @@ body:
     validations:
       required: false
 
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Nonlocal game result (optional)
+
+        Fill this section in only if your result is a **nonlocal game win rate** and you can ship the
+        raw per-question measurement counts behind it. The win rate is then recomputed from those
+        counts before the pull request is opened, so the number is checked rather than taken on
+        trust. Leave the whole section blank for every other kind of submission.
+
+        The five fields below travel together. Filling in any one of them makes the rest required.
+
+        **Size.** The counts go in the textarea at the end of this section, and GitHub caps an issue
+        body at 65,536 characters. A worst-case G14 document, all 88 questions with all 16 answer
+        keys, is about 31,000 characters pretty-printed and about 19,000 compact, so it fits with
+        room to spare. If yours does not fit, or if you are submitting several circuits, open a pull
+        request carrying `benchmark.json` and `counts.json` together instead: `submissions/README.md`
+        and `docs/verification.md` describe that route.
+
+  - type: dropdown
+    id: nlg_game
+    attributes:
+      label: Nonlocal Game
+      description: >-
+        Registry name of the game. Run
+        `node -e "console.log(require('./scripts/lib/nlg/registry').listGames())"`
+        for the current list.
+      options:
+        - g14
+        - magic-square
+        - odd-cycle
+    validations:
+      required: false
+
+  - type: input
+    id: nlg_params
+    attributes:
+      label: Game Parameters (JSON)
+      description: >-
+        Integer parameters selecting a member of the game family, as a small JSON object. The odd
+        cycle takes an odd `n`; `g14` and `magic-square` take none, so leave this blank for them.
+      placeholder: '{"n": 5}'
+    validations:
+      required: false
+
+  - type: input
+    id: nlg_win_rate
+    attributes:
+      label: Nonlocal Game Win Rate
+      description: >-
+        The authoritative claim, at full precision: the unweighted mean of the per-question win
+        rates. Do not round it. The Metric Value field above is the display number and is checked
+        loosely; this one is checked against the counts at a tolerance of 1e-4.
+      placeholder: "0.8059895833333334"
+    validations:
+      required: false
+
+  - type: input
+    id: nlg_shots_per_circuit
+    attributes:
+      label: Shots Per Circuit
+      description: >-
+        Shots behind each question circuit. It must be the same for every question, because the win
+        rate is an unweighted mean over the questions.
+      placeholder: "1024"
+    validations:
+      required: false
+
+  - type: textarea
+    id: nlg_counts
+    attributes:
+      label: Counts Document (JSON)
+      description: >-
+        The raw per-question measurement counts. Question keys are `"<x>|<y>"`, decimal and
+        unpadded, one for every question the game defines. Answer keys are
+        `"<alice bits>:<bob bits>"`, binary, most significant bit first, zero-padded to the width
+        the game fixes. Missing answer keys count as zero; a missing question key is an error.
+        `submissions/template/counts.json` is a complete working example.
+      render: json
+      placeholder: |
+        {
+          "schemaVersion": 1,
+          "counts": {
+            "0|0": { "0:0": 441, "0:1": 97, "1:0": 95, "1:1": 391 },
+            "0|1": { "0:0": 101, "0:1": 417, "1:0": 407, "1:1": 99 }
+          }
+        }
+    validations:
+      required: false
+
   - type: textarea
     id: notes
     attributes:
