@@ -107,6 +107,73 @@
       "minItems": 0,
       "maxItems": 50
     },
+    "nonlocalGame": {
+      "type": "object",
+      "description": "Recomputable nonlocal-game claim. Present when the submission ships the per-question measurement counts behind its result, so the reported win rate is recalculated from the raw data at build time instead of taken on trust. Optional: entries without it are stored as unverified assertions.",
+      "required": [
+        "game",
+        "winRate",
+        "shotsPerCircuit",
+        "countsFile"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "game": {
+          "type": "string",
+          "description": "Registry name of the game, resolved by the game registry under scripts/lib/nlg/",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "params": {
+          "type": "object",
+          "description": "Integer parameters selecting a member of the game family, for example { \"n\": 3 } for the odd cycle C_3",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "winRate": {
+          "type": "number",
+          "description": "Authoritative full-precision win rate claim: the unweighted mean of the per-question win rates. Checked tightly against the value recomputed from countsFile. Top-level metricValue is a display value and is checked loosely.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "shotsPerCircuit": {
+          "type": "integer",
+          "description": "Shot count per question circuit, constant across every question unless allowVariableShots is set",
+          "minimum": 1
+        },
+        "countsFile": {
+          "type": "string",
+          "description": "Bare filename of the counts document inside the same submission folder. Path separators are rejected, so the reference cannot escape the folder.",
+          "pattern": "^[^/\\\\]+\\.json$"
+        },
+        "uncertainty": {
+          "type": "number",
+          "description": "Uncertainty on winRate, at full precision",
+          "minimum": 0
+        },
+        "uncertaintyDefinition": {
+          "type": "string",
+          "description": "How the uncertainty was derived, for example the 95% confidence half-width",
+          "maxLength": 500
+        },
+        "allowVariableShots": {
+          "type": "boolean",
+          "description": "Escape hatch for runs whose per-question shot totals differ. Downgrades the shot mismatch from an error to a warning and marks the confidence interval approximate.",
+          "default": false
+        },
+        "eventTeam": {
+          "type": "string",
+          "description": "Event layer, optional and removable: the team name a submission is ranked under",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "provenance": {
+          "type": "object",
+          "description": "Event layer, optional and removable: free-form record of where the counts came from, for example provider job identifiers",
+          "additionalProperties": true
+        }
+      }
+    },
     "graph": {
       "type": "object",
       "description": "Optional submitter-provided explicit graph used as preferred lambda1 source, e.g. { \"edges\": [[0,1],[1,2]] }",
@@ -316,7 +383,8 @@
       "type": "object",
       "description": "Optional execution time statistics",
       "additionalProperties": true
-    }
+    },
+    "verification": false
   },
   "additionalProperties": true
 }

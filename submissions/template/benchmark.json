@@ -1,0 +1,33 @@
+{
+  "algorithmName": "Odd Cycle C3 (Nonlocal Game)",
+  "device": "Example Backend",
+  "metricName": "Win Rate",
+  "metricValue": 0.806,
+  "uncertainty": 0.016,
+  "description": "Template submission for the odd cycle game C_3, shipping the per-question counts behind the result so the win rate is recomputed rather than trusted. Replace every value with the real run.",
+  "team": [
+    "First Contributor",
+    "Second Contributor"
+  ],
+  "contributor": "your-github-username",
+  "timestamp": "2026-01-01T00:00:00.000Z",
+  "experimentDate": "2026-01-01T00:00:00.000Z",
+  "quantumSpecific": {
+    "qubitCount": 2,
+    "shots": 6144,
+    "circuitDepth": 3
+  },
+  "nonlocalGame": {
+    "game": "odd-cycle",
+    "params": {
+      "n": 3
+    },
+    "winRate": 0.8059895833333334,
+    "shotsPerCircuit": 1024,
+    "countsFile": "counts.json",
+    "uncertainty": 0.01609972821488432,
+    "uncertaintyDefinition": "95% confidence half-width (d = 0.05) over the 6 per-question win rates at 1024 shots each, using calculate_ci from nlg_data_extracted/src/nlg_data/uncertainty.py",
+    "allowVariableShots": false
+  },
+  "notes": "The classical value of C_3 is 1 - 1/(2n) = 5/6 = 0.8333333333333334. The counts in counts.json give 0.8059895833333334, which is below it, so this template does not claim quantum advantage."
+}

@@ -1,0 +1,7 @@
+{
+  "reason": "EXAMPLE ONLY, nothing reads this file. A live override must be named verify-override.json; this one ends in .example.json so it is never picked up. Replace every value below. The real reason states why a specific verification failure is accepted, in enough detail that someone reading it in a year understands the decision.",
+  "approvedBy": "example-maintainer",
+  "approvedAt": "2026-01-01T00:00:00Z",
+  "pr": 1234,
+  "countsSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}
