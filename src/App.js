@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Github, Info, FilePlus, Rocket } from 'lucide-react';
 import ContributionGuide from './components/ContributionGuide';
 import BenchmarkTable from './components/BenchmarkTable';
+import Leaderboard from './components/Leaderboard';
 import { COLORS, CONFIG, UI_CONSTANTS } from './constants';
 import { useSortedData } from './hooks/useSortedData';
 import { useWindowSize } from './hooks/useWindowSize';
@@ -273,6 +274,11 @@ function App() {
                     sortConfig={sortConfig}
                     onSort={handleSort}
                 />
+
+                {/* Event layer: the standings view. Ranks the unfiltered benchmarks by their
+                    recomputed win rate, so the search box above does not reorder or hide results.
+                    Removable on its own: delete this block and the import. */}
+                <Leaderboard benchmarks={benchmarks} isLoading={isLoading} />
             </main>
 
             {/* Floating Action Button for Contribution Guide */}
