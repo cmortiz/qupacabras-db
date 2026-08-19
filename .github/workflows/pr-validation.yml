@@ -74,10 +74,18 @@ jobs:
         if: steps.changed-submissions.outputs.count != '0'
         run: node scripts/ci/verification-report.js
 
-      # Validates the whole corpus, not only the changed folders: duplicate detection is a
-      # cross-submission check and a submission can only be judged a duplicate against the rest.
-      - name: Validate submissions against the schema
-        run: npm run validate
+      # Scoped to the folders this pull request changed, and no others. `npm run validate` walks
+      # the whole corpus and exits nonzero if any folder is invalid; under the `report` policy a
+      # submission that fails to reproduce its own claim can sit on `main`, and a whole-corpus
+      # check would then turn every later contributor's pull request red for someone else's data.
+      # Whole-corpus validation belongs to the deploy build, which owns the published site.
+      # Duplicate detection inside the script below stays corpus-wide, since a submission can only
+      # be judged a duplicate against the rest, but anything it finds elsewhere in the corpus is a
+      # warning rather than this pull request's failure. QDB_FOLDERS is set by the resolve step
+      # above through $GITHUB_ENV.
+      - name: Validate the changed submissions against the schema
+        if: steps.changed-submissions.outputs.count != '0'
+        run: node scripts/ci/validate-changed.js
 
       - name: Regenerate the benchmark index
         run: node scripts/ci/check-index.js

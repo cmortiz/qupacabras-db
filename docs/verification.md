@@ -388,6 +388,15 @@ for two independent reasons:
 Treat a green pull-request check as a convenience and a red one as information. Neither is the
 decision.
 
+**Schema validation on a pull request is scoped to the folders that pull request changed**, by
+`scripts/ci/validate-changed.js`. Whole-corpus validation stays in the deploy build, which owns the
+published site. The reason is the `report` policy: under it a submission that fails to reproduce its
+own claim can legitimately sit on `main`, and a whole-corpus check on every pull request would turn
+each later contributor's check red for someone else's data. Duplicate detection inside that script
+is still corpus-wide, because a submission can only be judged a duplicate against the rest, but
+anything it finds elsewhere in the corpus is reported as a warning against the corpus rather than as
+this pull request's failure.
+
 ### 3. The pre-commit hook (local)
 
 `.husky/pre-commit`. Validates staged benchmark documents, recomputes staged submission folders,
