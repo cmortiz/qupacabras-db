@@ -3,9 +3,12 @@
  *
  * Three groups of functions live here.
  *
- * 1. A JavaScript port of `nlg_data.uncertainty` (vendored at
- *    `nlg_data_extracted/src/nlg_data/uncertainty.py`), which produced the `win_rate.ci95`,
- *    `win_rate.var` and `win_rate.p_value` fields recorded in `nlg_data_extracted/data/db.json`.
+ * 1. A JavaScript port of the `nlg_data.uncertainty` reference implementation from Furches et al.,
+ *    "Application-level benchmarking of quantum computers using nonlocal game strategies", Quantum
+ *    Sci. Technol. 10, 045002 (2025), doi 10.1088/2058-9565/adf1c0, which produced the
+ *    `win_rate.ci95`, `win_rate.var` and `win_rate.p_value` fields recorded in
+ *    `nlg_data_extracted/data/db.json`. The Python source is not vendored here; the reference
+ *    values the port is checked against are committed in `__tests__/stats.test.js`.
  *    The port is bit-for-bit identical to the Python reference on every vendored record, so the
  *    published corpus can be reproduced exactly rather than approximately. Preserving that
  *    requires preserving two things: the association of the floating-point operations, and the

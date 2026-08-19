@@ -1,0 +1,102 @@
+# Citation metadata for qupacabras-db, in Citation File Format 1.2.0.
+# GitHub reads this file and shows a "Cite this repository" button from it.
+#
+# Every field below is quoted from a source, not written from memory: the DOIs and the article
+# details come from Crossref, and the arXiv record from the arXiv API. The two papers are the ones
+# this database rests on. Furches et al. is the work the vendored measurement records under
+# `nlg_data_extracted/data/` belong to and the paper all eighteen published entries cite in
+# `paperUrl`. AbuGhanem is where the device fidelity figures in those entries come from, recorded
+# in each `benchmark.json` as `fidelity_reference`.
+
+cff-version: 1.2.0
+message: "If you use this database, please cite both papers below."
+title: "qupacabras-db"
+abstract: >-
+  A community-maintained database for tracking the performance of quantum experiments executed on
+  quantum devices, including nonlocal-game win rates that are recomputed from the submitted
+  per-question measurement counts at build time.
+type: software
+authors:
+  - given-names: "Carlos M."
+    family-names: "Ortiz"
+repository-code: "https://github.com/cmortiz/qupacabras-db"
+url: "https://qupacabras-db.diy"
+license: MIT
+license-url: "https://github.com/cmortiz/qupacabras-db/blob/main/LICENSE"
+
+# The published version of the work the database's own corpus comes from.
+preferred-citation:
+  type: article
+  title: "Application-level benchmarking of quantum computers using nonlocal game strategies"
+  authors:
+    - given-names: "Jim"
+      family-names: "Furches"
+      orcid: "https://orcid.org/0009-0008-2852-4208"
+    - given-names: "Sarah"
+      family-names: "Chehade"
+      orcid: "https://orcid.org/0000-0003-3130-1247"
+    - given-names: "Kathleen"
+      family-names: "Hamilton"
+      orcid: "https://orcid.org/0000-0001-6382-5665"
+    - given-names: "Nathan"
+      family-names: "Wiebe"
+      orcid: "https://orcid.org/0000-0001-6047-0547"
+    - given-names: "Carlos"
+      family-names: "Ortiz Marrero"
+      orcid: "https://orcid.org/0000-0001-8302-1322"
+  journal: "Quantum Science and Technology"
+  publisher:
+    name: "IOP Publishing"
+  year: 2025
+  month: 7
+  volume: 10
+  issue: 4
+  start: "045002"
+  issn: "2058-9565"
+  doi: "10.1088/2058-9565/adf1c0"
+  url: "https://iopscience.iop.org/article/10.1088/2058-9565/adf1c0"
+
+references:
+  # The preprint of the paper above, and the citation `nlg_data_extracted/data/db.json` records for
+  # every vendored measurement record, exactly as: "Furches et al. arXiv 2311.01363 (2025)".
+  - type: article
+    title: "Application-level Benchmarking of Quantum Computers using Nonlocal Game Strategies"
+    authors:
+      - given-names: "Jim"
+        family-names: "Furches"
+      - given-names: "Sarah"
+        family-names: "Chehade"
+      - given-names: "Kathleen"
+        family-names: "Hamilton"
+      - given-names: "Nathan"
+        family-names: "Wiebe"
+      - given-names: "Carlos"
+        family-names: "Ortiz Marrero"
+    year: 2023
+    month: 11
+    identifiers:
+      - type: other
+        value: "arXiv:2311.01363"
+        description: "arXiv preprint identifier"
+    url: "https://arxiv.org/abs/2311.01363"
+    notes: >-
+      Submitted 2023-11-02, last updated 2025-06-28. Published as the preferred citation above.
+
+  # The source of the gate, readout and qubit fidelity figures carried by the published entries,
+  # recorded in each benchmark.json as `fidelity_measurement_method` and `fidelity_reference`.
+  - type: article
+    title: "IBM quantum computers: evolution, performance, and future directions"
+    authors:
+      - given-names: "Muhammad"
+        family-names: "AbuGhanem"
+    journal: "The Journal of Supercomputing"
+    publisher:
+      name: "Springer Science and Business Media LLC"
+    year: 2025
+    month: 4
+    volume: 81
+    issue: 5
+    start: "687"
+    issn: "1573-0484"
+    doi: "10.1007/s11227-025-07047-7"
+    url: "https://link.springer.com/article/10.1007/s11227-025-07047-7"
