@@ -1,10 +1,174 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Database, FileText, FolderOpen, Github, X, FileCode, Activity, Cpu, Clock } from 'lucide-react';
+import { Database, FileText, FolderOpen, Github, X, FileCode, Activity, Cpu, Clock, CheckCircle2, XCircle, Unlock, MinusCircle } from 'lucide-react';
 import { COLORS, CONFIG } from '../constants';
 import SearchBar from './SearchBar';
 import SortableHeader from './SortableHeader';
 import DownloadDropdown from './DownloadDropdown';
+
+/**
+ * Display states for a submission's build-time verification.
+ *
+ * The index distinguishes four things, and every one of them has to look different in the table.
+ * A claim that provably does not reproduce from its own counts must not render byte-identically to
+ * one that does, and neither must an entry that was never checked at all.
+ *
+ *   verified    the win rate was recomputed from the submitted counts and every check passed
+ *   failed      the recomputation ran and disagreed, or a check failed
+ *   overridden  a maintainer published a failing entry deliberately; still unverified and unranked
+ *   unverified  no `verification` block at all (the legacy corpus, which predates the counts
+ *               format), or a block whose recomputation produced no win rate
+ *
+ * `Leaderboard.js` shows only `verified` entries. This table shows all of them, which is why the
+ * marker is the thing that carries the difference here.
+ */
+export const VERIFICATION_STATES = Object.freeze({
+    verified: Object.freeze({
+        key: 'verified',
+        label: 'Verified',
+        color: COLORS.accentGreen,
+        Icon: CheckCircle2,
+        title: 'The win rate was recomputed from the submitted measurement counts at build time and every check passed.'
+    }),
+    failed: Object.freeze({
+        key: 'failed',
+        label: 'Failed',
+        color: COLORS.accentRed,
+        Icon: XCircle,
+        title: 'The win rate was recomputed from the submitted measurement counts at build time and did not reproduce the claim, or another check failed. The claimed value is shown as submitted; it is not a verified result.'
+    }),
+    overridden: Object.freeze({
+        key: 'overridden',
+        label: 'Overridden',
+        color: COLORS.accentOrange,
+        Icon: Unlock,
+        title: 'Verification failed and a maintainer published the entry anyway with a recorded reason. It stays unverified and unranked.'
+    }),
+    unverified: Object.freeze({
+        key: 'unverified',
+        label: 'Not verified',
+        color: COLORS.fgSubtle,
+        Icon: MinusCircle,
+        title: 'Never checked: this entry ships no per-question measurement counts, so there is nothing to recompute its number from. It is an assertion, not a reproduction.'
+    })
+});
+
+/**
+ * Resolve a benchmark's verification display state.
+ *
+ * An unrecognised status degrades to `unverified` rather than to `verified`: a state this code
+ * does not understand is not one it may present as checked. The own-property guard is what makes
+ * that hold for the inherited names, since a bare `VERIFICATION_STATES[status]` resolves
+ * `"__proto__"` and `"constructor"` to truthy objects that are not states at all.
+ *
+ * @param {Object} benchmark - Index entry.
+ * @returns {Object} One of `VERIFICATION_STATES`.
+ */
+export function verificationState(benchmark) {
+    const verification = benchmark && benchmark.verification;
+    if (verification === null || typeof verification !== 'object') {
+        return VERIFICATION_STATES.unverified;
+    }
+    const status = verification.status;
+    if (typeof status !== 'string' ||
+        !Object.prototype.hasOwnProperty.call(VERIFICATION_STATES, status)) {
+        return VERIFICATION_STATES.unverified;
+    }
+    return VERIFICATION_STATES[status];
+}
+
+/**
+ * The recomputed win rate to show beside a claim, when the two disagree.
+ *
+ * Reads the same two fields the leaderboard does. A delta of exactly 0 means the claim reproduced
+ * and there is nothing to show; anything above it means the published number and the number its
+ * own counts give are different, which is the whole point of recomputing.
+ *
+ * @param {Object} benchmark - Index entry.
+ * @returns {{value: number, delta: number}|null} The disagreement, or `null` when there is none.
+ */
+export function recomputedDisagreement(benchmark) {
+    const winRate = benchmark && benchmark.verification && benchmark.verification.winRate;
+    if (winRate === null || typeof winRate !== 'object') {
+        return null;
+    }
+    const value = winRate.recomputedMean;
+    const delta = winRate.delta;
+    if (typeof value !== 'number' || !Number.isFinite(value)) return null;
+    if (typeof delta !== 'number' || !Number.isFinite(delta) || delta === 0) return null;
+    return { value: value, delta: delta };
+}
+
+/**
+ * @param {number} value - Finite number.
+ * @returns {string} Six significant figures with trailing zeros dropped.
+ */
+function formatRecomputed(value) {
+    return String(Number(value.toPrecision(6)));
+}
+
+/**
+ * @param {number} value - Finite number.
+ * @returns {string} Exponential form for small magnitudes, six significant figures otherwise.
+ */
+function formatDelta(value) {
+    if (value !== 0 && Math.abs(value) < 1e-4) return value.toExponential(2);
+    return formatRecomputed(value);
+}
+
+/**
+ * The recomputed win rate, rendered under the claim it disagrees with.
+ *
+ * Renders nothing when the claim reproduced, so a verified row is unchanged.
+ *
+ * @param {Object} props - Component props.
+ * @param {Object} props.benchmark - Index entry.
+ * @returns {JSX.Element|null} The second line, or nothing.
+ */
+function RecomputedValue({ benchmark }) {
+    const disagreement = recomputedDisagreement(benchmark);
+    if (disagreement === null) {
+        return null;
+    }
+    return (
+        <div
+            title={'Recomputed from the submitted measurement counts at build time. It differs from the claimed value by ' + formatDelta(disagreement.delta) + '.'}
+            style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, fontFamily: 'monospace', marginTop: '0.15rem' }}
+        >
+            recomputed {formatRecomputed(disagreement.value)} (Δ {formatDelta(disagreement.delta)})
+        </div>
+    );
+}
+
+/**
+ * The verification marker for one row.
+ *
+ * @param {Object} props - Component props.
+ * @param {Object} props.benchmark - Index entry.
+ * @returns {JSX.Element} The badge.
+ */
+function VerificationBadge({ benchmark }) {
+    const state = verificationState(benchmark);
+    const Icon = state.Icon;
+    return (
+        <span
+            title={state.title}
+            style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                color: state.color,
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                whiteSpace: 'nowrap'
+            }}
+        >
+            <Icon style={{ width: '0.9rem', height: '0.9rem' }} aria-hidden="true" />
+            {state.label}
+        </span>
+    );
+}
+
 
 // Modal component for detailed benchmark view
 function BenchmarkDetailsModal({ benchmark, onClose }) {
@@ -166,6 +330,10 @@ function BenchmarkDetailsModal({ benchmark, onClose }) {
                                     ({primaryMetric.uncertaintyDefinition || benchmark.uncertaintyDefinition})
                                 </div>
                             )}
+                            <RecomputedValue benchmark={benchmark} />
+                            <div style={{ marginTop: '0.5rem' }}>
+                                <VerificationBadge benchmark={benchmark} />
+                            </div>
                         </div>
                     </div>
 
@@ -481,6 +649,12 @@ export default function BenchmarkTable({
                                 >
                                     Value
                                 </SortableHeader>
+                                <th
+                                    style={{ padding: '1rem 1.5rem', color: COLORS.fgMuted }}
+                                    title="Whether the reported number was recomputed from the measurement counts the submission ships, at build time."
+                                >
+                                    Verification
+                                </th>
                                 <SortableHeader
                                     sortKey="timestamp"
                                     currentSort={sortConfig}
@@ -503,7 +677,7 @@ export default function BenchmarkTable({
                         <tbody>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
+                                    <td colSpan="9" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
                                         Loading...
                                     </td>
                                 </tr>
@@ -532,6 +706,10 @@ export default function BenchmarkTable({
                                                     ±{bm.uncertainty}
                                                 </span>
                                             )}
+                                            <RecomputedValue benchmark={bm} />
+                                        </td>
+                                        <td style={{ padding: '1rem 1.5rem' }}>
+                                            <VerificationBadge benchmark={bm} />
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem', fontSize: '1rem', color: COLORS.fgMuted }}>
                                             {bm.timestamp.toLocaleDateString()}
@@ -562,7 +740,7 @@ export default function BenchmarkTable({
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
+                                    <td colSpan="9" style={{ textAlign: 'center', padding: '2rem', color: COLORS.fgMuted }}>
                                         {searchQuery ? `No results found for "${searchQuery}".` : 'No benchmarks available.'}
                                     </td>
                                 </tr>

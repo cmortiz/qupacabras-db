@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Github, Info, FilePlus, Rocket } from 'lucide-react';
 import ContributionGuide from './components/ContributionGuide';
-import BenchmarkTable from './components/BenchmarkTable';
+import BenchmarkTable, { verificationState, recomputedDisagreement } from './components/BenchmarkTable';
 import Leaderboard from './components/Leaderboard';
 import { COLORS, CONFIG, UI_CONSTANTS } from './constants';
 import { useSortedData } from './hooks/useSortedData';
@@ -58,11 +58,15 @@ function App() {
             return;
         }
 
-        // Only include the visible columns
-        const headers = ['Algorithm', 'Device', 'Qubits', 'Depth', 'Metric', 'Value', 'Uncertainty', 'Submission_Date', 'Paper_URL', 'Source_URL'];
+        // Only include the visible columns. `Verification` and `Recomputed_Value` are among them:
+        // without the first, a downloaded file mixes failed, overridden and never-checked rows in
+        // with the verified ones and nothing distinguishes them; without the second, `Value` is the
+        // submitted claim with the number its own counts actually give silently dropped.
+        const headers = ['Algorithm', 'Device', 'Qubits', 'Depth', 'Metric', 'Value', 'Uncertainty', 'Verification', 'Recomputed_Value', 'Submission_Date', 'Paper_URL', 'Source_URL'];
 
         const rows = sortedData.map(bm => {
             const sourceUrl = `${CONFIG.githubRepoUrl}/tree/main/submissions/${bm.benchmarkFolder}`;
+            const disagreement = recomputedDisagreement(bm);
 
             return [
                 `"${bm.algorithmName}"`,
@@ -72,6 +76,8 @@ function App() {
                 `"${bm.metricName}"`,
                 bm.metricValue,
                 bm.uncertainty || '',
+                `"${verificationState(bm).key}"`,
+                disagreement === null ? '' : disagreement.value,
                 `"${bm.timestamp.toISOString().split('T')[0]}"`,
                 `"${bm.paperUrl || 'N/A'}"`,
                 `"${sourceUrl}"`

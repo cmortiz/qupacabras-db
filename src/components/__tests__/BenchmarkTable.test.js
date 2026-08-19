@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import BenchmarkTable from '../BenchmarkTable';
+import BenchmarkTable, { verificationState, recomputedDisagreement } from '../BenchmarkTable';
 
 const mockBenchmarks = [
   {
@@ -97,6 +97,7 @@ describe('BenchmarkTable', () => {
     expect(screen.getByText('Qubits')).toBeInTheDocument();
     expect(screen.getByText('Metric')).toBeInTheDocument();
     expect(screen.getByText('Value')).toBeInTheDocument();
+    expect(screen.getByText('Verification')).toBeInTheDocument();
     expect(screen.getByText('Date')).toBeInTheDocument();
     expect(screen.getByText('Accepted')).toBeInTheDocument();
     expect(screen.getByText('Actions')).toBeInTheDocument();
@@ -222,4 +223,132 @@ describe('BenchmarkTable', () => {
     expect(screen.getAllByText('N/A').length).toBeGreaterThan(0);
   });
 
+});
+
+/**
+ * A minimal index entry carrying a verification block, of the shape
+ * `scripts/generate-benchmark-index.js` attaches.
+ */
+function withVerification(id, verification) {
+  return {
+    id,
+    algorithmName: id,
+    device: 'Device',
+    metricName: 'Win Rate',
+    metricValue: 0.99,
+    uncertainty: null,
+    timestamp: new Date('2026-08-22'),
+    benchmarkFolder: id,
+    verification
+  };
+}
+
+describe('verification status', () => {
+  test('an entry with no verification block is marked not verified', () => {
+    // The 18 legacy entries predate the counts format. They are valid unverified assertions and
+    // must say so rather than borrowing the look of a checked result.
+    render(<BenchmarkTable {...defaultProps} />);
+    expect(screen.getAllByText('Not verified')).toHaveLength(2);
+    expect(screen.queryByText('Verified')).not.toBeInTheDocument();
+  });
+
+  test('each index status renders its own marker', () => {
+    const benchmarks = [
+      withVerification('pass', { status: 'verified', ranked: true }),
+      withVerification('fail', { status: 'failed', ranked: false }),
+      withVerification('over', { status: 'overridden', ranked: false }),
+      withVerification('none', { status: 'unverified', ranked: false })
+    ];
+    render(<BenchmarkTable {...defaultProps} filteredBenchmarks={benchmarks} />);
+
+    expect(screen.getByText('Verified')).toBeInTheDocument();
+    expect(screen.getByText('Failed')).toBeInTheDocument();
+    expect(screen.getByText('Overridden')).toBeInTheDocument();
+    expect(screen.getByText('Not verified')).toBeInTheDocument();
+  });
+
+  test('a failed row does not render identically to a verified one', () => {
+    // The defect this guards: a claim that provably does not reproduce from its own counts once
+    // displayed byte-for-byte the same as one that does. The two entries below differ in nothing
+    // except their verification status, so any difference in the markup comes from the marker.
+    const rowText = (status) => {
+      const { unmount } = render(
+        <BenchmarkTable
+          {...defaultProps}
+          filteredBenchmarks={[withVerification('same', { status, ranked: status === 'verified' })]}
+        />
+      );
+      // Row 0 is the header; row 1 is the single data row these props render.
+      const text = screen.getAllByRole('row')[1].textContent;
+      unmount();
+      return text;
+    };
+
+    const verified = rowText('verified');
+    expect(rowText('failed')).not.toEqual(verified);
+    expect(rowText('overridden')).not.toEqual(verified);
+    expect(rowText('unverified')).not.toEqual(verified);
+  });
+
+  test('the recomputed win rate is shown when it disagrees with the claim', () => {
+    const benchmarks = [
+      withVerification('mismatch', {
+        status: 'failed',
+        ranked: false,
+        winRate: { claimed: 0.99, recomputedMean: 0.8125, delta: 0.1775 }
+      })
+    ];
+    render(<BenchmarkTable {...defaultProps} filteredBenchmarks={benchmarks} />);
+
+    expect(screen.getByText(/recomputed 0\.8125/)).toBeInTheDocument();
+    expect(screen.getByText(/0\.1775/)).toBeInTheDocument();
+  });
+
+  test('a claim that reproduced exactly shows no second number', () => {
+    const benchmarks = [
+      withVerification('clean', {
+        status: 'verified',
+        ranked: true,
+        winRate: { claimed: 0.8125, recomputedMean: 0.8125, delta: 0 }
+      })
+    ];
+    render(<BenchmarkTable {...defaultProps} filteredBenchmarks={benchmarks} />);
+
+    expect(screen.queryByText(/recomputed/)).not.toBeInTheDocument();
+  });
+});
+
+describe('verificationState', () => {
+  test('maps every index status, and defaults to unverified', () => {
+    expect(verificationState({ verification: { status: 'verified' } }).key).toBe('verified');
+    expect(verificationState({ verification: { status: 'failed' } }).key).toBe('failed');
+    expect(verificationState({ verification: { status: 'overridden' } }).key).toBe('overridden');
+    expect(verificationState({ verification: { status: 'unverified' } }).key).toBe('unverified');
+  });
+
+  test('anything it does not understand is unverified, never verified', () => {
+    // A status this code cannot read is not one it may present as checked.
+    for (const entry of [{}, null, undefined, { verification: null }, { verification: 'verified' },
+      { verification: {} }, { verification: { status: 'ok' } }, { verification: { status: 42 } },
+      { verification: { status: '__proto__' } }, { verification: { status: 'constructor' } }]) {
+      expect(verificationState(entry).key).toBe('unverified');
+    }
+  });
+});
+
+describe('recomputedDisagreement', () => {
+  test('reports a disagreement only when the delta is a nonzero finite number', () => {
+    expect(recomputedDisagreement({
+      verification: { winRate: { recomputedMean: 0.5, delta: 0.25 } }
+    })).toEqual({ value: 0.5, delta: 0.25 });
+
+    for (const winRate of [{ recomputedMean: 0.5, delta: 0 }, { recomputedMean: 0.5 },
+      { recomputedMean: null, delta: 0.25 }, { recomputedMean: 0.5, delta: NaN },
+      { recomputedMean: Infinity, delta: 0.25 }, { recomputedMean: '0.5', delta: 0.25 }]) {
+      expect(recomputedDisagreement({ verification: { winRate } })).toBeNull();
+    }
+    expect(recomputedDisagreement({ verification: {} })).toBeNull();
+    expect(recomputedDisagreement({})).toBeNull();
+    expect(recomputedDisagreement(null)).toBeNull();
+  });
 });
