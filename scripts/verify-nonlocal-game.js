@@ -11,7 +11,7 @@
  *   node scripts/verify-nonlocal-game.js --json           # machine-readable output
  *
  * A submission without a `nonlocalGame` block has nothing to recompute. That is reported as
- * "nothing to verify" and is NOT a failure: the 18 entries already in the database predate the
+ * "nothing to verify" and is NOT a failure: the legacy entries in the database predate the
  * counts format and remain valid unverified assertions. Exit status is 0 unless a submission that
  * does carry a claim fails to reproduce it.
  */

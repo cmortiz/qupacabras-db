@@ -166,18 +166,58 @@ test('verifySubmissionFolder returns null when there is nothing to verify', () =
     assert.equal(io.verifySubmissionFolder(TEMPLATE_DIR, { nonlocalGame: [] }, {}), null);
 });
 
-test('every existing submission has nothing to verify, and none of them errors', () => {
+test('every submission folder resolves the way its own benchmark.json says it should', () => {
+    // Do not snapshot the corpus. The whole point of the counts format is that submissions
+    // carrying counts arrive over time, so a hardcoded folder count goes red on the first real
+    // one. The rule that does hold for every folder, now and later: a benchmark with no
+    // nonlocalGame block has nothing to verify, and a benchmark with one produces a result.
     const folders = fs.readdirSync(SUBMISSIONS_DIR, { withFileTypes: true })
         .filter((entry) => entry.isDirectory() && entry.name !== 'template')
         .map((entry) => entry.name);
 
-    assert.equal(folders.length, 18);
+    assert.ok(folders.length > 0, 'the submissions directory must not be empty');
+
+    const preCounts = [];
+    const withCounts = [];
+
     folders.forEach((name) => {
         const folder = path.join(SUBMISSIONS_DIR, name);
         const benchmark = readJson(path.join(folder, 'benchmark.json'));
-        assert.equal(io.verifySubmissionFolder(folder, benchmark, {}), null,
-            name + ' predates the counts format and must report nothing to verify');
+        const claim = benchmark ? benchmark.nonlocalGame : null;
+        const claimed = typeof claim === 'object' && claim !== null && !Array.isArray(claim);
+        const result = io.verifySubmissionFolder(folder, benchmark, {});
+
+        if (!claimed) {
+            assert.equal(result, null,
+                name + ' carries no nonlocalGame block and must report nothing to verify');
+            preCounts.push(name);
+            return;
+        }
+
+        // A submission that carries counts must produce a well-formed result. Whether that
+        // result passes is the build gate's business, not this test's. A run that genuinely
+        // fails to reproduce is a legitimate thing to hold in the corpus, and recording it must
+        // not turn this suite red.
+        assert.notEqual(result, null,
+            name + ' carries a nonlocalGame block and must produce a verification result');
+        const v = result.verification;
+        assert.ok(['verified', 'failed', 'overridden', 'unverified'].includes(v.status),
+            name + ' reported an unknown verification status: ' + v.status);
+        assert.ok(Array.isArray(v.checks) && v.checks.length > 0,
+            name + ' must report the checks it ran');
+        assert.match(v.countsSha256, /^[0-9a-f]{64}$/,
+            name + ' must record the digest of the counts it verified');
+        assert.ok(Number.isFinite(v.winRate.recomputedMean),
+            name + ' must recompute a finite win rate');
+        assert.equal(v.winRate.delta, Math.abs(v.winRate.claimed - v.winRate.recomputedMean),
+            name + ' must report the delta it actually measured');
+        withCounts.push(name);
     });
+
+    // Keep the nothing-to-verify path exercised. The legacy entries predate the counts format
+    // and none of them will ever grow a block, so this stays true.
+    assert.ok(preCounts.length > 0,
+        'no folder exercised the nothing-to-verify path; the legacy corpus is missing');
 });
 
 test('verifySubmissionFolder verifies the shipped template end to end', () => {
