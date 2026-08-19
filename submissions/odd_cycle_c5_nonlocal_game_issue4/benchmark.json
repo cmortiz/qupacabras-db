@@ -1,0 +1,46 @@
+{
+  "id": "odd_cycle_c5_nonlocal_game_issue4",
+  "algorithmName": "Odd Cycle C5 (Nonlocal Game)",
+  "device": "aws:iqm:qpu:emerald via qbraid",
+  "metricName": "Win Rate",
+  "metricValue": 0.9626666666666667,
+  "timestamp": "2026-08-19T17:57:33.415Z",
+  "lastUpdated": "2026-08-19T17:57:33.415Z",
+  "contributor": "cmortiz",
+  "uncertainty": 0.02964731967402333,
+  "team": [
+    "dryrun_01"
+  ],
+  "quantumSpecific": {
+    "qubitRange": {
+      "min": 2,
+      "max": 2
+    },
+    "shots": 1500
+  },
+  "problemSpecific": {
+    "primaryMetric": {
+      "name": "Win Rate",
+      "definition": "Unweighted mean of the per-question win rates of the odd-cycle nonlocal game on C_5, 10 question circuits at 150 shots each.",
+      "value": 0.9626666666666667,
+      "uncertainty": 0.02964731967402333,
+      "uncertaintyDefinition": "95% confidence half-width (d = 0.05) over the 10 per-question win rates at 150 shots each, the Bernstein interval calculate_ci the results database recomputes"
+    },
+    "description": "Odd cycle nonlocal game on C_5, 10 question circuits at 150 shots each, run 1 of the Qupacabrathon 2026 hackathon.",
+    "shots": 1500,
+    "notes": "Classical bound omega_c = 0.9. Quantum bound omega_q = 0.9755282581475768. One-sided exact binomial tail p = 4.655747e-20 against the 3 sigma threshold 1.349898e-03, so this run is certified at 3 sigma. Certified nonlocal content p_NL = 0.455951 (exact binomial lower bound at the same threshold; the CHSH ceiling is 0.41421). The counts are what the device returned: no readout correction, no extrapolation and no postselection was applied to them. Dry run 2 of the Qupacabrathon 2026 event pipeline; organizer-executed via qBraid Runtime 0.12.2, circuits exported from PennyLane as OpenQASM 2.",
+    "qubitRange": {
+      "min": 2,
+      "max": 2
+    }
+  },
+  "nonlocalGame": {
+    "game": "odd-cycle",
+    "winRate": 0.9626666666666667,
+    "shotsPerCircuit": 150,
+    "countsFile": "counts.json",
+    "params": {
+      "n": 5
+    }
+  }
+}
