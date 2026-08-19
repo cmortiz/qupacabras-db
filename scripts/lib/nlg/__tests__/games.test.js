@@ -236,11 +236,21 @@ test('odd cycle: out of range answers lose rather than throw', () => {
   }
 });
 
-test('odd cycle: quantum value is null and that is a defined state', () => {
+test('odd cycle: quantum value is pinned to cos^2(pi / (4n)) with its citation', () => {
+  // Previously null; pinned to the closed form published in Drmota, Grilo, Vidick et al.,
+  // Phys. Rev. Lett. 134, 070201 (2025), arXiv:2406.08412, so the superquantum check compares
+  // against the true bound instead of degrading to "not above 1".
+  for (const n of [3, 5, 7, 13]) {
+    const game = getGame('odd-cycle', { n });
+    assert.equal(game.quantumValue, Math.pow(Math.cos(Math.PI / (4 * n)), 2),
+      'C_' + n + ': quantum value must be the pinned closed form');
+    assert.ok(game.quantumValue > game.classicalValue,
+      'C_' + n + ': the quantum value must exceed the classical 1 - 1/(2n)');
+  }
   const game = getGame('odd-cycle', { n: 5 });
-  assert.equal(game.quantumValue, null,
-    'the odd cycle quantum value is not recorded in the vendored data; null means the ' +
-    'superquantum check degrades to "not above 1" rather than using an invented constant');
+  assert.equal(typeof game.reference.citation, 'string');
+  assert.match(game.reference.citation, /Phys\. Rev\. Lett\. 134, 070201 \(2025\)/);
+  assert.equal(game.reference.url, 'https://arxiv.org/abs/2406.08412');
 });
 
 /* ------------------------------------------------------------------ *

@@ -292,7 +292,7 @@ function emptyVerification(schemaVersion, countsSha256) {
         },
         uncertainty: { claimed: null, recomputed: null, approximate: false },
         nonSignaling: { pValue: null, maxTvd: null, maxJsd: null, minExpected: null, df: null, groups: 0 },
-        classical: { value: null, exceeded: false, sigma: null, pValue: null },
+        classical: { value: null, exceeded: false, sigma: null, pValue: null, pValueExact: null, certifiedPnl: null },
         checks: [],
         countsSha256: countsSha256
     };
@@ -653,11 +653,29 @@ function checkNonSignaling(context, verification) {
  * trial regardless of which question produced it. At the constant shot count this verifier
  * requires, the pooled rate and the mean coincide.
  *
+ * The classical check computes three quantities. Each is computed here from the counts and never
+ * read from the submission.
+ *
  * `classical.sigma` is `(observed - classicalValue) / standardError`: a Gaussian-equivalent
- * z-score under an independent-Bernoulli null. It is NOT the quantity `stats.calculatePValue`
- * returns, which is a Bernstein tail bound and is reported separately as `classical.pValue`. A
- * user interface that labels the z-score as if it were the Bernstein significance would overstate
- * the claim, so the two are kept apart here rather than merged into one "sigma".
+ * z-score under an independent-Bernoulli null.
+ *
+ * `classical.pValue` is the quantity `stats.calculatePValue` returns: a Bernstein tail bound,
+ * kept for exact reproducibility of the published corpus.
+ *
+ * `classical.pValueExact` is the quantity `stats.binomialTailPValue` returns: the exact binomial
+ * upper tail on the pooled win count, the sharp bound the Bernstein one loosens. Its exactness
+ * needs a constant shot count per question, so with variable shots it stays null rather than
+ * pretending to a validity the data does not support.
+ *
+ * The three are different quantities and are kept apart rather than merged into one "sigma". A
+ * user interface that labels the z-score as if it were a tail bound, or either bound as the
+ * other, would overstate or misstate the claim.
+ *
+ * For odd-cycle games one more figure is derived: `classical.certifiedPnl`, the certified
+ * nonlocal content `1 - 2n (1 - omegaLB)` where `omegaLB` is the Clopper-Pearson one-sided lower
+ * bound on the win rate at the one-sided 3-sigma target and `n` is the game's cycle size. It is
+ * a lower bound certified from the counts, not a submitted number, and it can be negative when
+ * the counts certify nothing.
  *
  * @param {Object} context - Shared state.
  * @param {Object} verification - Block being filled in.
@@ -695,6 +713,20 @@ function checkSuperquantum(context, verification) {
     verification.classical.pValue = stats.calculatePValue(
         perQuestionRates, shots, game.classicalValue
     );
+
+    // The exact tail and the certified bound are defined on the pooled win count, which is a
+    // binomial count of the mean win rate only at a constant integer shot count. See the doc
+    // comment above: with variable shots both stay null.
+    const constantShots = context.shots.shotsPerCircuit;
+    if (Number.isSafeInteger(constantShots) && constantShots > 0) {
+        verification.classical.pValueExact = stats.binomialTailPValue(
+            perQuestionRates, constantShots, game.classicalValue
+        );
+        if (game.family === 'odd-cycle' && isFiniteNumber(game.params.n)) {
+            const omegaLB = stats.certifiedWinRateLowerBound(perQuestionRates, constantShots);
+            verification.classical.certifiedPnl = 1 - 2 * game.params.n * (1 - omegaLB);
+        }
+    }
 
     const degraded = game.quantumValue === null;
     const bound = degraded ? 1 : game.quantumValue;
