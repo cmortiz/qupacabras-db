@@ -27,8 +27,10 @@ const SIGNIFICANCE_TOOLTIP =
     'It is a different quantity from the Bernstein bound reported below it.';
 
 const BERNSTEIN_TOOLTIP =
-    'Bernstein tail bound on the chance that a classical strategy reaches this win rate. It is an ' +
-    'upper bound, not an exact p-value, and it is a different quantity from the z-score beside it.';
+    'Two tail bounds on the chance that a classical strategy reaches this win rate. The Bernstein ' +
+    'value is the historical figure, kept for comparability with the published corpus; the exact ' +
+    'binomial tail is the sharper, exactly valid bound. Both are upper bounds, and both are ' +
+    'different quantities from the z-score beside them.';
 
 const WIN_RATE_TOOLTIP =
     'Win rate recomputed at build time from the submitted per-question measurement counts, not the ' +
@@ -252,6 +254,12 @@ export default function Leaderboard({ benchmarks = [], isLoading = false }) {
                                                     title={BERNSTEIN_TOOLTIP}
                                                 >
                                                     Bernstein bound {formatSmall(classical.pValue)}
+                                                </div>
+                                                <div
+                                                    style={{ fontSize: '0.75rem', color: COLORS.fgSubtle, marginTop: '0.25rem' }}
+                                                    title={BERNSTEIN_TOOLTIP}
+                                                >
+                                                    Exact binomial {formatSmall(classical.pValueExact)}
                                                 </div>
                                             </td>
                                         </tr>

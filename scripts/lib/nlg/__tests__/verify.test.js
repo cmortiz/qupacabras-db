@@ -24,6 +24,7 @@ const path = require('path');
 const verify = require('../verify');
 const counts = require('../counts');
 const registry = require('../registry');
+const stats = require('../stats');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
 const DATA_DIR = path.join(REPO_ROOT, 'nlg_data_extracted', 'data');
@@ -151,6 +152,29 @@ function syntheticG14(shots, winsFor) {
         const wins = winsFor(index);
         const winningKey = question.x === question.y ? '00:00' : '00:01';
         const losingKey = question.x === question.y ? '00:01' : '00:00';
+        const answers = {};
+        answers[winningKey] = wins;
+        answers[losingKey] = shots - wins;
+        table[question.key] = answers;
+    });
+    return { schemaVersion: 1, counts: table };
+}
+
+/**
+ * Build an odd-cycle counts document with a chosen number of winning shots per question.
+ *
+ * @param {number} n - Cycle size, odd.
+ * @param {number} shots - Shots per question.
+ * @param {function(number): number} winsFor - Wins for the question at that index.
+ * @returns {Object} A counts document.
+ */
+function syntheticOddCycle(n, shots, winsFor) {
+    const game = registry.getGame('odd-cycle', { n: n });
+    const table = {};
+    game.questions.forEach((question, index) => {
+        const wins = winsFor(index);
+        const winningKey = question.x === question.y ? '0:0' : '0:1';
+        const losingKey = question.x === question.y ? '0:1' : '0:0';
         const answers = {};
         answers[winningKey] = wins;
         answers[losingKey] = shots - wins;
@@ -555,16 +579,156 @@ test('a win rate at the quantum value of 1 passes the superquantum check', () =>
     assert.equal(result.verification.game.quantumValue, 1);
 });
 
-test('a null quantum value degrades the check to "not above 1" and says so', () => {
+test('the odd cycle quantum value is pinned, so the check uses the true bound', () => {
+    // Previously the odd cycle carried quantumValue null and this check degraded to "not above
+    // 1". The value is now pinned to cos^2(pi / (4n)) (Drmota, Grilo, Vidick et al., Phys. Rev.
+    // Lett. 134, 070201 (2025), arXiv:2406.08412), so the template's C_3 run is compared against
+    // the real bound and the degraded wording must be gone.
     const benchmark = readJson(path.join(TEMPLATE_DIR, 'benchmark.json'));
     const doc = readJson(path.join(TEMPLATE_DIR, 'counts.json'));
     const result = verify.verifyNonlocalGame(benchmark, doc, {});
 
-    assert.equal(result.verification.game.quantumValue, null);
+    assert.equal(result.verification.game.quantumValue, Math.pow(Math.cos(Math.PI / 12), 2));
     const check = result.verification.checks.find((entry) => entry.id === 'SUPERQUANTUM');
     assert.equal(check.status, 'pass');
-    assert.match(check.message, /pins no quantum value/);
-    assert.match(check.message, /not above 1/);
+    assert.doesNotMatch(check.message, /pins no quantum value/);
+    assert.doesNotMatch(check.message, /not above 1/);
+});
+
+test('an odd-cycle win rate above the pinned quantum value now fails superquantum', () => {
+    // Every question won on every shot gives a win rate of 1, far above cos^2(pi / 12) at n = 3.
+    // Before the quantum value was pinned this passed, because 1 is not above 1; it must fail
+    // now, which is the point of pinning the constant.
+    const doc = syntheticOddCycle(3, 1024, () => 1024);
+    const game = registry.getGame('odd-cycle', { n: 3 });
+    const rates = counts.computeWinRates(counts.normalizeCounts(doc, game));
+    assert.equal(rates.winRateMean, 1);
+
+    const result = verify.verifyNonlocalGame({
+        metricName: 'Win Rate',
+        metricValue: 1,
+        nonlocalGame: {
+            game: 'odd-cycle',
+            params: { n: 3 },
+            winRate: 1,
+            shotsPerCircuit: 1024,
+            countsFile: 'counts.json'
+        }
+    }, doc, {});
+
+    assert.equal(result.valid, false);
+    assert.ok(codesOf(result.errors).includes('SUPERQUANTUM'));
+    assert.equal(checkStatus(result.verification, 'SUPERQUANTUM'), 'fail');
+    assert.equal(result.verification.ranked, false);
+});
+
+/* ------------------------------------------------------------------ *
+ * Exact binomial tail and certified nonlocal content
+ * ------------------------------------------------------------------ */
+
+test('an odd-cycle verification carries pValueExact and certifiedPnl, both recomputed', () => {
+    // 10 questions at 1000 shots each, 950 wins per question: a C_5 run above its classical
+    // value of 0.9 and below its quantum value of cos^2(pi / 20).
+    const n = 5;
+    const shots = 1000;
+    const doc = syntheticOddCycle(n, shots, () => 950);
+    const game = registry.getGame('odd-cycle', { n: n });
+    const rates = counts.computeWinRates(counts.normalizeCounts(doc, game));
+    // Every per-question rate is exactly 950/1000; their pairwise mean differs from 0.95 only
+    // in the last bit, which is why the claim below uses the recomputed value verbatim.
+    assert.ok(Math.abs(rates.winRateMean - 0.95) < 1e-12);
+
+    const result = verify.verifyNonlocalGame({
+        metricName: 'Win Rate',
+        metricValue: 0.95,
+        nonlocalGame: {
+            game: 'odd-cycle',
+            params: { n: n },
+            winRate: rates.winRateMean,
+            shotsPerCircuit: shots,
+            countsFile: 'counts.json'
+        }
+    }, doc, {});
+
+    assert.equal(result.valid, true);
+    assert.equal(result.verification.status, 'verified');
+    assert.equal(result.verification.classical.exceeded, true);
+
+    const perQuestion = new Array(2 * n).fill(0.95);
+    const classical = result.verification.classical;
+
+    // Both figures are the module's own recomputation, never a submitted number.
+    assert.equal(classical.pValueExact,
+        stats.binomialTailPValue(perQuestion, shots, game.classicalValue));
+    const omegaLB = stats.certifiedWinRateLowerBound(perQuestion, shots);
+    assert.equal(classical.certifiedPnl, 1 - 2 * n * (1 - omegaLB));
+
+    // The exact tail is the sharp bound: never larger than the Bernstein one on the same counts.
+    assert.ok(classical.pValueExact > 0 && classical.pValueExact < classical.pValue);
+
+    // The certified content is a real lower bound here: strictly positive and below the
+    // observed p_nl of 1 - 2n(1 - 0.95) = 0.5.
+    assert.ok(classical.certifiedPnl > 0 && classical.certifiedPnl < 0.5);
+});
+
+test('a non-odd-cycle verification gains pValueExact but keeps certifiedPnl null', () => {
+    // result_11 is a clean vendored G14 record: everything it reported before this feature must
+    // reproduce unchanged, with only the two added fields appearing in the classical block.
+    const { benchmark, doc } = fixture(11);
+    const result = verify.verifyNonlocalGame(benchmark, doc, {});
+
+    assert.equal(result.valid, true);
+    assert.equal(result.verification.status, 'verified');
+    assert.deepEqual(Object.keys(result.verification.classical).sort(),
+        ['certifiedPnl', 'exceeded', 'pValue', 'pValueExact', 'sigma', 'value']);
+
+    // The pre-existing figures are exactly what they were: this run sits below the classical
+    // value, so both the Bernstein bound and the exact tail early-return exactly 1.
+    assert.equal(result.verification.classical.value, 43 / 44);
+    assert.equal(result.verification.classical.exceeded, false);
+    assert.equal(result.verification.classical.pValue, 1);
+    assert.equal(result.verification.classical.pValueExact, 1);
+
+    // certifiedPnl is defined only for the odd-cycle family, whose cycle size gives it meaning.
+    assert.equal(result.verification.classical.certifiedPnl, null);
+});
+
+test('variable shots leave pValueExact and certifiedPnl null', () => {
+    // The exact tail pools the per-question counts into one binomial count, which is a count of
+    // the mean win rate only at a constant shot count. With allowVariableShots the Bernstein
+    // figures still compute against the mean shot count, flagged approximate, but the exact
+    // figures must stay null rather than claim an exactness the data cannot support.
+    const game = registry.getGame('odd-cycle', { n: 3 });
+    const table = {};
+    game.questions.forEach((question, index) => {
+        const shots = 1000 + index;
+        const winningKey = question.x === question.y ? '0:0' : '0:1';
+        const losingKey = question.x === question.y ? '0:1' : '0:0';
+        const answers = {};
+        answers[winningKey] = shots - 100;
+        answers[losingKey] = 100;
+        table[question.key] = answers;
+    });
+    const doc = { schemaVersion: 1, counts: table };
+    const rates = counts.computeWinRates(counts.normalizeCounts(doc, game));
+
+    const result = verify.verifyNonlocalGame({
+        metricName: 'Win Rate',
+        metricValue: 0.9,
+        nonlocalGame: {
+            game: 'odd-cycle',
+            params: { n: 3 },
+            winRate: rates.winRateMean,
+            countsFile: 'counts.json',
+            allowVariableShots: true
+        }
+    }, doc, {});
+
+    assert.equal(result.valid, true);
+    assert.equal(result.verification.uncertainty.approximate, true);
+    assert.equal(typeof result.verification.classical.pValue, 'number');
+    assert.equal(result.verification.classical.pValueExact, null);
+    assert.equal(result.verification.classical.certifiedPnl, null);
 });
 
 /* ------------------------------------------------------------------ *

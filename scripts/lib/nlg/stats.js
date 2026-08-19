@@ -1,7 +1,7 @@
 /**
  * Statistics for nonlocal game verification.
  *
- * Two groups of functions live here.
+ * Three groups of functions live here.
  *
  * 1. A JavaScript port of `nlg_data.uncertainty` (vendored at
  *    `nlg_data_extracted/src/nlg_data/uncertainty.py`), which produced the `win_rate.ci95`,
@@ -12,7 +12,12 @@
  *    summation order NumPy uses inside `np.mean` (see `pairwiseSum`). A mathematically equivalent
  *    regrouping changes the last bits and breaks the reproduction.
  *
- * 2. The regularized upper incomplete gamma function `gammq(a, x)` and the chi-square survival
+ * 2. The exact binomial upper tail `binomialTailPValue` and the Clopper-Pearson lower bound
+ *    `certifiedWinRateLowerBound` built on the same tail. These are not part of the port and
+ *    carry no bit-exactness obligation; they are validated against reference values computed
+ *    independently with SciPy, committed in `__tests__/stats.test.js`.
+ *
+ * 3. The regularized upper incomplete gamma function `gammq(a, x)` and the chi-square survival
  *    function built on it, used by the non-signaling check in `chi-square.js`. SciPy is not
  *    available in CI, so these are validated against committed golden vectors in
  *    `__tests__/fixtures/special-fn-goldens.json`.
@@ -258,6 +263,194 @@ function calculatePValue(winrates, shots, omegaC) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Exact binomial tail and the certified win-rate lower bound
+ * ------------------------------------------------------------------ */
+
+/**
+ * One-sided 3-sigma tail probability, `P(Z >= 3)` for a standard normal. Default significance
+ * target for `certifiedWinRateLowerBound`.
+ */
+const THREE_SIGMA_P_TARGET = 0.0013498980316300946;
+
+/** Relative floor below which a further binomial tail term cannot move the sum. */
+const BINOMIAL_TAIL_EPS = 1e-18;
+
+/**
+ * Rejects anything that is not a positive safe integer.
+ *
+ * The binomial tail counts whole trials, so a fractional or non-numeric shot count has no exact
+ * meaning here, unlike in `calculateCi` where any positive number is a valid scale.
+ *
+ * @param {*} value - Candidate shot count.
+ * @param {string} label - Name used in the thrown message.
+ * @returns {void}
+ * @throws {TypeError} If `value` is not a finite number.
+ * @throws {RangeError} If `value` is not a positive integer.
+ */
+function assertPositiveInteger(value, label) {
+    assertFiniteNumber(value, label);
+    if (!Number.isSafeInteger(value) || value <= 0) {
+        throw new RangeError(label + ' must be a positive integer');
+    }
+}
+
+/**
+ * Pooled win count, `round(shots * sum(winrates))`.
+ *
+ * Each entry of `winrates` is a per-question win count divided by the same `shots`, so the sum
+ * times `shots` is the total win count up to floating-point noise, and rounding recovers the
+ * integer. The summation order is irrelevant here for the same reason: the rounding absorbs it.
+ *
+ * @param {number[]} winrates - Per-question win rates, one entry per question.
+ * @param {number} shots - Shots per question.
+ * @returns {number} Total number of winning rounds.
+ */
+function pooledWins(winrates, shots) {
+    let total = 0;
+    for (let i = 0; i < winrates.length; i += 1) {
+        total += winrates[i];
+    }
+    return Math.round(shots * total);
+}
+
+/**
+ * Upper tail of the binomial distribution, `P(Bin(N, p) >= k)`, computed in log space.
+ *
+ * The leading term `pmf(k)` is evaluated once through `lgamma`, and the remaining terms follow
+ * by the multiplicative recurrence `pmf(j + 1) / pmf(j) = ((N - j) / (j + 1)) * (p / (1 - p))`,
+ * so no factorial or power is ever formed outside log space and the result stays finite down to
+ * the underflow limit. The terms are unimodal in `j`, so once the recurrence ratio drops below 1
+ * a term smaller than `BINOMIAL_TAIL_EPS` of the accumulated sum bounds everything after it.
+ *
+ * @param {number} N - Number of trials, a positive integer.
+ * @param {number} k - Threshold win count.
+ * @param {number} p - Success probability.
+ * @returns {number} `P(Bin(N, p) >= k)`, in `[0, 1]`. Exactly `1` when `k <= 0` or `p >= 1`,
+ *   exactly `0` when `k > N` or when `p <= 0` with `k >= 1`.
+ */
+function binomialUpperTail(N, k, p) {
+    if (k <= 0) {
+        return 1;
+    }
+    if (k > N) {
+        return 0;
+    }
+    if (p <= 0) {
+        return 0;
+    }
+    if (p >= 1) {
+        return 1;
+    }
+
+    const logPmf = lgamma(N + 1) - lgamma(k + 1) - lgamma(N - k + 1) +
+        k * Math.log(p) + (N - k) * Math.log(1 - p);
+
+    const odds = p / (1 - p);
+    let term = 1;
+    let sum = 1;
+    for (let j = k; j < N; j += 1) {
+        const ratio = ((N - j) / (j + 1)) * odds;
+        term *= ratio;
+        sum += term;
+        if (ratio < 1 && term < sum * BINOMIAL_TAIL_EPS) {
+            break;
+        }
+    }
+
+    const tail = Math.exp(logPmf + Math.log(sum));
+    return tail > 1 ? 1 : tail;
+}
+
+/**
+ * Exact one-sided binomial upper tail on the pooled win count: `P(Bin(N, omegaC) >= k)` with
+ * `k = round(shots * sum(winrates))` and `N = winrates.length * shots`.
+ *
+ * Exactly valid for stratified independent non-identical Bernoulli trials with equal shots per
+ * circuit: under a classical model the per-question win probabilities may differ, but their mean
+ * is at most `omegaC`, so the sum of the per-round means is at most `N * omegaC`. Hoeffding
+ * (1956), Theorem 5, gives that among independent Bernoulli trials with a fixed sum of means the
+ * i.i.d. binomial tail dominates every other tail at or above the mean, and the binomial tail is
+ * monotone increasing in its mean, so `P(Bin(N, omegaC) >= k)` bounds the true tail from above.
+ * Equal shots per question are load-bearing: they are what makes the sum of the per-round means
+ * proportional to the mean of the per-question probabilities, the quantity `omegaC` bounds.
+ *
+ * This is the sharp counterpart of `calculatePValue`. The Bernstein bound is kept unchanged for
+ * reproducibility of the published corpus; this tail is exactly valid and never larger than the
+ * true significance, so the two are reported side by side rather than one replacing the other.
+ *
+ * @param {number[]} winrates - Per-question win rates, one entry per question.
+ * @param {number} shots - Shots per question, a positive integer, constant across questions.
+ * @param {number} omegaC - Optimal classical value of the game, in `[0, 1]`.
+ * @returns {number} The tail probability, in `[0, 1]`. Exactly `1` when `k <= N * omegaC`.
+ * @throws {TypeError} If any argument has the wrong type.
+ * @throws {RangeError} On empty `winrates`, a non-positive-integer `shots`, or `omegaC` outside
+ *   `[0, 1]`.
+ */
+function binomialTailPValue(winrates, shots, omegaC) {
+    assertFiniteArray(winrates, 'winrates');
+    assertPositiveInteger(shots, 'shots');
+    assertFiniteNumber(omegaC, 'omegaC');
+    if (omegaC < 0 || omegaC > 1) {
+        throw new RangeError('omegaC must lie in [0, 1]');
+    }
+
+    const k = pooledWins(winrates, shots);
+    const N = winrates.length * shots;
+
+    if (k <= N * omegaC) {
+        return 1;
+    }
+    return binomialUpperTail(N, k, omegaC);
+}
+
+/**
+ * Clopper-Pearson one-sided lower confidence bound on the win rate.
+ *
+ * The largest `omega` in `[0, 1]` whose binomial upper tail at the pooled win count does not
+ * exceed `pTarget`: every rate at or below the returned value is rejected at the target
+ * significance by the exact tail, so the true win rate exceeds it with confidence
+ * `1 - pTarget`. Found by bisection, 60 halvings of `[0, 1]`, which pins the bound to within
+ * `2^-60` and is far below the statistical width at any realistic shot count. The tail is
+ * monotone increasing in `omega`, which is what makes the bisection valid.
+ *
+ * The same equal-shots caveat as `binomialTailPValue` applies: the pooled count is a binomial
+ * count of the mean win rate only when every question ran the same number of shots.
+ *
+ * @param {number[]} winrates - Per-question win rates, one entry per question.
+ * @param {number} shots - Shots per question, a positive integer, constant across questions.
+ * @param {number} [pTarget=THREE_SIGMA_P_TARGET] - One-sided significance target, in `(0, 1)`.
+ *   The default is the one-sided 3-sigma tail.
+ * @returns {number} The lower bound, in `[0, 1]`. Exactly `0` when no rate can be rejected,
+ *   which happens whenever the pooled win count is `0`.
+ * @throws {TypeError} If any argument has the wrong type.
+ * @throws {RangeError} On empty `winrates`, a non-positive-integer `shots`, or `pTarget`
+ *   outside `(0, 1)`.
+ */
+function certifiedWinRateLowerBound(winrates, shots, pTarget = THREE_SIGMA_P_TARGET) {
+    assertFiniteArray(winrates, 'winrates');
+    assertPositiveInteger(shots, 'shots');
+    assertFiniteNumber(pTarget, 'pTarget');
+    if (pTarget <= 0 || pTarget >= 1) {
+        throw new RangeError('pTarget must lie in (0, 1)');
+    }
+
+    const k = pooledWins(winrates, shots);
+    const N = winrates.length * shots;
+
+    let lo = 0;
+    let hi = 1;
+    for (let i = 0; i < 60; i += 1) {
+        const mid = (lo + hi) / 2;
+        if (binomialUpperTail(N, k, mid) <= pTarget) {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+    return lo;
+}
+
+/* ------------------------------------------------------------------ *
  * Incomplete gamma and the chi-square survival function
  * ------------------------------------------------------------------ */
 
@@ -448,6 +641,8 @@ function chiSquareSf(x, df) {
 module.exports = {
     calculateCi,
     calculatePValue,
+    binomialTailPValue,
+    certifiedWinRateLowerBound,
     mean,
     bernoulliVariance,
     gammq,

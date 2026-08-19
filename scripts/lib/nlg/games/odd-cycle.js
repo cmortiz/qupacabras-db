@@ -58,6 +58,16 @@ function isWin(q, a, b) {
   return a !== b;
 }
 
+/**
+ * Source of the quantum value below. The closed form covers every odd n at
+ * once, which is why the constant can be pinned per parameter without a
+ * per-instance table.
+ */
+const REFERENCE = {
+  citation: 'Drmota, Grilo, Vidick et al., Phys. Rev. Lett. 134, 070201 (2025)',
+  url: 'https://arxiv.org/abs/2406.08412'
+};
+
 function build(id, params) {
   const n = params.n;
   const questionCount = 2 * n;
@@ -84,22 +94,20 @@ function build(id, params) {
     classicalValue: 1 - 1 / (2 * n),
 
     /**
-     * quantumValue is null: NOT PINNED.
-     *
-     * The odd cycle game has a known optimal quantum value in the literature,
-     * but it is not recorded anywhere in this repository's vendored data
-     * (`nlg_data_extracted/data/db.json` carries a record for G14 only), and
-     * writing a Tsirelson style bound from memory is exactly the kind of
-     * unverified constant this project exists to eliminate. [CITATION NEEDED]
-     *
-     * A null quantum value is a defined state, not a placeholder bug: the
-     * superquantum check degrades to "the win rate must not exceed 1". That is
-     * strictly weaker than the true bound, so it can miss an impossible-looking
-     * result, but it can never reject a legitimate one. Replacing null with a
-     * cited constant is a one line change here plus one line in the citation
-     * comment, and tightens the check with no other code touched.
+     * Optimal quantum value: exactly cos^2(pi / (4n)). Pinned to a published
+     * closed form rather than a constant written from memory: Drmota, Grilo,
+     * Vidick et al., Phys. Rev. Lett. 134, 070201 (2025), arXiv:2406.08412,
+     * carried machine-readably in REFERENCE above. This value was previously
+     * null, which made the superquantum check degrade to "the win rate must
+     * not exceed 1"; pinning it tightens that check to the true bound, so a
+     * win rate materially above cos^2(pi / (4n)) is now flagged as
+     * impossible rather than accepted. It exceeds the classical 1 - 1/(2n)
+     * for every odd n >= 3, since sin^2(pi / (4n)) < (pi / (4n))^2 < 1/(2n)
+     * there, and `assertWellFormed` in `__tests__/games.test.js` checks the
+     * ordering on every instance it builds.
      */
-    quantumValue: null
+    quantumValue: Math.pow(Math.cos(Math.PI / (4 * n)), 2),
+    reference: REFERENCE
   };
 }
 

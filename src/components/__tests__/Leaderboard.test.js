@@ -18,7 +18,14 @@ function makeEntry(id, recomputedMean, overrides = {}) {
       game: { id: 'odd-cycle:n=3', name: 'odd-cycle', label: 'Odd cycle C_3' },
       winRate: { claimed: recomputedMean, recomputedMean, totalShots: 6144, questions: 6 },
       uncertainty: { claimed: 0.016, recomputed: 0.016, approximate: false },
-      classical: { value: 0.8333333333333334, exceeded: false, sigma: -1.5, pValue: 1 },
+      classical: {
+        value: 0.8333333333333334,
+        exceeded: false,
+        sigma: -1.5,
+        pValue: 1,
+        pValueExact: 1,
+        certifiedPnl: null
+      },
       checks: []
     },
     ...overrides
@@ -97,7 +104,8 @@ describe('Leaderboard', () => {
       value: 0.9772727272727273,
       exceeded: true,
       sigma: 3.42,
-      pValue: 0.04675268138851943
+      pValue: 0.04675268138851943,
+      pValueExact: 0.0123
     };
 
     const notAbove = makeEntry('not-above', 0.9601, { contributor: 'NotAbove' });
@@ -105,7 +113,8 @@ describe('Leaderboard', () => {
       value: 0.9772727272727273,
       exceeded: false,
       sigma: -2.11,
-      pValue: 1
+      pValue: 1,
+      pValueExact: 1
     };
 
     render(<Leaderboard benchmarks={[above, notAbove]} />);
@@ -131,6 +140,43 @@ describe('Leaderboard', () => {
     expect(screen.getByText(/Bernstein bound/)).toBeInTheDocument();
     expect(screen.queryByText(/sigma/i)).not.toBeInTheDocument();
     expect(screen.queryByText('σ')).not.toBeInTheDocument();
+  });
+
+  test('shows the Bernstein bound and the exact binomial bound side by side', () => {
+    const entry = makeEntry('bounds', 0.9793);
+    entry.verification.classical = {
+      value: 0.9772727272727273,
+      exceeded: true,
+      sigma: 3.42,
+      pValue: 0.0467,
+      pValueExact: 0.0123,
+      certifiedPnl: null
+    };
+
+    render(<Leaderboard benchmarks={[entry]} />);
+
+    const bernstein = screen.getByText(/Bernstein bound 0\.0467/);
+    const exact = screen.getByText(/Exact binomial 0\.0123/);
+    expect(bernstein).toBeInTheDocument();
+    expect(exact).toBeInTheDocument();
+
+    // One tooltip names both figures: the Bernstein value as the historical one kept for
+    // comparability, the exact binomial tail as the sharper, exactly valid bound.
+    for (const el of [bernstein, exact]) {
+      expect(el.getAttribute('title')).toMatch(/Bernstein/);
+      expect(el.getAttribute('title')).toMatch(/exact binomial tail is the sharper, exactly valid bound/);
+    }
+  });
+
+  test('renders N/A for the exact binomial bound when a verification predates it', () => {
+    const entry = makeEntry('legacy', 0.9);
+    delete entry.verification.classical.pValueExact;
+    delete entry.verification.classical.certifiedPnl;
+
+    render(<Leaderboard benchmarks={[entry]} />);
+
+    expect(screen.getByText(/Exact binomial N\/A/)).toBeInTheDocument();
+    expect(screen.getByText(/Bernstein bound 1\.0000/)).toBeInTheDocument();
   });
 
   test('renders an empty state when no entry is ranked', () => {
