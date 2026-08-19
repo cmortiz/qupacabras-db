@@ -51,22 +51,34 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # TODO(maintainer): pin this to a commit SHA rather than a mutable tag. A tag can be moved to
-      # point at different code without the reference here changing.
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v40
-        with:
-          files: submissions/**
-
-      # Injection point, closed. `all_changed_files` is submitter-controlled text. It is handed to
-      # a script through env, never interpolated into the body, and the script keeps only names
-      # that match a conservative pattern and resolve to a directory that exists.
+      # `git diff` against the merge base, in place of tj-actions/changed-files@v40.
+      #
+      # That action had its tags retargeted to malicious code in March 2025, and a tag is a mutable
+      # pointer, so `@v40` was never a reference to fixed code. It ran here inside a job holding
+      # `pull-requests: write`. Nothing it did needs a third party: the checkout above already uses
+      # `fetch-depth: 0`, which is what makes the merge base reachable, and git computes the file
+      # list directly. Removing it removes the dependency rather than pinning it.
+      #
+      # Injection point, still closed, and closed the same way. The file list is submitter-
+      # controlled text: a branch can add a file under any name it likes, including one that is
+      # shell. It is exported to the environment and read there by the filter script, never
+      # interpolated into this body, and the script keeps only names that match a conservative
+      # pattern and resolve to a directory that exists. The two SHAs come from the event payload
+      # and reach the body through `env:` for the same reason.
+      #
+      # The three-dot range asks git for the diff since the merge base, so a change on `main` after
+      # this branch was cut is not reported as this pull request's. `--diff-filter=ACMR` drops
+      # deletions, whose folders no longer exist in the checkout and would only be rejected.
       - name: Resolve changed submission folders
         id: changed-submissions
         env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: node scripts/ci/changed-submissions.js
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -eu
+          CHANGED_FILES="$(git diff --name-only --diff-filter=ACMR "$BASE_SHA...$HEAD_SHA" -- submissions)"
+          export CHANGED_FILES
+          node scripts/ci/changed-submissions.js
 
       # Runs first, and writes verification-report.md whatever the outcome, so the comment step
       # below always has a body to post. QDB_FOLDERS is set by the step above through $GITHUB_ENV.

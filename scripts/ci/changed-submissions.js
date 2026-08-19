@@ -6,7 +6,9 @@
  * The file list arrives in `CHANGED_FILES` and is submitter-controlled: a branch can add a file
  * under any path it likes, including one whose name is shell or JavaScript. Reading it from the
  * environment rather than interpolating it into a workflow body is half of the defence; the other
- * half is here. A name survives only when it
+ * half is here. The workflow produces the list with `git diff --name-only` against the merge base;
+ * where that list comes from makes no difference to anything below, which treats it as hostile
+ * either way. A name survives only when it
  *
  *   1. sits directly under `submissions/`,
  *   2. matches a conservative folder-name pattern, and
@@ -45,9 +47,9 @@ const EXCLUDED_FOLDERS = ['template'];
 /**
  * Split a whitespace-separated path list.
  *
- * The upstream action's separator has varied between releases, so both spaces and newlines are
- * treated as separators. A path containing whitespace cannot survive this, which is intended: such
- * a path also cannot name a folder that passes `FOLDER_NAME_PATTERN`.
+ * `git diff --name-only` emits one path per line, and earlier producers of this variable used
+ * spaces, so both are treated as separators. A path containing whitespace cannot survive this,
+ * which is intended: such a path also cannot name a folder that passes `FOLDER_NAME_PATTERN`.
  *
  * @param {string} raw - Raw value of `CHANGED_FILES`.
  * @returns {string[]} Individual path strings, empties removed.
