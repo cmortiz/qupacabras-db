@@ -1,0 +1,46 @@
+{
+  "id": "odd_cycle_c5_nonlocal_game_issue2",
+  "algorithmName": "Odd Cycle C5 (Nonlocal Game)",
+  "device": "aws:rigetti:qpu:cepheus-1-108q via qbraid",
+  "metricName": "Win Rate",
+  "metricValue": 0.8576666666666666,
+  "timestamp": "2026-08-19T17:34:53.965Z",
+  "lastUpdated": "2026-08-19T17:34:53.965Z",
+  "contributor": "cmortiz",
+  "uncertainty": 0.025462836927331596,
+  "team": [
+    "dryrun_00"
+  ],
+  "quantumSpecific": {
+    "qubitRange": {
+      "min": 2,
+      "max": 2
+    },
+    "shots": 3000
+  },
+  "problemSpecific": {
+    "primaryMetric": {
+      "name": "Win Rate",
+      "definition": "Unweighted mean of the per-question win rates of the odd-cycle nonlocal game on C_5, 10 question circuits at 300 shots each.",
+      "value": 0.8576666666666666,
+      "uncertainty": 0.025462836927331596,
+      "uncertaintyDefinition": "95% confidence half-width (d = 0.05) over the 10 per-question win rates at 300 shots each, the Bernstein interval calculate_ci the results database recomputes"
+    },
+    "description": "Odd cycle nonlocal game on C_5, 10 question circuits at 300 shots each, run 1 of the Qupacabrathon 2026 hackathon.",
+    "shots": 3000,
+    "notes": "Classical bound omega_c = 0.9. Quantum bound omega_q = 0.9755282581475768. One-sided exact binomial tail p = 1.000000e+00 against the 3 sigma threshold 1.349898e-03, so this run is not certified at 3 sigma. Certified nonlocal content p_NL = -0.623923 (exact binomial lower bound at the same threshold; the CHSH ceiling is 0.41421). The counts are what the device returned: no readout correction, no extrapolation and no postselection was applied to them. Dry run 1 of the Qupacabrathon 2026 event pipeline; organizer-executed via qBraid Runtime 0.12.2, circuits exported from PennyLane as OpenQASM 2.",
+    "qubitRange": {
+      "min": 2,
+      "max": 2
+    }
+  },
+  "nonlocalGame": {
+    "game": "odd-cycle",
+    "winRate": 0.8576666666666666,
+    "shotsPerCircuit": 300,
+    "countsFile": "counts.json",
+    "params": {
+      "n": 5
+    }
+  }
+}
