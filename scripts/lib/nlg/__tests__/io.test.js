@@ -37,6 +37,30 @@ function readJson(filePath) {
 }
 
 /**
+ * Read a JSON file that is allowed not to be there or not to parse.
+ *
+ * `submissions/README.md` says a folder without a `benchmark.json` is reported and skipped, so the
+ * corpus walk below must survive one. Reading it unguarded would take down every test in this file
+ * for a folder shape the repository documents as legitimate.
+ *
+ * @param {string} filePath - Absolute path to a JSON file.
+ * @returns {{ok: true, value: *}|{ok: false, message: string}} Parsed contents, or the reason not.
+ */
+function tryReadJson(filePath) {
+    let raw;
+    try {
+        raw = fs.readFileSync(filePath, 'utf8');
+    } catch (error) {
+        return { ok: false, message: 'could not be read: ' + error.message };
+    }
+    try {
+        return { ok: true, value: JSON.parse(raw) };
+    } catch (error) {
+        return { ok: false, message: 'could not be parsed: ' + error.message };
+    }
+}
+
+/**
  * Create a throwaway directory holding the given files.
  *
  * @param {Object<string, string>} files - File name to contents.
@@ -179,10 +203,18 @@ test('every submission folder resolves the way its own benchmark.json says it sh
 
     const preCounts = [];
     const withCounts = [];
+    const unreadable = [];
 
     folders.forEach((name) => {
         const folder = path.join(SUBMISSIONS_DIR, name);
-        const benchmark = readJson(path.join(folder, 'benchmark.json'));
+        const read = tryReadJson(path.join(folder, 'benchmark.json'));
+        if (!read.ok) {
+            // Reported and skipped, the way the generator treats it. A folder mid-review, or one
+            // carrying only counts, is not this test's failure.
+            unreadable.push(name + ': ' + read.message);
+            return;
+        }
+        const benchmark = read.value;
         const claim = benchmark ? benchmark.nonlocalGame : null;
         const claimed = typeof claim === 'object' && claim !== null && !Array.isArray(claim);
         const result = io.verifySubmissionFolder(folder, benchmark, {});
@@ -214,10 +246,17 @@ test('every submission folder resolves the way its own benchmark.json says it sh
         withCounts.push(name);
     });
 
+    if (unreadable.length > 0) {
+        console.log('Skipped ' + unreadable.length + ' folder(s) with no readable benchmark.json:');
+        unreadable.forEach((line) => console.log('   - ' + line));
+    }
+
     // Keep the nothing-to-verify path exercised. The legacy entries predate the counts format
     // and none of them will ever grow a block, so this stays true.
     assert.ok(preCounts.length > 0,
         'no folder exercised the nothing-to-verify path; the legacy corpus is missing');
+    assert.ok(preCounts.length + withCounts.length > 0,
+        'every submission folder was skipped as unreadable');
 });
 
 test('verifySubmissionFolder verifies the shipped template end to end', () => {

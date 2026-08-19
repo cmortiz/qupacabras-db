@@ -294,7 +294,9 @@ body:
         counts before the pull request is opened, so the number is checked rather than taken on
         trust. Leave the whole section blank for every other kind of submission.
 
-        The five fields below travel together. Filling in any one of them makes the rest required.
+        The five result fields below travel together: game, parameters, win rate, shots per circuit
+        and the counts document. Filling in any one of them makes the other four required. The event
+        team name is separate and stays optional.
 
         **Size.** The counts go in the textarea at the end of this section, and GitHub caps an issue
         body at 65,536 characters. A worst-case G14 document, all 88 questions with all 16 answer
@@ -303,6 +305,11 @@ body:
         request carrying `benchmark.json` and `counts.json` together instead: `submissions/README.md`
         and `docs/verification.md` describe that route.
 
+  # These options are written by hand and are NOT generated. `scripts/ci/issue-submission.js`
+  # validates the submitted name against the live `listGames()`, so registering a game makes it
+  # accepted by the parser while staying invisible here, and deleting one makes an option here
+  # rejected by the parser. Update this list by hand when the registry changes; do not try to
+  # generate it, since a GitHub issue form is static YAML with no build step in front of it.
   - type: dropdown
     id: nlg_game
     attributes:
@@ -310,7 +317,7 @@ body:
       description: >-
         Registry name of the game. Run
         `node -e "console.log(require('./scripts/lib/nlg/registry').listGames())"`
-        for the current list.
+        for the current list, which is the list the submission parser actually enforces.
       options:
         - g14
         - magic-square
@@ -326,6 +333,19 @@ body:
         Integer parameters selecting a member of the game family, as a small JSON object. The odd
         cycle takes an odd `n`; `g14` and `magic-square` take none, so leave this blank for them.
       placeholder: '{"n": 5}'
+    validations:
+      required: false
+
+  - type: input
+    id: nlg_event_team
+    attributes:
+      label: Event Team Name
+      description: >-
+        The team this result is ranked under, if you are submitting from an event. It is what the
+        standings show, and it is what tells two teams filing the same game with the same parameters
+        on the same day apart. Optional, and independent of the five result fields: leave it blank
+        and the submission still verifies, ranked under the Team / Authors field above.
+      placeholder: "Qupacabras Team 7"
     validations:
       required: false
 

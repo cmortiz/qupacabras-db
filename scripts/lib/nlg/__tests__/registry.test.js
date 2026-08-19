@@ -36,15 +36,72 @@ function attemptMutation(fn) {
  * listGames
  * ------------------------------------------------------------------ */
 
-test('listGames returns the registered names, sorted', () => {
-  assert.deepEqual(listGames(), ['g14', 'magic-square', 'odd-cycle']);
+// Do not snapshot the registry. Registering a game is an ordinary, additive change that breaks
+// nothing, and a membership assertion turns it into a red `npm run test:scripts` on both matrix
+// legs and in .husky/pre-commit. What must hold whatever is registered is asserted instead: the
+// list is sorted, unique and non-empty, every name on it resolves, and every definition it
+// resolves to is well formed. This is the same rule io.test.js already applies to the corpus.
+
+test('listGames returns a sorted, unique, non-empty list of names', () => {
+  const names = listGames();
+
+  assert.ok(Array.isArray(names), 'must be an array');
+  assert.ok(names.length > 0, 'the registry must not be empty');
+  for (const name of names) {
+    assert.equal(typeof name, 'string', 'every name must be a string, got ' + typeof name);
+    assert.notEqual(name, '', 'no name may be empty');
+  }
+  assert.deepEqual(names, names.slice().sort(), 'must be sorted');
+  assert.equal(new Set(names).size, names.length, 'must be free of repeats');
 });
 
 test('listGames returns a fresh array each call', () => {
+  const before = listGames();
   const first = listGames();
   first.push('injected');
   first[0] = 'tampered';
-  assert.deepEqual(listGames(), ['g14', 'magic-square', 'odd-cycle']);
+  assert.deepEqual(listGames(), before);
+});
+
+test('every registered game resolves to a well-formed definition with a unique id', () => {
+  const ids = new Set();
+
+  for (const name of listGames()) {
+    const game = getGame(name);
+    const at = name + ': ';
+
+    assert.equal(game.name, name, at + 'name must be the registry key');
+    assert.equal(typeof game.id, 'string', at + 'id must be a string');
+    assert.ok(game.id.startsWith(name), at + 'id must begin with the registry key');
+    assert.ok(!ids.has(game.id), at + 'duplicate canonical id ' + game.id);
+    ids.add(game.id);
+
+    assert.equal(typeof game.family, 'string', at + 'family');
+    assert.equal(typeof game.label, 'string', at + 'label');
+    assert.equal(typeof game.isWin, 'function', at + 'isWin');
+    assert.ok(Number.isSafeInteger(game.aliceAnswerBits) && game.aliceAnswerBits >= 1,
+      at + 'aliceAnswerBits');
+    assert.ok(Number.isSafeInteger(game.bobAnswerBits) && game.bobAnswerBits >= 1,
+      at + 'bobAnswerBits');
+
+    assert.ok(Array.isArray(game.questions) && game.questions.length > 0, at + 'questions');
+    const keys = new Set();
+    for (const q of game.questions) {
+      assert.ok(Number.isSafeInteger(q.x) && q.x >= 0, at + 'question x');
+      assert.ok(Number.isSafeInteger(q.y) && q.y >= 0, at + 'question y');
+      assert.equal(q.key, q.x + '|' + q.y, at + 'question key encoding');
+      assert.ok(!keys.has(q.key), at + 'duplicate question key ' + q.key);
+      keys.add(q.key);
+      assert.ok(q.weight > 0, at + 'question weight must be positive');
+    }
+
+    assert.ok(game.classicalValue > 0 && game.classicalValue <= 1, at + 'classicalValue');
+    assert.ok(game.quantumValue === null ||
+      (game.quantumValue >= game.classicalValue && game.quantumValue <= 1),
+      at + 'quantumValue must be null or in [classicalValue, 1]');
+
+    assert.ok(Object.isFrozen(game), at + 'definition must be frozen');
+  }
 });
 
 /* ------------------------------------------------------------------ *
@@ -121,7 +178,14 @@ test('mutating a returned definition does not change it', () => {
  * ------------------------------------------------------------------ */
 
 test('unknown names throw UNKNOWN_GAME', () => {
-  for (const name of ['', 'nope', 'G14', 'oddcycle', 'coloring', 'games/g14', 'odd-cycle ']) {
+  // Filtered against the registry rather than hardcoded: 'coloring' is a game family here and a
+  // plausible future registry key, and a name that becomes real must not fail this test.
+  const registered = new Set(listGames());
+  const candidates = ['', 'nope', 'G14', 'oddcycle', 'coloring', 'games/g14', 'odd-cycle ']
+    .filter((name) => !registered.has(name));
+
+  assert.ok(candidates.length > 0, 'every candidate unknown name is now registered');
+  for (const name of candidates) {
     assertCode(() => getGame(name), 'UNKNOWN_GAME', 'name ' + JSON.stringify(name));
   }
 });

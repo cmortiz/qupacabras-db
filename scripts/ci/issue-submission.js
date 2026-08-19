@@ -389,9 +389,13 @@ function submissionFolderName(algorithmName, issueNumber, errors) {
 /**
  * Assemble the `nonlocalGame` block from the counts fields.
  *
- * The five fields travel together: a claim without counts cannot be recomputed, and counts without
- * a claim have nothing to check. Supplying some of them is a mistake worth naming rather than
- * quietly dropping.
+ * The five result fields travel together: a claim without counts cannot be recomputed, and counts
+ * without a claim have nothing to check. Supplying some of them is a mistake worth naming rather
+ * than quietly dropping.
+ *
+ * The event team name is deliberately NOT one of them. It is an optional label on a result that is
+ * otherwise complete, so filling it in must not demand the other five, and leaving it out must not
+ * reject the submission. It is attached only when a block is actually being built.
  *
  * @param {Object} sections - Output of `parseSections`.
  * @param {Array} errors - Accumulator.
@@ -404,6 +408,7 @@ function buildNonlocalGame(sections, errors) {
     const winRateRaw = section(sections, 'Nonlocal Game Win Rate');
     const shotsRaw = section(sections, 'Shots Per Circuit');
     const countsRaw = stripCodeFence(section(sections, 'Counts Document (JSON)'));
+    const eventTeamRaw = section(sections, 'Event Team Name');
 
     const supplied = [gameName, paramsRaw, winRateRaw, shotsRaw, countsRaw]
         .filter((value) => value !== null);
@@ -478,6 +483,14 @@ function buildNonlocalGame(sections, errors) {
     };
     if (params !== null) {
         block.params = params;
+    }
+    // `singleLine` flattens control characters and caps the value at 100 characters, which is the
+    // schema's own limit on this field, so no separate length check is needed here.
+    if (eventTeamRaw !== null) {
+        const eventTeam = singleLine(eventTeamRaw);
+        if (eventTeam !== '') {
+            block.eventTeam = eventTeam;
+        }
     }
 
     return { block: block, countsText: normalizeFileText(countsRaw) };

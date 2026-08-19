@@ -9,11 +9,13 @@ const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
-const { verifySubmissionFolder } = require('./lib/nlg/io');
+const { verifySubmissionFolder, loadCountsFile } = require('./lib/nlg/io');
 
 // Initialize AJV with all formats
 const ajv = new Ajv({ allErrors: true, verbose: true });
 addFormats(ajv);
+
+const SUBMISSIONS_DIR = path.join(__dirname, '../submissions');
 
 // Load the schema
 const schemaPath = path.join(__dirname, '../schemas/benchmark-schema.json');
@@ -268,6 +270,11 @@ function validateStatisticalConsistency(stats, fieldName, result, checkRange = t
 /**
  * Team a nonlocal-game submission is attributed to, for duplicate detection.
  *
+ * The chain ends at the empty string, and it reaches it often: `eventTeam` is optional, `team[]`
+ * and `contributor` are both optional in the schema. That is why the signature this feeds cannot
+ * rest on the team alone. Two dozen teams filing the same game with the same parameters on the same
+ * day would otherwise share one signature and be reported as duplicates of each other.
+ *
  * @param {Object} benchmark - Parsed benchmark document carrying a `nonlocalGame` block.
  * @returns {string} A stable team key, possibly empty.
  */
@@ -303,28 +310,74 @@ function duplicateParamsKey(params) {
 }
 
 /**
- * Signature identifying one nonlocal-game run.
+ * Digest of the measurement counts a nonlocal-game submission ships.
  *
- * Keyed on (team, game, params, run) and NOT on the reported value. Several teams playing the same
- * game on the same hardware legitimately land on near-identical win rates, so the value-similarity
- * test that catches copied legacy entries would flag honest independent results here. The run
- * component is the experiment date, falling back to the submission timestamp: a genuine second run
- * carries a different one, while a copied folder carries the same and is flagged.
+ * This is what separates two honest runs that agree on everything else. Independent hardware runs
+ * never produce byte-identical counts, so a shared digest means the same data was filed twice,
+ * which is exactly what duplicate detection is for. The read goes through `loadCountsFile`, which
+ * owns the path checks on the submitter-controlled `countsFile` name.
+ *
+ * Returns the empty string when there is nothing to digest. That degrades to the old behaviour for
+ * the folder rather than inventing a distinction the data does not support.
  *
  * @param {Object} benchmark - Parsed benchmark document carrying a `nonlocalGame` block.
+ * @param {string} [submissionsDir] - Directory holding the submission folders.
+ * @returns {string} Hex digest, or the empty string.
+ */
+function duplicateCountsKey(benchmark, submissionsDir) {
+    const folder = benchmark.benchmarkFolder;
+    const countsFile = benchmark.nonlocalGame.countsFile;
+    if (typeof folder !== 'string' || folder === '' || typeof countsFile !== 'string') {
+        return '';
+    }
+    const root = typeof submissionsDir === 'string' ? submissionsDir : SUBMISSIONS_DIR;
+    let loaded;
+    try {
+        loaded = loadCountsFile(path.join(root, folder), countsFile);
+    } catch (error) {
+        return '';
+    }
+    return loaded.ok === true ? loaded.sha256 : '';
+}
+
+/**
+ * Signature identifying one nonlocal-game run.
+ *
+ * Keyed on (team, game, params, run, counts digest) and NOT on the reported value. Several teams
+ * playing the same game on the same hardware legitimately land on near-identical win rates, so the
+ * value-similarity test that catches copied legacy entries would flag honest independent results
+ * here. The run component is the experiment date, falling back to the submission timestamp: a
+ * genuine second run carries a different one, while a copied folder carries the same and is
+ * flagged.
+ *
+ * The counts digest is what makes the signature usable at event scale. The first four components
+ * are all shared by design when two dozen teams file the same game on the same day, and the team
+ * key is empty whenever none of `eventTeam`, `team[]` or `contributor` is filled in, so without the
+ * digest those submissions collapse onto one signature and every one of them is reported as a
+ * duplicate of the first. The reports are warnings rather than failures, so this was noise rather
+ * than breakage, but it is noise arriving exactly when the signal matters.
+ *
+ * @param {Object} benchmark - Parsed benchmark document carrying a `nonlocalGame` block.
+ * @param {string} [submissionsDir] - Directory holding the submission folders.
  * @returns {string} Signature, namespaced so it cannot collide with a legacy signature.
  */
-function nonlocalGameSignature(benchmark) {
+function nonlocalGameSignature(benchmark, submissionsDir) {
     const game = benchmark.nonlocalGame.game;
     const params = duplicateParamsKey(benchmark.nonlocalGame.params);
     const run = benchmark.experimentDate || benchmark.timestamp || '';
-    return `nlg:${duplicateTeamKey(benchmark)}-${game}-${params}-${run}`;
+    const counts = duplicateCountsKey(benchmark, submissionsDir);
+    return `nlg:${duplicateTeamKey(benchmark)}-${game}-${params}-${run}-${counts}`;
 }
 
 /**
  * Check for duplicate submissions
+ *
+ * @param {Object[]} allBenchmarks - Parsed documents, each carrying `benchmarkFolder`.
+ * @param {string} [submissionsDir] - Directory holding the submission folders, for the counts
+ *   digest a nonlocal-game signature includes.
+ * @returns {Array<{current: string, existing: string, signature: string}>} Reported duplicates.
  */
-function checkDuplicates(allBenchmarks) {
+function checkDuplicates(allBenchmarks, submissionsDir) {
     const duplicates = [];
     const seen = new Map();
 
@@ -332,7 +385,7 @@ function checkDuplicates(allBenchmarks) {
         // Create a signature for comparison
         const nonlocal = isPlainObject(benchmark.nonlocalGame);
         const signature = nonlocal
-            ? nonlocalGameSignature(benchmark)
+            ? nonlocalGameSignature(benchmark, submissionsDir)
             : `${benchmark.algorithmName}-${benchmark.device}-${benchmark.metricName}`;
 
         if (seen.has(signature)) {
@@ -414,7 +467,7 @@ function validateAllBenchmarks(submissionsDir) {
 
     // Check for duplicates
     console.log('🔍 Checking for duplicate submissions...');
-    const duplicates = checkDuplicates(allBenchmarks);
+    const duplicates = checkDuplicates(allBenchmarks, submissionsDir);
 
     if (duplicates.length > 0) {
         console.log('⚠️  Potential duplicates found:');
