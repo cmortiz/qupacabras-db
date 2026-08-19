@@ -119,6 +119,23 @@ const DEFAULT_MAX_TVD = 0.25;
  */
 const SUPERQUANTUM_SIGMA = 4;
 
+/**
+ * The likeliest cause of a real superquantum failure, named in the message.
+ *
+ * Since `games/odd-cycle.js` pins `cos^2(pi / (4n))`, this branch is reachable on a game the
+ * hackathon uses, and the margin is narrow: at n = 3 with 1024 shots on each of 6 questions, four
+ * standard errors is about 0.013 above a bound of 0.933. Hardware does not clear that. A question
+ * set built under the wrong edge convention does, and nothing else in the submission looks wrong
+ * when it happens, so the message has to say where to look. `odd-cycle` takes each cycle edge
+ * ONCE in the orientation i -> i+1; `coloring` takes each edge in BOTH directions.
+ */
+const SUPERQUANTUM_CAUSE =
+    '. A win rate this far above the bound is not a hardware result. The likeliest cause is that ' +
+    'the questions were built under a different edge convention from the one this game fixes: ' +
+    '"odd-cycle" takes each cycle edge once, in the orientation i -> i+1, while the coloring ' +
+    'family takes each edge in both directions. Check the question set and the win rule against ' +
+    'scripts/lib/nlg/games/README.md before changing anything else';
+
 /* ------------------------------------------------------------------ *
  * Small helpers
  * ------------------------------------------------------------------ */
@@ -747,13 +764,18 @@ function checkSuperquantum(context, verification) {
         : String(bound);
 
     if (violated) {
+        // The convention hint belongs only to a real quantum bound. Where the bound is 1 the
+        // result is arithmetically impossible rather than physically impossible, and the cause is
+        // the counts, not the question set.
+        const cause = bound === 1 ? '' : SUPERQUANTUM_CAUSE;
         log.error('nonlocalGame.winRate',
             'recomputed win rate ' + show(observed) + ' exceeds the quantum bound ' + boundText +
                 ' by ' + show(exceededBy) + ', more than ' + SUPERQUANTUM_SIGMA +
-                ' standard errors (' + show(standardError) + ')',
+                ' standard errors (' + show(standardError) + ')' + cause,
             VERIFY_ERROR_CODES.SUPERQUANTUM);
         log.record(CHECK_IDS.SUPERQUANTUM, 'fail',
-            'win rate ' + show(observed) + ' above the quantum bound ' + boundText);
+            'win rate ' + show(observed) + ' above the quantum bound ' + boundText +
+                (bound === 1 ? '' : '; check the edge convention first'));
         return;
     }
 

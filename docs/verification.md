@@ -183,10 +183,26 @@ Where the quantum value is exactly 1, the check reduces to "not above 1". Where 
 quantum value, it degrades to the same.
 
 A failure means the reported result is above what quantum mechanics allows for that game, so the
-counts, the game identification, or the win rule is wrong. Every game in the registry today has a
-quantum value of exactly 1 or none at all, so the four-standard-error branch is currently
-unreachable and gets its first real exercise when a game registers a quantum value strictly between
-0 and 1.
+counts, the game identification, or the win rule is wrong.
+
+**The four-standard-error branch is live, and it is live on the odd cycle.** `g14` and
+`magic-square` still pin a quantum value of exactly 1, so for those the check remains "not above 1".
+`odd-cycle` pins `cos^2(pi / (4n))`, which is strictly below 1 for every odd `n`, so an odd-cycle
+submission is held to a real bound rather than to arithmetic.
+
+The margin is narrow at small `n` and high shot counts, which is exactly the regime an event runs
+in. For `odd-cycle` with `n = 3` at 1024 shots on each of the `2n = 6` questions, the quantum value
+is 0.9330127 and the binomial standard error on 6144 rounds is about 0.0032, so four standard errors
+is about 0.013 and a recomputed win rate above roughly 0.9447 fails. Hardware does not reach that.
+An encoding mistake does: the most likely way to land there is a question set built under the other
+edge convention. `games/odd-cycle.js` takes each cycle edge ONCE, in the orientation `i -> i+1`, for
+`2n` questions; `games/coloring.js` takes each edge in BOTH directions. The two conventions give
+different question distributions and different bounds, and getting it backwards shifts the measured
+rate without shifting anything visible in the submission. See `scripts/lib/nlg/games/README.md`.
+
+The right response to a failure here is to check the convention and the counts, not to widen the
+tolerance. Four standard errors was chosen because at three the simulated false-positive rate
+reaches 8.5e-4 and at four it is at most 1e-5; a result that clears it is not a borderline case.
 
 The classical value is reported alongside, with two separate quantities: `classical.sigma`, a
 Gaussian-equivalent z-score against the binomial standard error, and `classical.pValue`, a Bernstein
